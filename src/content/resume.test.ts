@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { resume } from './resume';
 import { formatRange, parseMonth } from '../lib/dates';
+import { findPhoneNumber } from '../lib/privacy';
 
 const toIndex = (m: `${number}-${number}`) => {
   const { year, month } = parseMonth(m);
@@ -165,6 +166,7 @@ describe('resume content', () => {
   });
 
   it('keeps a phone number off the public page', () => {
-    expect(JSON.stringify(resume)).not.toMatch(/\b0\d{9}\b|\+84/);
+    // Serialising the whole object covers every field, including metrics, checks, case studies and the CV link.
+    expect(findPhoneNumber(JSON.stringify(resume))).toBeUndefined();
   });
 });
