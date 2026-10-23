@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Khánh">
+<defs>
+<linearGradient id="fpl" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="58"><stop offset="0" stop-color="#355788"/><stop offset="1" stop-color="#102a52"/></linearGradient>
+<linearGradient id="frim" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="58" y2="58"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7d92b2"/></linearGradient>
+<linearGradient id="fsil" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="48"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#dbe6f5"/><stop offset="1" stop-color="#9db2d0"/></linearGradient>
+<linearGradient id="fgold" gradientUnits="userSpaceOnUse" x1="27" y1="36" x2="44" y2="21"><stop offset="0" stop-color="#a97f22"/><stop offset=".55" stop-color="#e3bf6b"/><stop offset="1" stop-color="#fff2c4"/></linearGradient>
+<linearGradient id="faqua" gradientUnits="userSpaceOnUse" x1="27" y1="33" x2="51" y2="47"><stop offset="0" stop-color="#dcf5ff"/><stop offset=".5" stop-color="#7fd0ff"/><stop offset="1" stop-color="#3b91d2"/></linearGradient>
+<radialGradient id="fsun" gradientUnits="userSpaceOnUse" cx="45.8" cy="19.1" r="4.6"><stop offset="0" stop-color="#fff2c4"/><stop offset=".6" stop-color="#e3bf6b"/><stop offset="1" stop-color="#a97f22"/></radialGradient>
+<filter id="fsh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="0.9" flood-color="#000" flood-opacity="0.62"/></filter>
+</defs>
+<rect width="64" height="64" fill="url(#fpl)"/><rect x="0.9" y="0.9" width="62.2" height="62.2" fill="none" stroke="url(#frim)" stroke-width="1.8" opacity="0"/>
+<g transform="translate(32 32) scale(1.02) translate(1 2) translate(-32 -32)">
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#fsh)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8" stroke="url(#fsil)" stroke-width="4.2"/>
+<path d="M27 16V46" stroke="url(#fsil)" stroke-width="4.2"/>
+<path d="M27 34L43.6 22.8" stroke="url(#fgold)" stroke-width="3.8"/>
+<path d="M27 34L35 40.5C38 43 40 45.5 43 45.5S47.5 43 51 44.5" stroke="url(#faqua)" stroke-width="3.8"/>
+<circle cx="46.8" cy="20.2" r="3.2" fill="url(#fsun)" stroke="none"/>
+</g>
+<g fill="none" stroke-linecap="round" stroke="#fff" stroke-opacity="0.6" stroke-width="1" transform="translate(-0.5 -0.9)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8"/><path d="M27 16V46"/><path d="M27 34L43.6 22.8" stroke-opacity="0.48"/>
+</g>
+</g>
+</svg>

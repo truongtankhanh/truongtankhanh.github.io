@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="TK monogram: a T and a K sharing one stem, drawn like wind and cloud, for Trương Tấn Khánh">
+<path d="M12 6H46L58 18V52a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V12a6 6 0 0 1 6-6Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8" stroke="currentColor" stroke-width="4.2"/>
+<path d="M27 16V46" stroke="currentColor" stroke-width="4.2"/>
+<path d="M27 34L43.6 22.8" stroke="currentColor" stroke-width="3.8"/>
+<path d="M27 34L35 40.5C38 43 40 45.5 43 45.5S47.5 43 51 44.5" stroke="currentColor" stroke-width="3.8"/>
+</g>
+<circle cx="46.8" cy="20.2" r="3.2" fill="currentColor"/>
+</svg>

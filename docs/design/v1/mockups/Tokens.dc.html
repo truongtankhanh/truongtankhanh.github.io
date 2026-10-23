@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tokens and components</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./site.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width:1040px;display:flex;flex-direction:column">
+
+<div class="site" data-theme="light" style="padding:48px 48px 40px">
+<p class="mono">Light</p>
+<h2 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin:6px 0 20px">Colour tokens</h2>
+<div class="swatches">
+<sc-for list="{{light}}" as="c" hint-placeholder-count="8">
+<div class="swatch"><i style="background:{{c.hex}}"></i><div><b>{{c.name}}</b>{{c.hex}} · {{c.use}}</div></div>
+</sc-for>
+</div>
+</div>
+
+<div class="site" data-theme="dark" style="padding:40px 48px 48px">
+<p class="mono">Dark</p>
+<h2 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin:6px 0 20px">Same names, new values</h2>
+<div class="swatches">
+<sc-for list="{{dark}}" as="c" hint-placeholder-count="8">
+<div class="swatch"><i style="background:{{c.hex}}"></i><div><b>{{c.name}}</b>{{c.hex}} · {{c.use}}</div></div>
+</sc-for>
+</div>
+</div>
+
+<div class="site" data-theme="light" style="padding:48px">
+<p class="mono">Type · Be Vietnam Pro, already in the project</p>
+<div style="display:grid;gap:18px;margin-top:20px">
+<div style="display:grid;grid-template-columns:140px 1fr;align-items:baseline;gap:20px"><span class="mono">Display 64/800</span><span style="font-size:4rem;line-height:1.04;font-weight:800;letter-spacing:-0.03em" lang="vi">Trương Tấn Khánh</span></div>
+<div style="display:grid;grid-template-columns:140px 1fr;align-items:baseline;gap:20px"><span class="mono">Section 40/800</span><span style="font-size:2.5rem;line-height:1.1;font-weight:800;letter-spacing:-0.025em">Five repositories, one platform</span></div>
+<div style="display:grid;grid-template-columns:140px 1fr;align-items:baseline;gap:20px"><span class="mono">Role 22/600</span><span style="font-size:1.375rem;font-weight:600;color:var(--accent)">Team Lead - Full-stack Engineer</span></div>
+<div style="display:grid;grid-template-columns:140px 1fr;align-items:baseline;gap:20px"><span class="mono">Body 17/400</span><span>I take systems from requirements to production: architecture, planning, and hands-on implementation.</span></div>
+<div style="display:grid;grid-template-columns:140px 1fr;align-items:baseline;gap:20px"><span class="mono">Label 12 mono</span><span class="mono">Featured case study</span></div>
+</div>
+</div>
+
+<div class="site" data-theme="light" style="padding:8px 48px 56px">
+<p class="mono">Components</p>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;align-items:center">
+<a class="btn btn-primary" href="#x">Primary</a>
+<a class="btn" href="#x">Secondary</a>
+<a class="btn btn-primary btn-sm" href="#x">Small</a>
+<ul class="chips"><li>NestJS</li><li>PostgreSQL</li><li>MQTT 5</li></ul>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:28px;align-items:start">
+<div class="card">
+<h3>Project card</h3>
+<p>One sentence in plain language, then the claim a reviewer can check.</p>
+<p class="proof"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>Proof line: the checkable claim.</span></p>
+</div>
+<div class="metrics" style="border:1px solid var(--line);border-radius:14px;overflow:hidden">
+<ul style="grid-template-columns:repeat(2,minmax(0,1fr))">
+<li style="padding-left:24px;border-left:0"><b>44</b><span>implementation-ready tickets</span><small>Planned for the UCS monorepo</small></li>
+<li><b>~10k/s</b><span>messages on one replica</span><small>Open-source telemetry pipeline</small></li>
+</ul>
+</div>
+</div>
+<p style="margin-top:28px;color:var(--muted);font-size:0.95rem;max-width:70ch">Rules: one accent (ocean blue), blue is the base (Mệnh Thủy), silver and white metal (Kim) feed it,  gold is the single warm accent (Cung Sư Tử); light-blue glow marks what is live; no browns, no reds, 44 px touch targets, visible focus ring, text 4.5:1 or better in both themes, spacing on an 8 px step.</p>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1040,"height":1500}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+light: [
+{ name: '--paper', hex: '#F4F7FB', use: 'page, cool white' },
+{ name: '--surface', hex: '#FFFFFF', use: 'cards' },
+{ name: '--ink', hex: '#0B1B33', use: 'text, ink black-blue' },
+{ name: '--muted', hex: '#4A5B73', use: 'secondary text' },
+{ name: '--accent', hex: '#1B4F9C', use: 'accent, links (ocean blue)' },
+{ name: '--wash', hex: '#E6EEF9', use: 'tint' },
+{ name: '--line', hex: '#D3DEEC', use: 'borders' },
+{ name: '--band', hex: '#0B2447', use: 'deep sea bands' },
+{ name: '--gold', hex: '#E3BF6B', use: 'metallic gold, the sun' },
+{ name: '--glow', hex: '#7FD0FF', use: 'current, water light' },
+{ name: '--silver-hi', hex: '#FFFFFF', use: 'steel, bright edge' },
+{ name: '--silver-lo', hex: '#A9B8CD', use: 'steel, silver rim' },
+{ name: '--steel', hex: '#6F84A1', use: 'steel, shade and foot' }
+],
+dark: [
+{ name: '--paper', hex: '#07142A', use: 'page' },
+{ name: '--surface', hex: '#0E2140', use: 'cards' },
+{ name: '--ink', hex: '#E8EEFC', use: 'text' },
+{ name: '--muted', hex: '#9DB0D0', use: 'secondary text' },
+{ name: '--accent', hex: '#6AA9FF', use: 'accent, links' },
+{ name: '--wash', hex: '#12305C', use: 'tint' },
+{ name: '--line', hex: '#223A63', use: 'borders' },
+{ name: '--band', hex: '#0F2B57', use: 'deep sea bands' },
+{ name: '--gold', hex: '#E3BF6B', use: 'metallic gold, the sun' },
+{ name: '--glow', hex: '#7FD0FF', use: 'current, water light' },
+{ name: '--silver-hi', hex: '#9BB3D8', use: 'steel, bright edge' },
+{ name: '--silver-lo', hex: '#2B4A7A', use: 'steel, rim' },
+{ name: '--steel', hex: '#B4C6E3', use: 'steel, highlight' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Print CV</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#fff}
+.cv{width:794px}
+.pg{position:relative;width:794px;height:1123px;box-sizing:border-box;overflow:hidden;background:#fff;color:#0b1b33;font-family:'Be Vietnam Pro',system-ui,sans-serif;font-size:11.5px;line-height:1.5}
+.pg *{box-sizing:border-box}
+:where(.pg) :where(h1,h2,h3,h4,p,ul,dl,dd){margin:0;padding:0}
+:where(.pg) :where(ul){list-style:none}
+.pg a{color:#1b4f9c}
+.mono{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase}
+.k{font-weight:700;color:#0b1b33}
+
+/* header: white, with a blue rule; nothing runs to the paper edge, so every printer can reproduce it */
+.hd{padding:34px 44px 0}
+.hd::before{content:'';display:block;height:7px;margin-bottom:22px;border-radius:3px;background:linear-gradient(90deg,#b3c1d4 0%,#1b4f9c 45%,#123a78 100%)}
+.hd-top{display:flex;justify-content:space-between;align-items:flex-start}
+.eyebrow{display:flex;align-items:center;gap:10px;color:#4a5b73}
+.eyebrow::before{content:'';width:28px;height:2px;background:#b58a2f}
+.name{margin-top:12px;font-size:40px;line-height:1;font-weight:800;letter-spacing:-.04em;color:#0b1b33}
+.role-line{margin-top:8px;font-size:16px;font-weight:700;letter-spacing:-.01em;color:#1b4f9c}
+.mark{width:46px;height:46px;flex:none}
+.mark .plate{fill:#e6eef9;stroke:#6f84a1;stroke-width:1.6}
+.mark .stem,.mark .ray,.mark .wave{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mark .stem{stroke:#0b1b33;stroke-width:4.2}
+.mark .ray{stroke:#b58a2f;stroke-width:3.8}
+.mark .wave{stroke:#1b4f9c;stroke-width:3.8}
+.mark .sun{fill:#b58a2f}
+.contact{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:16px;font-size:10.5px;color:#2c3d57}
+.contact li{position:relative}
+.contact li+li::before{content:'';position:absolute;left:-10px;top:.55em;width:3px;height:3px;border-radius:50%;background:#9db0d0}
+.core{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid #d3deec}
+.core li{padding:3px 11px;border:1px solid #b3c1d4;border-radius:999px;background:linear-gradient(180deg,#fff,#e6eef9);color:#0b2447;font-size:10px;font-weight:700}
+.core .lab{padding:3px 6px 3px 0;border:0;background:none;color:#4a5b73;font-weight:700}
+
+/* figures */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:0 14px;margin:16px 44px 0;padding:14px 16px 12px;border:1.5px solid #8a9db8;border-top:3px solid #1b4f9c;border-radius:8px;background:#f4f7fb}
+.kpis b{display:block;font-size:24px;line-height:1;font-weight:800;letter-spacing:-.04em;color:#1b4f9c}
+.kpis span{display:block;margin-top:7px;font-size:9.5px;line-height:1.3;font-weight:600}
+
+.in{padding:0 44px}
+.sec{display:flex;align-items:center;gap:10px;margin:20px 0 10px;color:#1b4f9c}
+.sec::before{content:'';width:22px;height:3px;border-radius:2px;background:linear-gradient(90deg,#b3c1d4,#1b4f9c)}
+.sec::after{content:'';flex:1;height:1px;background:#d3deec}
+.sec h2{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+
+.sum{font-size:11.5px;line-height:1.6;color:#2c3d57}
+
+/* timeline */
+.role{display:grid;grid-template-columns:104px 14px 1fr;gap:0 12px;padding-bottom:14px}
+.role .when{padding-top:3px}
+.role .when .mono{color:#0b1b33;font-weight:700}
+.badge{display:inline-block;margin-top:5px;padding:1px 8px;border-radius:999px;background:#1b4f9c;color:#fff;font-size:7.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.rail{position:relative}
+.rail::before{content:'';position:absolute;left:50%;top:14px;bottom:-14px;width:1.5px;margin-left:-.75px;background:#d3deec}
+.rail i{position:absolute;left:50%;top:5px;width:10px;height:10px;margin-left:-5px;border:2px solid #1b4f9c;border-radius:50%;background:#fff}
+.role.now .rail i{background:#1b4f9c;box-shadow:0 0 0 3px rgba(27,79,156,.2)}
+.role.last .rail::before{display:none}
+.role h3{font-size:15px;line-height:1.2;font-weight:800;letter-spacing:-.02em}
+.role h3 small{display:block;margin-top:2px;font-size:11px;font-weight:600;letter-spacing:0;color:#1b4f9c}
+.rs{display:flex;gap:26px;margin-top:9px;padding:7px 12px;border:1.5px solid #8a9db8;border-radius:8px;background:#f4f7fb}
+.rs li b{display:inline;font-size:15px;font-weight:800;letter-spacing:-.03em;color:#1b4f9c;margin-right:6px}
+.rs li span{font-size:9.5px;font-weight:600}
+.role .intro{margin-top:8px;color:#4a5b73}
+.eng{margin-top:8px}
+.eng h4{font-size:11.5px;font-weight:800}
+.eng .ctx{font-size:10px;color:#4a5b73}
+.bl{margin-top:4px}
+.bl li{position:relative;padding-left:12px;margin-top:2px;color:#4a5b73}
+.bl li::before{content:'';position:absolute;left:1px;top:.62em;width:4px;height:4px;border-radius:1px;background:#1b4f9c}
+
+/* leadership */
+.lead{display:grid;grid-template-columns:200px 1fr;border:1.5px solid #8a9db8;border-radius:10px;background:#f4f7fb;overflow:hidden}
+.lead .fig{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;border-right:1px solid #d3deec}
+.lead .fig b{display:block;font-size:26px;line-height:1;font-weight:800;letter-spacing:-.04em;color:#1b4f9c}
+.lead .fig span{display:block;margin-top:5px;font-size:9px;line-height:1.3;font-weight:600}
+.lead .own{padding:12px 16px}
+.lead .own .mono{color:#1b4f9c;font-weight:700}
+.lead .own li{position:relative;padding-left:12px;margin-top:3px;font-size:10px;color:#2c3d57}
+.lead .own li::before{content:'';position:absolute;left:1px;top:.6em;width:4px;height:4px;border-radius:1px;background:#1b4f9c}
+.pr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.pc{box-shadow:0 2px 0 #8a9db8;padding:11px 13px;border:1.5px solid #8a9db8;border-radius:10px}
+.pc h4{font-size:11.5px;font-weight:800;letter-spacing:-.01em}
+.pc .stmt{margin-top:2px;font-size:9.5px;line-height:1.4;color:#4a5b73}
+.pc .mono{display:block;margin-top:7px;padding-top:6px;border-top:1px solid #d3deec;color:#1b4f9c;font-weight:700;font-size:7.5px}
+.pc li{position:relative;padding-left:10px;margin-top:3px;font-size:9.5px;line-height:1.35;font-weight:600}
+.pc li::before{content:'';position:absolute;left:0;top:.5em;width:4px;height:4px;border-radius:1px;background:#1b4f9c}
+.pc li small{display:block;font-size:8px;font-weight:500;color:#4a5b73}
+
+/* skills */
+.sk{display:grid;grid-template-columns:96px 1fr;gap:5px 14px}
+.sk dt{font-weight:800;font-size:10px;color:#1b4f9c}
+.sk dd{font-size:10.5px;color:#2c3d57}
+
+/* public work (page 3) */
+.wk{display:grid;grid-template-columns:118px 1fr;gap:0 16px;padding:16px 0;border-top:1px solid #d3deec}
+.wk:first-of-type{border-top:0;padding-top:0}
+.wk .st b{display:block;font-size:21px;line-height:1.05;font-weight:800;letter-spacing:-.04em;color:#1b4f9c}
+.wk .st span{display:block;margin-top:5px;font-size:9px;line-height:1.3;font-weight:600}
+.wk h3{font-size:13px;font-weight:800;letter-spacing:-.015em}
+.wk p{margin-top:3px;font-size:10.5px;line-height:1.5;color:#4a5b73}
+.wk .pf{color:#0b1b33;font-weight:600}
+.wk ul{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.wk li{padding:1px 8px;border:1.5px solid #8a9db8;border-radius:999px;font-size:8.5px;font-weight:600;color:#2c3d57}
+.wk .mono{display:block;margin-top:6px;font-size:7.5px;color:#1b4f9c}
+
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sc{box-shadow:0 2px 0 #8a9db8;padding:12px 14px;border:1.5px solid #8a9db8;border-radius:10px;background:#fff}
+.sh{display:flex;align-items:center;gap:9px}
+.sh h4{font-size:12px;font-weight:800;letter-spacing:-.01em}
+.si{width:28px;height:28px;flex:none;padding:6px;border-radius:8px;background:#e6eef9;fill:none;stroke:#1b4f9c;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sc ul{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.sc li{padding:2px 9px;border-radius:999px;background:#e6eef9;font-size:9.5px;font-weight:600;color:#0b2447}
+.facts{display:grid;grid-template-columns:1.4fr 1fr 1.4fr;gap:0 20px}
+.facts div+div{padding-left:20px;border-left:1px solid #d3deec}
+.facts dt{color:#1b4f9c;margin-bottom:3px}
+.facts dd.m{font-size:11.5px;font-weight:700}
+.facts dd.s{font-size:9.5px;line-height:1.4;color:#4a5b73}
+
+.ft{position:absolute;left:44px;right:44px;bottom:22px;display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid #d3deec;color:#4a5b73}
+
+/* closing block (page 3): bordered, inside the margins */
+.cb{position:relative;margin:34px 44px 0;display:grid;grid-template-columns:1fr 1.3fr;gap:22px;align-items:center;padding:20px 24px;border:1px solid #1b4f9c;border-top:4px solid #1b4f9c;border-radius:10px;background:#f4f7fb;color:#0b1b33}
+.cb h2{font-size:30px;line-height:1;font-weight:800;letter-spacing:-.04em;color:#1b4f9c}
+.cb .sub{margin-top:8px;font-size:10.5px;color:#4a5b73}
+.cb .mail{display:block;padding:10px 14px;border:1.5px solid #1b4f9c;border-radius:10px;background:#fff;color:#0b2447;font-size:15px;font-weight:800;letter-spacing:-.02em;text-decoration:none}
+.cb .mail .mono{display:block;margin-bottom:2px;color:#4a5b73;font-size:7.5px}
+.cb ul{display:flex;gap:8px;margin-top:8px}
+.cb li{flex:1;padding:7px 10px;border:1.5px solid #8a9db8;border-radius:8px;background:#fff}
+.cb li b{display:block;font-size:10.5px;font-weight:700}
+.cb li span{display:block;margin-top:1px;font-size:8.5px;color:#4a5b73}
+.cb .pn{position:absolute;right:24px;top:8px;color:#4a5b73}
+
+/* metal and raised type, kept to real text and plain borders so a PDF stays selectable and prints in one pass */
+.hd::before{height:8px;background:linear-gradient(90deg,#d6e0ee 0%,#9db0cd 22%,#1b4f9c 60%,#123a78 100%);box-shadow:0 2px 0 #8a9db8,inset 0 1px 0 rgba(255,255,255,.7)}
+.name{text-shadow:0 1px 0 #fff,0 2.5px 0 rgba(11,27,51,.2),0 3.5px 2px rgba(11,27,51,.14)}
+.role-line{text-shadow:0 1px 0 #fff,0 2px 2px rgba(18,58,120,.25)}
+.kpis b,.rs li b,.lead .fig b,.wk .st b,.proj .st{text-shadow:0 1px 0 #fff,0 2px 2px rgba(11,27,51,.2)}
+.kpis,.rs,.lead,.proj,.sc,.pc,.cb,.cb li,.cb .mail{border:1.5px solid transparent;background:linear-gradient(180deg,#ffffff,#eef2f8) padding-box,linear-gradient(145deg,#ffffff 0%,#a9b8cd 38%,#6f84a1 64%,#ffffff 100%) border-box;box-shadow:inset 0 1px 0 #fff,0 2px 0 #8a9db8}
+.kpis{border-top:3px solid transparent}
+.cb{box-shadow:inset 0 1px 0 #fff,0 3px 0 #8a9db8}
+.core li,.sc li,.wk li{border-color:#8a9db8;background:linear-gradient(180deg,#ffffff,#dfe8f5);box-shadow:0 1px 0 #8a9db8}
+.sec::before{height:4px;background:linear-gradient(90deg,#c3cfdf,#6f84a1 40%,#1b4f9c);box-shadow:0 1px 0 rgba(11,27,51,.25)}
+.rail i{box-shadow:0 1.5px 0 #8a9db8}
+.role.now .rail i{box-shadow:0 0 0 3px rgba(27,79,156,.2),0 1.5px 0 #123a78}
+.badge{box-shadow:0 1.5px 0 #0a2550;background:linear-gradient(180deg,#2a63b6,#123a78)}
+.si{box-shadow:0 1px 0 #8a9db8,inset 0 1px 0 #fff;background:linear-gradient(180deg,#ffffff,#dfe8f5)}
+.cb .mail{box-shadow:inset 0 1px 0 #fff,0 3px 0 #8a9db8}
+</style>
+</helmet>
+
+<div class="cv">
+
+<div class="pg">
+<header class="hd">
+<div class="hd-top">
+<div>
+<p class="mono eyebrow">Lâm Đồng, Vietnam · UTC+7</p>
+<h1 class="name" lang="vi">Trương Tấn Khánh</h1>
+<p class="role-line">Team Lead - Full-stack Engineer</p>
+</div>
+<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs>
+<linearGradient id="ppl" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="58"><stop offset="0" stop-color="#f6f9fd"/><stop offset="1" stop-color="#c9d6e8"/></linearGradient>
+<linearGradient id="prim" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="58" y2="58"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7b8fae"/></linearGradient>
+<linearGradient id="psil" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="48"><stop offset="0" stop-color="#4a6285"/><stop offset=".5" stop-color="#1d3558"/><stop offset="1" stop-color="#0b1b33"/></linearGradient>
+<linearGradient id="pgold" gradientUnits="userSpaceOnUse" x1="27" y1="36" x2="44" y2="21"><stop offset="0" stop-color="#7a5712"/><stop offset=".55" stop-color="#b58a2f"/><stop offset="1" stop-color="#e7c46a"/></linearGradient>
+<linearGradient id="paqua" gradientUnits="userSpaceOnUse" x1="27" y1="33" x2="51" y2="47"><stop offset="0" stop-color="#5b9be0"/><stop offset=".5" stop-color="#1b4f9c"/><stop offset="1" stop-color="#123a78"/></linearGradient>
+<radialGradient id="psun" gradientUnits="userSpaceOnUse" cx="45.8" cy="19.1" r="4.6"><stop offset="0" stop-color="#e7c46a"/><stop offset=".6" stop-color="#b58a2f"/><stop offset="1" stop-color="#7a5712"/></radialGradient>
+<filter id="psh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="0.9" flood-color="#000" flood-opacity="0.3"/></filter>
+</defs>
+<path d="M12 6H46L58 18V52a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V12a6 6 0 0 1 6-6Z" fill="url(#ppl)" stroke="url(#prim)" stroke-width="1.8"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#psh)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8" stroke="url(#psil)" stroke-width="4.2"/>
+<path d="M27 16V46" stroke="url(#psil)" stroke-width="4.2"/>
+<path d="M27 34L43.6 22.8" stroke="url(#pgold)" stroke-width="3.8"/>
+<path d="M27 34L35 40.5C38 43 40 45.5 43 45.5S47.5 43 51 44.5" stroke="url(#paqua)" stroke-width="3.8"/>
+<circle cx="46.8" cy="20.2" r="3.2" fill="url(#psun)" stroke="none"/>
+</g>
+<g fill="none" stroke-linecap="round" stroke="#fff" stroke-opacity="0.5" stroke-width="1" transform="translate(-0.5 -0.9)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8"/><path d="M27 16V46"/><path d="M27 34L43.6 22.8" stroke-opacity="0.40"/>
+</g></svg>
+</div>
+<ul class="contact">
+<li>ttkhanh100896@gmail.com</li>
+<li>truongtankhanh.github.io</li>
+<li>github.com/truongtankhanh</li>
+<li>linkedin.com/in/truongtankhanh</li>
+</ul>
+<ul class="core" aria-label="Core stack">
+<li class="lab mono">Core stack</li><li>Node.js</li><li>TypeScript</li><li>NestJS</li><li>React</li><li>Angular</li><li>PostgreSQL</li>
+</ul>
+</header>
+
+<ul class="kpis" aria-label="Career at a glance">
+<li><b>7+</b><span>years shipping production software</span></li>
+<li><b>5+</b><span>marketplaces integrated</span></li>
+<li><b>3+</b><span>engineers led</span></li>
+<li><b>~50</b><span>repositories and services</span></li>
+<li><b>~10k/s</b><span>messages on one replica, open-source pipeline</span></li>
+</ul>
+
+<div class="in">
+<div class="sec"><h2>Summary</h2></div>
+<p class="sum">Team Lead with 7+ years of production experience in Node.js and TypeScript. I lead a team of 3+ developers at Surbana Jurong on IoT and command-center platforms for clients in Singapore, across about 50 repositories and services (NestJS, Angular, React, PostgreSQL), turning requirements into detailed designs and implementation plans, and I stay hands-on in the hardest parts. Before that I built AWS-based cross-border e-commerce integrations.</p>
+
+<div class="sec"><h2>Experience</h2></div>
+<div class="role now last">
+<div class="when"><p class="mono">Apr 2024 – present</p><p class="badge">Current</p></div>
+<div class="rail" aria-hidden="true"><i></i></div>
+<div>
+<h3>Surbana Jurong<small>Team Lead - Full-stack Engineer</small></h3>
+<p class="intro">I lead a team of three or more developers across about 50 repositories and services, turning requirements from the project manager into detailed designs and implementation plans.</p>
+
+<div class="eng"><h4>Unified Command System</h4><p class="ctx">Command-center portal for island-wide operations in Singapore: an operator console and a three-projector video wall.</p>
+<ul class="bl">
+<li>Designed the monorepo architecture (pnpm workspaces and Turborepo): <span class="k">two apps and nine shared packages</span>.</li>
+<li>Broke the full scope into <span class="k">44 implementation-ready tickets</span> across every feature epic, checked against the Figma designs.</li>
+<li>Designed the <span class="k">camera integration</span> through the site’s video management system, relayed by MediaMTX behind an adapter, so mock and production sources switch by configuration.</li>
+<li>Set the key technical decisions: <span class="k">OneMap-based 2D maps with MapLibre and deck.gl</span>, <span class="k">Entra ID single sign-on</span> with an in-app permission model, and a <span class="k">single on-prem Docker Compose deployment</span>.</li>
+<li>Build the <span class="k">operator-view app hands-on</span>.</li>
+</ul></div>
+
+<div class="eng"><h4>IoT building-management platform</h4><p class="ctx">Backend that processes and serves IoT data for an automated building-management system.</p>
+<ul class="bl">
+<li>Primary developer of the <span class="k">core data processing and provisioning features</span> (Node.js, TypeORM, PostgreSQL).</li>
+<li>Shipped services as <span class="k">Docker images to AWS ECR</span>, running on <span class="k">Kubernetes</span>; reviewed the team’s code and tests.</li>
+</ul></div>
+
+<div class="eng"><h4>AI-assisted engineering workflow</h4>
+<ul class="bl">
+<li>Designed and maintain the team’s <span class="k">Claude Code pipelines</span> used daily on NestJS, Angular and React code: <span class="k">diff-scoped self-review</span> before PM review, <span class="k">API documentation with drift detection</span>, test and lint scaffolding, and the <span class="k">ticket pipeline</span> that delivered the command-center monorepo.</li>
+</ul></div>
+</div>
+</div>
+</div>
+
+<div class="ft mono"><span>Trương Tấn Khánh · Team Lead - Full-stack Engineer</span><span>1 / 4</span></div>
+</div>
+
+<div class="pg">
+<div class="in" style="padding-top:34px">
+<div class="role">
+<div class="when"><p class="mono">Jul 2020 – Feb 2024</p></div>
+<div class="rail" aria-hidden="true"><i></i></div>
+<div>
+<h3>NewIT Vietnam<small>Backend Developer</small></h3>
+<p class="intro">Built and ran cross-border e-commerce integrations that keep products listed on Tmall, eBay US, Mercari, 95Point and Yahoo Shopping.</p>
+<ul class="bl" style="margin-top:6px">
+<li><span class="k">Brandtmall, three years</span>: built the AWS ECS services that keep Tmall listings in sync (S3, DynamoDB, AWS Translate); in phase two, <span class="k">led the move from JavaScript to TypeScript microservices</span> on MySQL and owned image processing.</li>
+<li><span class="k">Sole core developer</span> of an eBay US listing service and core developer of a 95Point integration, owning staging and production releases.</li>
+<li><span class="k">Primary developer</span> of the Mercari integration and developer and code reviewer on the Yahoo Shopping integration (TypeScript, AWS CDK, RDS, TypeORM).</li>
+<li>Proposed, built and ran an <span class="k">internal serverless tool</span> (API Gateway, React, CloudFront) that replaced direct edits of files on S3 with controlled, auditable updates.</li>
+</ul>
+</div>
+</div>
+<div class="role">
+<div class="when"><p class="mono">Mar 2020 – Jun 2020</p></div>
+<div class="rail" aria-hidden="true"><i></i></div>
+<div>
+<h3 style="font-size:13px">AMIT Group<small>Web Developer</small></h3>
+<ul class="bl"><li>Web APIs with <span class="k">ASP.NET Core</span> and Entity Framework Core, and <span class="k">Angular</span> UI, for an AI-driven web platform.</li></ul>
+</div>
+</div>
+<div class="role last">
+<div class="when"><p class="mono">Dec 2018 – Feb 2020</p></div>
+<div class="rail" aria-hidden="true"><i></i></div>
+<div>
+<h3 style="font-size:13px">HHD Group<small>Mobile Developer</small></h3>
+<ul class="bl"><li><span class="k">React Native</span> apps connected to the company’s ERP system.</li></ul>
+</div>
+</div>
+
+<div class="sec"><h2>Skills</h2></div>
+<div class="sg"><div class="sc"><div class="sh"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 10h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2ZM7 7h.01M7 17h.01"></path></svg><h4>Backend</h4></div><ul><li>Node.js</li><li>NestJS</li><li>TypeScript</li><li>TypeORM</li><li>REST and OpenAPI</li><li>Socket.IO</li><li>MQTT</li></ul></div><div class="sc"><div class="sh"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM8 20h8M12 16v4"></path></svg><h4>Frontend</h4></div><ul><li>React</li><li>Angular</li><li>TanStack Query</li><li>Zustand</li><li>RxJS</li><li>MapLibre</li><li>deck.gl</li></ul></div><div class="sc"><div class="sh"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg><h4>Data</h4></div><ul><li>PostgreSQL</li><li>MySQL</li><li>DynamoDB</li></ul></div><div class="sc"><div class="sh"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 8.5H7Z"></path></svg><h4>Cloud and delivery</h4></div><ul><li>AWS (ECS, CDK, RDS, S3, CloudFront, IoT Core)</li><li>Docker</li><li>Kubernetes</li><li>GitHub Actions</li><li>Prometheus</li></ul></div><div class="sc" style="grid-column:1 / -1"><div class="sh"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM18 15.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM8.5 6H14a3 3 0 0 1 3 3v6.5"></path></svg><h4>Ways of working</h4></div><ul><li>Architecture decision records</li><li>Ticket-level planning</li><li>pnpm and Turborepo monorepos</li><li>Playwright and unit testing</li><li>AI-assisted delivery with Claude Code</li></ul></div></div>
+</div>
+
+<div class="ft mono"><span>truongtankhanh.github.io</span><span>2 / 4</span></div>
+</div>
+
+<div class="pg">
+<div class="in" style="padding-top:34px">
+<div class="sec" style="margin-top:0"><h2>Public work</h2></div>
+<p class="sum" style="margin-bottom:14px">Five public repositories that fit together as one campus operations platform. The campus is fictional; the engineering is the kind a real deployment needs, and every claim below can be checked in the code.</p>
+
+<div class="wk">
+<div class="st"><b>One command</b><span>brings up the whole stack</span></div>
+<div><h3>Ops Command Center</h3>
+<p>A real-time console for a campus control room: live incidents on a site map, the cameras covering each incident, and a response workflow where every action is recorded.</p>
+<p class="pf">Incident lifecycle enforced by the domain, events published only after commit, end-to-end tests on a real PostgreSQL, and the whole stack up with one command.</p>
+<ul><li>NestJS</li><li>React 19</li><li>MapLibre</li><li>three.js</li><li>Socket.IO</li><li>Keycloak</li><li>PostgreSQL</li></ul>
+<span class="mono">github.com/truongtankhanh/ops-command-center</span></div>
+</div>
+<div class="wk">
+<div class="st"><b>~10k/s</b><span>messages on one replica</span></div>
+<div><h3>IoT Telemetry Pipeline</h3>
+<p>Sensor readings arrive over MQTT, are stored in PostgreSQL, and turn into alerts that open and resolve incidents in the command center.</p>
+<p class="pf">About 10,000 messages a second on one replica with no loss and no duplicates; alerts delivered through an outbox; ready for Kubernetes.</p>
+<ul><li>NestJS</li><li>MQTT 5</li><li>PostgreSQL</li><li>Prometheus</li><li>Kubernetes</li></ul>
+<span class="mono">github.com/truongtankhanh/iot-telemetry-pipeline</span></div>
+</div>
+<div class="wk">
+<div class="st"><b>cdk-nag</b><span>rules pass on every synth</span></div>
+<div><h3>Platform on AWS</h3>
+<p>Both systems described as AWS CDK code: containers on ECS Fargate, RDS PostgreSQL, AWS IoT Core for devices, CloudFront and WAF in front.</p>
+<p class="pf">cdk-nag security rules pass on every synth, least privilege is asserted in tests, and deploys use GitHub OIDC with no stored keys.</p>
+<ul><li>AWS CDK</li><li>TypeScript</li><li>ECS Fargate</li><li>RDS</li><li>IoT Core</li><li>CloudFront</li></ul>
+<span class="mono">github.com/truongtankhanh/platform-aws</span></div>
+</div>
+<div class="wk">
+<div class="st"><b>12</b><span>decision records</span></div>
+<div><h3>Architecture Decisions</h3>
+<p>The written design of the platform: C4 views, the decisions that cross system boundaries, and how a decision gets reviewed.</p>
+<p class="pf">Twelve decision records with the options that were rejected and why, including one superseded when its assumption turned out wrong.</p>
+<ul><li>ADRs</li><li>C4 model</li><li>Mermaid</li></ul>
+<span class="mono">github.com/truongtankhanh/architecture-decisions</span></div>
+</div>
+<div class="wk">
+<div class="st"><b>Plan first</b><span>plans are written before code</span></div>
+<div><h3>Claude Code Pipelines</h3>
+<p>The AI-assisted workflow both systems were built with: each job is analysed, planned, applied and verified in separate stages a person can review.</p>
+<p class="pf">Plans are written before code, file scope is fixed, nothing is committed automatically, and real runs are published next to the commits they produced.</p>
+<ul><li>Claude Code plugin</li><li>Markdown artifacts</li></ul>
+<span class="mono">github.com/truongtankhanh/claude-code-pipelines</span></div>
+</div>
+
+</div>
+
+<div class="ft mono"><span>truongtankhanh.github.io</span><span>3 / 4</span></div>
+</div>
+
+<div class="pg">
+<div class="in" style="padding-top:34px">
+<div class="sec" style="margin-top:0"><h2>How I lead</h2></div>
+<div class="lead">
+<ul class="fig" aria-label="Scope of leadership"><li><b>3+</b><span>engineers led</span></li><li><b>~50</b><span>repositories and services</span></li></ul>
+<div class="own"><p class="mono">What I own</p>
+<ul>
+<li>Turning requirements from the project manager into detailed designs and implementation plans</li>
+<li>Reviewing the team’s code and tests</li>
+<li>The team’s AI-assisted engineering workflow</li>
+</ul></div>
+</div>
+<div class="pr">
+<div class="pc"><h4>Design is written down</h4><p class="stmt">Decisions and tickets are documented and reviewed before code is written.</p><span class="mono">In practice</span>
+<ul><li>Broke the full scope into 44 implementation-ready tickets, checked against the Figma designs.<small>Unified Command System</small></li><li>Twelve decision records with the options that were rejected and why.<small>Architecture Decisions, public repository</small></li></ul></div>
+<div class="pc"><h4>Simple scales</h4><p class="stmt">Framework-native solutions first; every new tool has to earn its place.</p><span class="mono">In practice</span>
+<ul><li>A single on-prem Docker Compose deployment.<small>Unified Command System</small></li><li>Mock and production sources switch by configuration.<small>Camera integration, Unified Command System</small></li></ul></div>
+<div class="pc"><h4>Standards are a team asset</h4><p class="stmt">Shared conventions and automated review let a small team move quickly across many repositories.</p><span class="mono">In practice</span>
+<ul><li>Claude Code pipelines used daily on NestJS, Angular and React code: diff-scoped self-review before PM review.<small>AI-assisted engineering workflow</small></li><li>API documentation with drift detection.<small>AI-assisted engineering workflow</small></li></ul></div>
+<div class="pc"><h4>Leads still ship</h4><p class="stmt">I stay in the code, because good decisions come from knowing where the real complexity is.</p><span class="mono">In practice</span>
+<ul><li>Build the operator-view app hands-on.<small>Unified Command System</small></li><li>Primary developer of the core data processing and provisioning features.<small>IoT building-management platform</small></li></ul></div>
+</div>
+<div class="sec"><h2>Education and languages</h2></div>
+<dl class="facts">
+<div><dt class="mono">Education</dt><dd class="m">Ton Duc Thang University</dd><dd class="s">Computer Science, not completed (2014–2018)</dd></div>
+<div><dt class="mono">Vietnamese</dt><dd class="m">Native</dd></div>
+<div><dt class="mono">English</dt><dd class="m">Working level</dd><dd class="s">Reads and writes technical documentation; speaks well enough for day-to-day work</dd></div>
+</dl>
+</div>
+<div class="cb">
+<div><h2>Let’s talk</h2><p class="sub">Email is the quickest way to reach me; I work in UTC+7.</p></div>
+<div>
+<a class="mail" href="mailto:ttkhanh100896@gmail.com"><span class="mono">Email</span>ttkhanh100896@gmail.com</a>
+<ul><li><b>GitHub</b><span>github.com/truongtankhanh</span></li><li><b>LinkedIn</b><span>linkedin.com/in/truongtankhanh</span></li><li><b>Website</b><span>truongtankhanh.github.io</span></li></ul>
+</div>
+</div>
+<div class="ft mono"><span>truongtankhanh.github.io</span><span>4 / 4</span></div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":4492}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

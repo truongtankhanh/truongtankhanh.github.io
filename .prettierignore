@@ -1,3 +1,6 @@
 dist
 dist-ssr
 pnpm-lock.yaml
+
+# Verbatim copy of the V1 design canvas source (docs/design/v1/brief.md)
+docs/design/v1/mockups

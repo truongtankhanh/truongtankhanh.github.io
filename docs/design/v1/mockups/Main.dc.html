@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./site.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="site" data-theme="{{theme}}">
+
+<header class="top">
+<div class="wrap">
+<a class="brand" href="#top"><svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><defs>
+<linearGradient id="hpl" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="58"><stop offset="0" stop-color="#355788"/><stop offset="1" stop-color="#102a52"/></linearGradient>
+<linearGradient id="hrim" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="58" y2="58"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7d92b2"/></linearGradient>
+<linearGradient id="hsil" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="48"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#dbe6f5"/><stop offset="1" stop-color="#9db2d0"/></linearGradient>
+<linearGradient id="hgold" gradientUnits="userSpaceOnUse" x1="27" y1="36" x2="44" y2="21"><stop offset="0" stop-color="#a97f22"/><stop offset=".55" stop-color="#e3bf6b"/><stop offset="1" stop-color="#fff2c4"/></linearGradient>
+<linearGradient id="haqua" gradientUnits="userSpaceOnUse" x1="27" y1="33" x2="51" y2="47"><stop offset="0" stop-color="#dcf5ff"/><stop offset=".5" stop-color="#7fd0ff"/><stop offset="1" stop-color="#3b91d2"/></linearGradient>
+<radialGradient id="hsun" gradientUnits="userSpaceOnUse" cx="45.8" cy="19.1" r="4.6"><stop offset="0" stop-color="#fff2c4"/><stop offset=".6" stop-color="#e3bf6b"/><stop offset="1" stop-color="#a97f22"/></radialGradient>
+<filter id="hsh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="0.9" flood-color="#000" flood-opacity="0.62"/></filter>
+</defs>
+<path d="M12 6H46L58 18V52a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V12a6 6 0 0 1 6-6Z" fill="url(#hpl)" stroke="url(#hrim)" stroke-width="1.8"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#hsh)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8" stroke="url(#hsil)" stroke-width="4.2"/>
+<path d="M27 16V46" stroke="url(#hsil)" stroke-width="4.2"/>
+<path d="M27 34L43.6 22.8" stroke="url(#hgold)" stroke-width="3.8"/>
+<path d="M27 34L35 40.5C38 43 40 45.5 43 45.5S47.5 43 51 44.5" stroke="url(#haqua)" stroke-width="3.8"/>
+<circle cx="46.8" cy="20.2" r="3.2" fill="url(#hsun)" stroke="none"/>
+</g>
+<g fill="none" stroke-linecap="round" stroke="#fff" stroke-opacity="0.6" stroke-width="1" transform="translate(-0.5 -0.9)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8"/><path d="M27 16V46"/><path d="M27 34L43.6 22.8" stroke-opacity="0.48"/>
+</g></svg><span class="brand-text"><span class="brand-name" lang="vi">Trương Tấn Khánh</span><span class="brand-role">Team Lead - Full-stack Engineer</span></span></a>
+<nav aria-label="Sections">
+<sc-for list="{{navItems}}" as="n" hint-placeholder-count="5">
+<a href="#{{n.id}}" class="{{n.cls}}" aria-current="{{n.current}}" onClick="{{n.pick}}">{{n.label}}</a>
+</sc-for>
+</nav>
+<div class="actions">
+<button class="icon-btn" type="button" aria-label="Switch colour theme">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>
+</button>
+<a class="btn btn-primary btn-sm" href="Print-cv.dc.html" aria-label="Download CV">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path></svg>
+<span>Download CV</span>
+</a>
+<button class="icon-btn menu-btn" type="button" aria-label="{{menuLabel}}" aria-expanded="{{menuExpanded}}" aria-controls="site-menu" onClick="{{toggleMenu}}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round"><path d="{{menuIcon}}"></path></svg></button>
+</div>
+</div>
+<div id="site-menu" class="menu {{menuCls}}" role="navigation" aria-label="Menu">
+<sc-for list="{{navItems}}" as="m" hint-placeholder-count="5">
+<a href="#{{m.id}}" class="{{m.cls}}" aria-current="{{m.current}}" onClick="{{m.pickClose}}">{{m.label}}</a>
+</sc-for>
+<button class="menu-theme" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>Switch colour theme</button>
+</div>
+</header>
+
+<main id="top">
+<section class="hero" aria-labelledby="name">
+<svg class="sun" viewBox="0 0 760 760" aria-hidden="true" focusable="false"><circle cx="380" cy="380" r="150"></circle><circle cx="380" cy="380" r="210"></circle><circle cx="380" cy="380" r="250"></circle><line x1="648" y1="380" x2="698" y2="380"></line><line x1="644" y1="427" x2="673" y2="432"></line><line x1="632" y1="472" x2="679" y2="489"></line><line x1="612" y1="514" x2="638" y2="529"></line><line x1="585" y1="552" x2="624" y2="584"></line><line x1="552" y1="585" x2="572" y2="608"></line><line x1="514" y1="612" x2="539" y2="655"></line><line x1="472" y1="632" x2="482" y2="660"></line><line x1="427" y1="644" x2="435" y2="693"></line><line x1="380" y1="648" x2="380" y2="678"></line><line x1="333" y1="644" x2="325" y2="693"></line><line x1="288" y1="632" x2="278" y2="660"></line><line x1="246" y1="612" x2="221" y2="655"></line><line x1="208" y1="585" x2="188" y2="608"></line><line x1="175" y1="552" x2="136" y2="584"></line><line x1="148" y1="514" x2="122" y2="529"></line><line x1="128" y1="472" x2="81" y2="489"></line><line x1="116" y1="427" x2="87" y2="432"></line><line x1="112" y1="380" x2="62" y2="380"></line><line x1="116" y1="333" x2="87" y2="328"></line><line x1="128" y1="288" x2="81" y2="271"></line><line x1="148" y1="246" x2="122" y2="231"></line><line x1="175" y1="208" x2="136" y2="176"></line><line x1="208" y1="175" x2="188" y2="152"></line><line x1="246" y1="148" x2="221" y2="105"></line><line x1="288" y1="128" x2="278" y2="100"></line><line x1="333" y1="116" x2="325" y2="67"></line><line x1="380" y1="112" x2="380" y2="82"></line><line x1="427" y1="116" x2="435" y2="67"></line><line x1="472" y1="128" x2="482" y2="100"></line><line x1="514" y1="148" x2="539" y2="105"></line><line x1="552" y1="175" x2="572" y2="152"></line><line x1="585" y1="208" x2="624" y2="176"></line><line x1="612" y1="246" x2="638" y2="231"></line><line x1="632" y1="288" x2="679" y2="271"></line><line x1="644" y1="333" x2="673" y2="328"></line></svg>
+<div class="wrap">
+<div class="hero-grid">
+<div class="hero-text">
+<p class="mono meta">Lâm Đồng, Vietnam · UTC+7</p>
+<h1 id="name" lang="vi">Trương Tấn Khánh</h1>
+<p class="tagline">Team Lead - Full-stack Engineer</p>
+<p class="lead">I take systems from requirements to production: architecture, ticket-level planning, documentation that stands up to client review, and hands-on implementation of the hardest parts. Today I lead the engineering of operations platforms for clients in Singapore.</p>
+<div class="cta">
+<a class="btn btn-primary" href="mailto:ttkhanh100896@gmail.com" onClick="{{copyEmail}}" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>{{mailLabel}}</a>
+<a class="btn" href="Print-cv.dc.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path></svg>Download CV (PDF)</a>
+<a class="btn btn-link" href="https://github.com/truongtankhanh">GitHub</a>
+<a class="btn btn-link" href="https://www.linkedin.com/in/truongtankhanh/">LinkedIn</a>
+</div>
+<div class="hero-facts">
+<div>
+<p class="mono">Currently</p>
+<p class="fact-main">Surbana Jurong</p>
+<p class="fact-sub">Leading engineering since April 2024, for clients in Singapore</p>
+</div>
+<div>
+<p class="mono">Open source</p>
+<p class="fact-main">5 public repositories</p>
+<p class="fact-sub"><a class="fact-link" href="#work">See the work</a></p>
+</div>
+</div>
+</div>
+<div class="stack" role="group" aria-label="Technology stack">
+<div class="layer"><div class="layer-head"><svg class="layer-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM8 20h8M12 16v4"></path></svg><span class="mono">Frontend</span></div><ul><li class="k">React</li><li class="k">Angular</li><li>MapLibre</li><li>deck.gl</li></ul></div>
+<div class="layer"><div class="layer-head"><svg class="layer-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 10h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2ZM7 7h.01M7 17h.01"></path></svg><span class="mono">Backend</span></div><ul><li class="k">Node.js</li><li class="k">TypeScript</li><li class="k">NestJS</li><li>Socket.IO</li></ul></div>
+<div class="layer"><div class="layer-head"><svg class="layer-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg><span class="mono">Data</span></div><ul><li class="k">PostgreSQL</li><li>MySQL</li><li>DynamoDB</li></ul></div>
+<div class="layer"><div class="layer-head"><svg class="layer-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 8.5H7Z"></path></svg><span class="mono">Cloud</span></div><ul><li>AWS</li><li>Docker</li><li>Kubernetes</li><li>GitHub Actions</li></ul></div>
+</div>
+</div>
+<ul class="metrics" aria-label="Career at a glance">
+<sc-for list="{{metrics}}" as="m" hint-placeholder-count="5">
+<li>
+<b>{{m.value}}</b>
+<span>{{m.label}}</span>
+<small>{{m.source}}</small>
+</li>
+</sc-for>
+</ul>
+</div>
+<div class="waves" aria-hidden="true">
+<svg class="back" viewBox="0 0 2880 64" preserveAspectRatio="none"><path d="M0 36 C240 8 480 62 720 36 S1200 8 1440 36 C1680 8 1920 62 2160 36 S2640 8 2880 36 V64 H0Z"></path></svg>
+<svg class="mid" viewBox="0 0 2880 64" preserveAspectRatio="none"><path d="M0 28 C300 58 540 6 720 30 S1180 56 1440 28 C1740 58 1980 6 2160 30 S2620 56 2880 28 V64 H0Z"></path></svg>
+<svg class="front" viewBox="0 0 1440 64" preserveAspectRatio="none"><path d="M0 40 C240 10 480 60 720 36 S1200 14 1440 40 V64 H0Z"></path></svg>
+</div>
+</section>
+
+<section id="work" class="section" aria-labelledby="work-title">
+<div class="wrap">
+<div class="section-head">
+<div>
+<h2 id="work-title">Public work</h2>
+</div>
+<p>Five repositories that fit together as one campus operations platform. The campus is fictional; the engineering is the kind a real deployment needs, and every claim below can be checked in the code.</p>
+</div>
+
+<article class="feature">
+<div class="body">
+<p class="mono tag">Featured case study</p>
+<h3>Ops Command Center</h3>
+<p class="desc">A real-time console for a campus control room: live incidents on a site map, the cameras covering each incident, and a response workflow where every action is recorded.</p>
+<ul class="chips" aria-label="Stack">
+<li>NestJS</li><li>React 19</li><li>MapLibre</li><li>three.js</li><li>Socket.IO</li><li>Keycloak</li><li>PostgreSQL</li>
+</ul>
+<div class="actions">
+<a class="btn btn-primary" href="Case-study.dc.html">Read the case study</a>
+<a class="btn" href="https://github.com/truongtankhanh/ops-command-center">Repository</a>
+</div>
+</div>
+<div class="side">
+<p class="mono">What you can check in the code</p>
+<ul class="checks">
+<li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>Incident lifecycle enforced by the domain</span></li>
+<li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>Events published only after commit</span></li>
+<li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>End-to-end tests on a real PostgreSQL</span></li>
+<li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>The whole stack up with one command</span></li>
+</ul>
+</div>
+</article>
+
+<div class="grid-4">
+<sc-for list="{{projects}}" as="p" hint-placeholder-count="4">
+<article class="card proj">
+<div class="proj-head">
+<h3>{{p.name}}</h3>
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg>
+</div>
+<p class="what">{{p.what}}</p>
+<p class="stat"><b>{{p.statValue}}</b><span>{{p.statLabel}}</span></p>
+<ul class="ticks">
+<sc-for list="{{p.checks}}" as="chk" hint-placeholder-count="3">
+<li>{{chk}}</li>
+</sc-for>
+</ul>
+<ul class="chips" aria-label="Stack">
+<sc-for list="{{p.stack}}" as="s" hint-placeholder-count="4">
+<li>{{s}}</li>
+</sc-for>
+</ul>
+<div class="proj-foot"><a class="more" href="{{p.repo}}">View repository</a></div>
+</article>
+</sc-for>
+</div>
+
+<div class="arch" role="group" aria-label="How the repositories fit together">
+<div class="arch-head">
+<h3>How the pieces fit together</h3>
+<p>Readings flow from devices to the control room through two repositories. The third describes where both run.</p>
+</div>
+<ol class="arch-row">
+<li class="node"><b>Sensors</b><small>Campus devices</small></li>
+<li class="edge"><span>MQTT 5 · ~10k msg/s per replica</span><i aria-hidden="true"></i></li>
+<li class="node repo"><span class="mono">Repository</span><b>IoT Telemetry Pipeline</b><small>NestJS · PostgreSQL</small></li>
+<li class="edge"><span>alerts through an outbox</span><i aria-hidden="true"></i></li>
+<li class="node repo"><span class="mono">Repository</span><b>Ops Command Center</b><small>NestJS · React</small></li>
+<li class="edge"><span>live incidents</span><i aria-hidden="true"></i></li>
+<li class="node"><b>Operators</b><small>Control room</small></li>
+</ol>
+<div class="arch-base">
+<span class="mono">Runs on</span>
+<p><b>Platform on AWS</b> · ECS Fargate · RDS PostgreSQL · IoT Core · CloudFront and WAF, all described as AWS CDK code</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="experience" class="section alt" aria-labelledby="experience-title">
+<div class="wrap">
+<div class="section-head">
+<div>
+<h2 id="experience-title">Experience</h2>
+</div>
+</div>
+<ol class="timeline">
+<sc-for list="{{roles}}" as="role" hint-placeholder-count="4">
+<li class="role {{role.cls}}">
+<div class="when">
+<p class="mono">{{role.when}}</p>
+<sc-if value="{{role.current}}" hint-placeholder-val="{{ true }}">
+<p class="badge">Current</p>
+</sc-if>
+</div>
+<div class="rail" aria-hidden="true"><i></i></div>
+<div class="content">
+<h3>{{role.company}}<small>{{role.title}}</small></h3>
+<sc-if value="{{role.summary}}" hint-placeholder-val="{{ true }}">
+<p class="sum">{{role.summary}}</p>
+</sc-if>
+<sc-for list="{{role.engagements}}" as="eng" hint-placeholder-count="2">
+<div class="eng">
+<h4>{{eng.name}}</h4>
+<p class="ctx">{{eng.context}}</p>
+<ul>
+<sc-for list="{{eng.points}}" as="pt" hint-placeholder-count="3">
+<li><sc-for list="{{pt.parts}}" as="part" hint-placeholder-count="3"><span class="{{part.cls}}">{{part.t}}</span></sc-for></li>
+</sc-for>
+</ul>
+</div>
+</sc-for>
+<ul class="flat">
+<sc-for list="{{role.points}}" as="pt2" hint-placeholder-count="2">
+<li><sc-for list="{{pt2.parts}}" as="part2" hint-placeholder-count="3"><span class="{{part2.cls}}">{{part2.t}}</span></sc-for></li>
+</sc-for>
+</ul>
+</div>
+</li>
+</sc-for>
+</ol>
+</div>
+</section>
+
+<section id="skills" class="section" aria-labelledby="skills-title">
+<div class="wrap">
+<div class="section-head">
+<div>
+<h2 id="skills-title">Skills</h2>
+</div>
+</div>
+<div class="core">
+<div>
+<p class="mono">Core stack</p>
+<p class="core-note">Node.js and TypeScript systems with NestJS, Angular, React and PostgreSQL.</p>
+</div>
+<ul class="core-list" aria-label="Core stack">
+<li>Node.js</li><li>TypeScript</li><li>NestJS</li><li>React</li><li>Angular</li><li>PostgreSQL</li>
+</ul>
+</div>
+<div class="skill-grid">
+<sc-for list="{{skills}}" as="g" hint-placeholder-count="5">
+<article class="skill-card">
+<div class="skill-head">
+<svg class="skill-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="{{g.icon}}"></path></svg>
+<h3>{{g.name}}</h3>
+</div>
+<ul class="skill-chips">
+<sc-for list="{{g.items}}" as="it" hint-placeholder-count="6">
+<li>{{it}}</li>
+</sc-for>
+</ul>
+<p class="skill-used"><span class="mono">Shown in</span> {{g.used}}</p>
+</article>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section id="approach" class="section alt" aria-labelledby="approach-title">
+<div class="wrap">
+<div class="section-head">
+<div>
+<h2 id="approach-title">How I lead</h2>
+</div>
+</div>
+<div class="lead-scope">
+<ul class="lead-figures" aria-label="Scope of leadership">
+<li><b>3+</b><span>engineers led</span></li>
+<li><b>~50</b><span>repositories and services</span></li>
+</ul>
+<div class="lead-owns">
+<p class="mono">What I own</p>
+<ul class="ticks">
+<li>Turning requirements from the project manager into detailed designs and implementation plans</li>
+<li>Reviewing the team’s code and tests</li>
+<li>The team’s AI-assisted engineering workflow</li>
+</ul>
+</div>
+</div>
+<div class="principles">
+<sc-for list="{{principles}}" as="pr" hint-placeholder-count="4">
+<article class="principle">
+<h3>{{pr.title}}</h3>
+<p class="stmt">{{pr.body}}</p>
+<p class="mono in-practice">In practice</p>
+<ul class="evidence">
+<sc-for list="{{pr.evidence}}" as="ev" hint-placeholder-count="2">
+<li><q>{{ev.text}}</q><cite>{{ev.src}}</cite></li>
+</sc-for>
+</ul>
+</article>
+</sc-for>
+</div>
+<dl class="facts">
+<div><dt class="mono">Education</dt><dd class="main">Ton Duc Thang University</dd><dd class="sub">Computer Science, not completed (2014–2018)</dd></div>
+<div><dt class="mono">Vietnamese</dt><dd class="main">Native</dd></div>
+<div><dt class="mono">English</dt><dd class="main">Working level</dd><dd class="sub">Reads and writes technical documentation; speaks well enough for day-to-day work</dd></div>
+</dl>
+</div>
+</section>
+
+<section id="contact" class="contact" aria-labelledby="contact-title">
+<svg class="wave-top" viewBox="0 0 1440 48" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0 H1440 V14 C1200 46 960 4 720 28 S240 44 0 14 Z"></path></svg>
+<div class="wrap">
+<div class="contact-copy">
+<h2 id="contact-title">Let’s talk</h2>
+<p>Email is the quickest way to reach me; I work in UTC+7.</p>
+</div>
+<div class="contact-actions">
+<a class="mail-card {{mailCardCls}}" href="mailto:ttkhanh100896@gmail.com" onClick="{{copyEmail}}" aria-live="polite">
+<span class="mono">{{mailCardLabel}}</span>
+<b>ttkhanh100896@gmail.com</b>
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg>
+</a>
+<div class="link-tiles">
+<a class="tile" href="https://github.com/truongtankhanh"><span class="tile-name">GitHub</span><span class="tile-sub">github.com/truongtankhanh</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg></a>
+<a class="tile" href="https://www.linkedin.com/in/truongtankhanh/"><span class="tile-name">LinkedIn</span><span class="tile-sub">linkedin.com/in/truongtankhanh</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg></a>
+<a class="tile" href="Print-cv.dc.html"><span class="tile-name">Download CV</span><span class="tile-sub">PDF, four pages</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path></svg></a>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":6000}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { active: 'work', copied: false, menuOpen: false };
+}
+renderVals() {
+const GH = 'https://github.com/truongtankhanh';
+const P = (...parts) => ({ parts: parts.map((x) => (typeof x === 'string' ? { t: x, cls: '' } : { t: x[0], cls: 'k' })) });
+return {
+theme: this.props.theme ?? 'light',
+mailLabel: this.state.copied ? 'Email copied' : 'Email me',
+menuCls: this.state.menuOpen ? 'open' : '',
+menuExpanded: this.state.menuOpen ? 'true' : 'false',
+menuLabel: this.state.menuOpen ? 'Close menu' : 'Open menu',
+menuIcon: this.state.menuOpen ? 'M6 6l12 12M18 6 6 18' : 'M4 7h16M4 12h16M4 17h16',
+toggleMenu: () => this.setState({ menuOpen: !this.state.menuOpen }),
+mailCardLabel: this.state.copied ? 'Copied to clipboard' : 'Email',
+mailCardCls: this.state.copied ? 'is-copied' : '',
+copyEmail: () => {
+try { navigator.clipboard.writeText('ttkhanh100896@gmail.com'); } catch (e) {}
+this.setState({ copied: true });
+setTimeout(() => this.setState({ copied: false }), 2200);
+},
+navItems: [['work', 'Work'], ['experience', 'Experience'], ['skills', 'Skills'], ['approach', 'How I lead'], ['contact', 'Contact']].map(([id, label]) => ({
+id,
+label,
+cls: this.state.active === id ? 'on' : '',
+current: this.state.active === id ? 'location' : undefined,
+pick: () => this.setState({ active: id }),
+pickClose: () => this.setState({ active: id, menuOpen: false })
+})),
+metrics: [
+{ value: '7+', label: 'years shipping production software', source: 'Since December 2018' },
+{ value: '5+', label: 'marketplaces integrated', source: 'Tmall, eBay US, Mercari, 95Point, Yahoo Shopping and more' },
+{ value: '3+', label: 'engineers led', source: 'Surbana Jurong, since April 2024' },
+{ value: '~50', label: 'repositories and services', source: 'NestJS, Angular, React, PostgreSQL' },
+{ value: '~10k/s', label: 'messages on one replica', source: 'Open-source telemetry pipeline' }
+],
+projects: [
+{ name: 'IoT Telemetry Pipeline', repo: GH + '/iot-telemetry-pipeline', what: 'Sensor readings arrive over MQTT, are stored in PostgreSQL, and turn into alerts that open and resolve incidents in the command center.', statValue: '~10k/s', statLabel: 'messages on one replica', checks: ['About 10,000 messages a second on one replica with no loss and no duplicates', 'Alerts delivered through an outbox', 'Ready for Kubernetes'], stack: ['NestJS', 'MQTT 5', 'PostgreSQL', 'Prometheus', 'Kubernetes'] },
+{ name: 'Platform on AWS', repo: GH + '/platform-aws', what: 'Both systems described as AWS CDK code: containers on ECS Fargate, RDS PostgreSQL, AWS IoT Core for devices, CloudFront and WAF in front.', statValue: 'cdk-nag', statLabel: 'security rules pass on every synth', checks: ['cdk-nag security rules pass on every synth', 'Least privilege is asserted in tests', 'Deploys use GitHub OIDC with no stored keys'], stack: ['AWS CDK', 'TypeScript', 'ECS Fargate', 'RDS', 'IoT Core', 'CloudFront'] },
+{ name: 'Architecture Decisions', repo: GH + '/architecture-decisions', what: 'The written design of the platform: C4 views, the decisions that cross system boundaries, and how a decision gets reviewed.', statValue: '12', statLabel: 'decision records', checks: ['Twelve decision records with the options that were rejected and why', 'One superseded when its assumption turned out wrong'], stack: ['ADRs', 'C4 model', 'Mermaid'] },
+{ name: 'Claude Code Pipelines', repo: GH + '/claude-code-pipelines', what: 'The AI-assisted workflow both systems were built with: each job is analysed, planned, applied and verified in separate stages a person can review.', statValue: 'Plan first', statLabel: 'plans are written before code', checks: ['Plans are written before code', 'File scope is fixed', 'Nothing is committed automatically', 'Real runs are published next to the commits they produced'], stack: ['Claude Code plugin', 'Markdown artifacts'] }
+],
+roles: [
+{ cls: 'now', current: true, when: 'Apr 2024 – present', company: 'Surbana Jurong', title: 'Team Lead - Full-stack Engineer', summary: 'I lead a team of three or more developers across about 50 repositories and services, turning requirements from the project manager into detailed designs and implementation plans.', points: [], engagements: [
+{ name: 'Unified Command System', context: 'Command-center portal for island-wide operations in Singapore: an operator console and a three-projector video wall with live cameras, maps and incidents.', points: [
+P('Designed the monorepo architecture (pnpm workspaces and Turborepo): ', ['two apps and nine shared packages'], '.'),
+P('Broke the full scope into ', ['44 implementation-ready tickets'], ' across every feature epic, checked against the Figma designs.'),
+P('Designed the ', ['camera integration'], ' through the site’s video management system, relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.'),
+P('Set the key technical decisions: ', ['OneMap-based 2D maps with MapLibre and deck.gl'], ', ', ['Entra ID single sign-on'], ' with an in-app permission model, and a ', ['single on-prem Docker Compose deployment'], '.'),
+P('Build the ', ['operator-view app hands-on'], '.')
+] },
+{ name: 'IoT building-management platform', context: 'Backend that processes and serves IoT data for an automated building-management system.', points: [
+P('Primary developer of the ', ['core data processing and provisioning features'], ' (Node.js, TypeORM, PostgreSQL).'),
+P('Shipped services as ', ['Docker images to AWS ECR'], ', running on ', ['Kubernetes'], '; reviewed the team’s code and tests.')
+] },
+{ name: 'AI-assisted engineering workflow', context: '', points: [
+P('Designed and maintain the team’s ', ['Claude Code pipelines'], ' used daily on NestJS, Angular and React code: ', ['diff-scoped self-review'], ' before PM review, ', ['API documentation with drift detection'], ', test and lint scaffolding, and the ', ['ticket pipeline'], ' that delivered the command-center monorepo.')
+] }
+] },
+{ cls: '', current: false, when: 'Jul 2020 – Feb 2024', company: 'NewIT Vietnam', title: 'Backend Developer', summary: 'Built and ran cross-border e-commerce integrations that keep products listed on Tmall, eBay US, Mercari, 95Point and Yahoo Shopping.', engagements: [], points: [
+P(['Brandtmall, three years'], ': built the AWS ECS services that keep Tmall listings in sync (S3, DynamoDB, AWS Translate); in phase two, ', ['led the move from JavaScript to TypeScript microservices'], ' on MySQL and owned image processing.'),
+P(['Sole core developer'], ' of an eBay US listing service and core developer of a 95Point integration, owning staging and production releases.'),
+P(['Primary developer'], ' of the Mercari integration and developer and code reviewer on the Yahoo Shopping integration (TypeScript, AWS CDK, RDS, TypeORM).'),
+P('Proposed, built and ran an ', ['internal serverless tool'], ' (API Gateway, React, CloudFront) that replaced direct edits of files on S3 with controlled, auditable updates.')
+] },
+{ cls: '', current: false, when: 'Mar 2020 – Jun 2020', company: 'AMIT Group', title: 'Web Developer', summary: '', engagements: [], points: [
+P('Web APIs with ', ['ASP.NET Core'], ' and Entity Framework Core, and ', ['Angular'], ' UI, for an AI-driven web platform.')
+] },
+{ cls: '', current: false, when: 'Dec 2018 – Feb 2020', company: 'HHD Group', title: 'Mobile Developer', summary: '', engagements: [], points: [
+P(['React Native'], ' apps connected to the company’s ERP system.')
+] }
+],
+principles: [
+{ title: 'Design is written down', body: 'Decisions and tickets are documented and reviewed before code is written.', evidence: [
+{ text: 'Broke the full scope into 44 implementation-ready tickets across every feature epic, checked against the Figma designs.', src: 'Unified Command System, Surbana Jurong' },
+{ text: 'Twelve decision records with the options that were rejected and why.', src: 'Architecture Decisions, public repository' }
+] },
+{ title: 'Simple scales', body: 'Framework-native solutions first; every new tool has to earn its place.', evidence: [
+{ text: 'A single on-prem Docker Compose deployment.', src: 'Unified Command System, Surbana Jurong' },
+{ text: 'Mock and production sources switch by configuration.', src: 'Camera integration, Unified Command System' }
+] },
+{ title: 'Standards are a team asset', body: 'Shared conventions and automated review let a small team move quickly across many repositories.', evidence: [
+{ text: 'Claude Code pipelines used daily on NestJS, Angular and React code: diff-scoped self-review before PM review.', src: 'AI-assisted engineering workflow, Surbana Jurong' },
+{ text: 'API documentation with drift detection.', src: 'AI-assisted engineering workflow, Surbana Jurong' }
+] },
+{ title: 'Leads still ship', body: 'I stay in the code, because good decisions come from knowing where the real complexity is.', evidence: [
+{ text: 'Build the operator-view app hands-on.', src: 'Unified Command System, Surbana Jurong' },
+{ text: 'Primary developer of the core data processing and provisioning features.', src: 'IoT building-management platform, Surbana Jurong' }
+] }
+],
+skills: [
+{ name: 'Backend', icon: 'M5 4h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 10h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2ZM7 7h.01M7 17h.01', items: ['Node.js', 'NestJS', 'TypeScript', 'TypeORM', 'REST and OpenAPI', 'Socket.IO', 'MQTT'], used: 'Ops Command Center, IoT Telemetry Pipeline, UCS, NewIT services' },
+{ name: 'Frontend', icon: 'M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM8 20h8M12 16v4', items: ['React', 'Angular', 'TanStack Query', 'Zustand', 'RxJS', 'MapLibre', 'deck.gl'], used: 'Ops Command Center console, UCS operator view' },
+{ name: 'Data', icon: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3', items: ['PostgreSQL', 'MySQL', 'DynamoDB'], used: 'Telemetry pipeline, NewIT integrations' },
+{ name: 'Cloud and delivery', icon: 'M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 8.5H7Z', items: ['AWS (ECS, CDK, RDS, S3, CloudFront, IoT Core)', 'Docker', 'Kubernetes', 'GitHub Actions', 'Prometheus'], used: 'Platform on AWS, IoT building-management platform' },
+{ name: 'Ways of working', icon: 'M6 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM18 15.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM8.5 6H14a3 3 0 0 1 3 3v6.5', items: ['Architecture decision records', 'Ticket-level planning', 'pnpm and Turborepo monorepos', 'Playwright and unit testing', 'AI-assisted delivery with Claude Code'], used: 'Architecture Decisions, Claude Code Pipelines, UCS' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

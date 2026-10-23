@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Share image</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+      }
+      .og {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 64px 72px;
+        background: #0b2447;
+        color: #eef4ff;
+        font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+      }
+      .og * {
+        box-sizing: border-box;
+      }
+      .og .sun {
+        position: absolute;
+        top: -250px;
+        right: -230px;
+        width: 760px;
+        height: 760px;
+      }
+      .og .sun circle {
+        fill: none;
+        stroke: rgba(227, 191, 107, 0.32);
+        stroke-width: 1.4;
+      }
+      .og .sun line {
+        stroke: rgba(227, 191, 107, 0.28);
+        stroke-width: 1.8;
+        stroke-linecap: round;
+      }
+      .og .waves {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 120px;
+      }
+      .og .w1 {
+        fill: rgba(238, 244, 255, 0.07);
+      }
+      .og .w2 {
+        fill: rgba(238, 244, 255, 0.12);
+      }
+      .og .logo {
+        position: absolute;
+        top: 64px;
+        right: 76px;
+        width: 210px;
+        height: 210px;
+        filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.45));
+      }
+      .og .eyebrow {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font:
+          600 20px ui-monospace,
+          'SF Mono',
+          Menlo,
+          monospace;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(238, 244, 255, 0.75);
+      }
+      .og .eyebrow::before {
+        content: '';
+        width: 56px;
+        height: 3px;
+        background: #e3bf6b;
+      }
+      .og h1 {
+        position: relative;
+        margin: 26px 0 0;
+        font-size: 92px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        background: linear-gradient(135deg, #fff 0%, #dde6f3 40%, #a9bbd3 68%, #f6f9fd 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.3));
+      }
+      .og .role {
+        position: relative;
+        margin: 22px 0 0;
+        font-size: 40px;
+        line-height: 1.2;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        background: linear-gradient(90deg, #f6e2a6 0%, #e3bf6b 45%, #b98a2e 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .og .lead {
+        position: relative;
+        margin: 24px 0 0;
+        max-width: 700px;
+        font-size: 27px;
+        line-height: 1.45;
+        color: rgba(238, 244, 255, 0.82);
+      }
+      .og .figs {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        bottom: 66px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0 40px;
+      }
+      .og .fig {
+        padding-top: 18px;
+        border-top: 2px solid rgba(238, 244, 255, 0.3);
+      }
+      .og .fig b {
+        display: block;
+        font-size: 56px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        background: linear-gradient(180deg, #fff, #c9d6e8);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .og .fig span {
+        display: block;
+        margin-top: 10px;
+        font-size: 22px;
+        line-height: 1.25;
+        font-weight: 600;
+      }
+      .og .url {
+        position: absolute;
+        right: 76px;
+        bottom: 20px;
+        font:
+          600 18px ui-monospace,
+          'SF Mono',
+          Menlo,
+          monospace;
+        letter-spacing: 0.08em;
+        color: rgba(238, 244, 255, 0.7);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="og">
+      <svg class="sun" viewBox="0 0 760 760" aria-hidden="true">
+        <circle cx="380" cy="380" r="150" />
+        <circle cx="380" cy="380" r="210" />
+        <circle cx="380" cy="380" r="250" />
+        <line x1="648" y1="380" x2="698" y2="380" />
+        <line x1="644" y1="427" x2="673" y2="432" />
+        <line x1="632" y1="472" x2="679" y2="489" />
+        <line x1="612" y1="514" x2="638" y2="529" />
+        <line x1="585" y1="552" x2="624" y2="584" />
+        <line x1="552" y1="585" x2="572" y2="608" />
+        <line x1="514" y1="612" x2="539" y2="655" />
+        <line x1="472" y1="632" x2="482" y2="660" />
+        <line x1="427" y1="644" x2="435" y2="693" />
+        <line x1="380" y1="648" x2="380" y2="678" />
+        <line x1="333" y1="644" x2="325" y2="693" />
+        <line x1="288" y1="632" x2="278" y2="660" />
+        <line x1="246" y1="612" x2="221" y2="655" />
+        <line x1="208" y1="585" x2="188" y2="608" />
+        <line x1="175" y1="552" x2="136" y2="584" />
+        <line x1="148" y1="514" x2="122" y2="529" />
+        <line x1="128" y1="472" x2="81" y2="489" />
+        <line x1="116" y1="427" x2="87" y2="432" />
+        <line x1="112" y1="380" x2="62" y2="380" />
+        <line x1="116" y1="333" x2="87" y2="328" />
+        <line x1="128" y1="288" x2="81" y2="271" />
+        <line x1="148" y1="246" x2="122" y2="231" />
+        <line x1="175" y1="208" x2="136" y2="176" />
+        <line x1="208" y1="175" x2="188" y2="152" />
+        <line x1="246" y1="148" x2="221" y2="105" />
+        <line x1="288" y1="128" x2="278" y2="100" />
+        <line x1="333" y1="116" x2="325" y2="67" />
+        <line x1="380" y1="112" x2="380" y2="82" />
+        <line x1="427" y1="116" x2="435" y2="67" />
+        <line x1="472" y1="128" x2="482" y2="100" />
+        <line x1="514" y1="148" x2="539" y2="105" />
+        <line x1="552" y1="175" x2="572" y2="152" />
+        <line x1="585" y1="208" x2="624" y2="176" />
+        <line x1="612" y1="246" x2="638" y2="231" />
+        <line x1="632" y1="288" x2="679" y2="271" />
+        <line x1="644" y1="333" x2="673" y2="328" /></svg
+      ><svg class="waves" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="w1" d="M0 70C150 30 300 110 450 70S750 30 900 70 1100 100 1200 60V120H0Z" />
+        <path class="w2" d="M0 90C170 55 320 120 480 88S780 55 930 92 1120 112 1200 84V120H0Z" /></svg
+      ><svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="opl" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="58">
+            <stop offset="0" stop-color="#355788" />
+            <stop offset="1" stop-color="#102a52" />
+          </linearGradient>
+          <linearGradient id="orim" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="58" y2="58">
+            <stop offset="0" stop-color="#ffffff" />
+            <stop offset="1" stop-color="#7d92b2" />
+          </linearGradient>
+          <linearGradient id="osil" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="48">
+            <stop offset="0" stop-color="#ffffff" />
+            <stop offset=".5" stop-color="#dbe6f5" />
+            <stop offset="1" stop-color="#9db2d0" />
+          </linearGradient>
+          <linearGradient id="ogold" gradientUnits="userSpaceOnUse" x1="27" y1="36" x2="44" y2="21">
+            <stop offset="0" stop-color="#a97f22" />
+            <stop offset=".55" stop-color="#e3bf6b" />
+            <stop offset="1" stop-color="#fff2c4" />
+          </linearGradient>
+          <linearGradient id="oaqua" gradientUnits="userSpaceOnUse" x1="27" y1="33" x2="51" y2="47">
+            <stop offset="0" stop-color="#dcf5ff" />
+            <stop offset=".5" stop-color="#7fd0ff" />
+            <stop offset="1" stop-color="#3b91d2" />
+          </linearGradient>
+          <radialGradient id="osun" gradientUnits="userSpaceOnUse" cx="45.8" cy="19.1" r="4.6">
+            <stop offset="0" stop-color="#fff2c4" />
+            <stop offset=".6" stop-color="#e3bf6b" />
+            <stop offset="1" stop-color="#a97f22" />
+          </radialGradient>
+          <filter id="osh" x="-20%" y="-20%" width="140%" height="160%">
+            <feDropShadow dx="0" dy="1.8" stdDeviation="0.9" flood-color="#000" flood-opacity="0.62" />
+          </filter>
+        </defs>
+        <path
+          d="M12 6H46L58 18V52a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V12a6 6 0 0 1 6-6Z"
+          fill="url(#opl)"
+          stroke="url(#orim)"
+          stroke-width="1.8"
+        />
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#osh)">
+          <path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8" stroke="url(#osil)" stroke-width="4.2" />
+          <path d="M27 16V46" stroke="url(#osil)" stroke-width="4.2" />
+          <path d="M27 34L43.6 22.8" stroke="url(#ogold)" stroke-width="3.8" />
+          <path
+            d="M27 34L35 40.5C38 43 40 45.5 43 45.5S47.5 43 51 44.5"
+            stroke="url(#oaqua)"
+            stroke-width="3.8"
+          />
+          <circle cx="46.8" cy="20.2" r="3.2" fill="url(#osun)" stroke="none" />
+        </g>
+        <g
+          fill="none"
+          stroke-linecap="round"
+          stroke="#fff"
+          stroke-opacity="0.6"
+          stroke-width="1"
+          transform="translate(-0.5 -0.9)"
+        >
+          <path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8" />
+          <path d="M27 16V46" />
+          <path d="M27 34L43.6 22.8" stroke-opacity="0.48" />
+        </g>
+      </svg>
+      <p class="eyebrow">Lâm Đồng, Vietnam · UTC+7</p>
+      <h1 lang="vi">Trương Tấn Khánh</h1>
+      <p class="role">Team Lead - Full-stack Engineer</p>
+      <p class="lead">Operations platforms, IoT and live video, from architecture to production.</p>
+      <div class="figs">
+        <div class="fig"><b>7+</b><span>years shipping production software</span></div>
+        <div class="fig"><b>3+</b><span>engineers led</span></div>
+        <div class="fig"><b>~50</b><span>repositories and services</span></div>
+      </div>
+      <p class="url">truongtankhanh.github.io</p>
+    </div>
+  </body>
+</html>

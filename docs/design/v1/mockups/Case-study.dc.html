@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Case study</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./site.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="site" data-theme="light">
+
+<header class="top">
+<div class="wrap">
+<a class="brand" href="Main.dc.html"><svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><defs>
+<linearGradient id="cpl" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="58"><stop offset="0" stop-color="#355788"/><stop offset="1" stop-color="#102a52"/></linearGradient>
+<linearGradient id="crim" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="58" y2="58"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7d92b2"/></linearGradient>
+<linearGradient id="csil" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="48"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#dbe6f5"/><stop offset="1" stop-color="#9db2d0"/></linearGradient>
+<linearGradient id="cgold" gradientUnits="userSpaceOnUse" x1="27" y1="36" x2="44" y2="21"><stop offset="0" stop-color="#a97f22"/><stop offset=".55" stop-color="#e3bf6b"/><stop offset="1" stop-color="#fff2c4"/></linearGradient>
+<linearGradient id="caqua" gradientUnits="userSpaceOnUse" x1="27" y1="33" x2="51" y2="47"><stop offset="0" stop-color="#dcf5ff"/><stop offset=".5" stop-color="#7fd0ff"/><stop offset="1" stop-color="#3b91d2"/></linearGradient>
+<radialGradient id="csun" gradientUnits="userSpaceOnUse" cx="45.8" cy="19.1" r="4.6"><stop offset="0" stop-color="#fff2c4"/><stop offset=".6" stop-color="#e3bf6b"/><stop offset="1" stop-color="#a97f22"/></radialGradient>
+<filter id="csh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="0.9" flood-color="#000" flood-opacity="0.62"/></filter>
+</defs>
+<path d="M12 6H46L58 18V52a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V12a6 6 0 0 1 6-6Z" fill="url(#cpl)" stroke="url(#crim)" stroke-width="1.8"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#csh)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8" stroke="url(#csil)" stroke-width="4.2"/>
+<path d="M27 16V46" stroke="url(#csil)" stroke-width="4.2"/>
+<path d="M27 34L43.6 22.8" stroke="url(#cgold)" stroke-width="3.8"/>
+<path d="M27 34L35 40.5C38 43 40 45.5 43 45.5S47.5 43 51 44.5" stroke="url(#caqua)" stroke-width="3.8"/>
+<circle cx="46.8" cy="20.2" r="3.2" fill="url(#csun)" stroke="none"/>
+</g>
+<g fill="none" stroke-linecap="round" stroke="#fff" stroke-opacity="0.6" stroke-width="1" transform="translate(-0.5 -0.9)">
+<path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8"/><path d="M27 16V46"/><path d="M27 34L43.6 22.8" stroke-opacity="0.48"/>
+</g></svg><span class="brand-text"><span class="brand-name" lang="vi">Trương Tấn Khánh</span><span class="brand-role">Team Lead - Full-stack Engineer</span></span></a>
+<nav aria-label="Sections">
+<a href="Main.dc.html#work" aria-current="location">Work</a>
+<a href="Main.dc.html#experience">Experience</a>
+<a href="Main.dc.html#skills">Skills</a>
+<a href="Main.dc.html#approach">How I lead</a>
+<a href="Main.dc.html#contact">Contact</a>
+</nav>
+<div class="actions">
+<a class="btn btn-primary btn-sm" href="Print-cv.dc.html" aria-label="Download CV">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path></svg>
+<span>Download CV</span>
+</a>
+<button class="icon-btn menu-btn" type="button" aria-label="{{menuLabel}}" aria-expanded="{{menuExpanded}}" aria-controls="site-menu" onClick="{{toggleMenu}}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round"><path d="{{menuIcon}}"></path></svg></button>
+</div>
+</div>
+<div id="site-menu" class="menu {{menuCls}}" role="navigation" aria-label="Menu">
+<a href="Main.dc.html#work" class="on">Work</a>
+<a href="Main.dc.html#experience">Experience</a>
+<a href="Main.dc.html#skills">Skills</a>
+<a href="Main.dc.html#approach">How I lead</a>
+<a href="Main.dc.html#contact">Contact</a>
+<button class="menu-theme" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>Switch colour theme</button>
+</div>
+</header>
+
+<main style="padding-bottom:96px">
+<section class="cs-hero" aria-labelledby="cs-title">
+<div class="wrap">
+<p class="crumbs"><a href="Main.dc.html#work">Work</a><span aria-hidden="true">/</span><span>Ops Command Center</span></p>
+<p class="mono tag">Case study</p>
+<h1 id="cs-title">Ops Command Center</h1>
+<p class="lead">A real-time operations console for a campus security and facilities team. One screen that answers what is happening, where, and who is handling it.</p>
+<div class="cs-cta">
+<a class="btn btn-primary" href="https://github.com/truongtankhanh/ops-command-center">Open the repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg></a>
+<a class="btn" href="#run">Run it yourself</a>
+</div>
+<dl class="facts-row">
+<div class="fact"><dt class="mono">Role</dt><dd>Author and maintainer</dd></div>
+<div class="fact"><dt class="mono">Stack</dt><dd>NestJS 12 · React 19 · PostgreSQL</dd></div>
+<div class="fact"><dt class="mono">Status</dt><dd>Runs on a fictional campus with one command</dd></div>
+<div class="fact"><dt class="mono">Source</dt><dd><a href="https://github.com/truongtankhanh/ops-command-center">ops-command-center</a><small>github.com/truongtankhanh</small></dd></div>
+</dl>
+</div>
+</section>
+<div class="wrap">
+
+<div class="cs-body">
+<aside>
+<div class="toc-wrap">
+<p class="mono toc-title">On this page</p>
+<nav class="toc" aria-label="On this page">
+<sc-for list="{{toc}}" as="t" hint-placeholder-count="5">
+<a href="#{{t.id}}" class="{{t.cls}}" aria-current="{{t.current}}" onClick="{{t.pick}}">{{t.label}}</a>
+</sc-for>
+</nav>
+</div>
+</aside>
+
+<article>
+<section id="overview">
+<figure class="shot">
+<div class="bar"><i></i><i></i><i></i></div>
+<img src="/_blob/db2536b7ff74e9b9a526633eb4438d8d" alt="Operator console with an incident list, a campus map with incident markers, and camera tiles" width="1600" height="900">
+</figure>
+<p class="mono shot-cap">The operator console on the demo campus, Langbiang Tech Campus.</p>
+<h2 style="margin-top:40px">Overview</h2>
+<p>The demo runs on a fictional campus with synthetic incidents and simulated cameras. The engineering is what a real control room needs: a live feed that never disagrees between screens, a response workflow where every action is recorded, and a stack that comes up with one command.</p>
+</section>
+
+<section id="does">
+<h2>What it does</h2>
+<article class="does-hero">
+<div class="does-copy">
+<p class="does-stat"><b>1 s</b><span>for a new report to reach every open console</span></p>
+<h3>Live incident feed</h3>
+<p>New reports reach every open console <strong>within a second</strong>, ordered by what needs attention first: unresolved, then severity, then age.</p>
+</div>
+<figure class="does-shot">
+<img src="/_blob/dac3a185cc82b4dbe1d4607520c9db7a" alt="A server-room temperature incident in the command center, raised by the telemetry pipeline" width="1600" height="900">
+<figcaption class="mono">Three readings over 27 °C opened this incident; it resolved itself when the room cooled.</figcaption>
+</figure>
+</article>
+<div class="does-grid">
+<article class="does-card">
+<svg class="does-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm14 3 4-2v8l-4-2"></path></svg>
+<h3>Cameras in context</h3>
+<p>The cameras covering an incident’s zone come first, behind a <strong>source-agnostic stream descriptor</strong> so mock feeds and real streams switch by configuration.</p>
+</article>
+<article class="does-card">
+<svg class="does-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm-4-9 3 3 5-6"></path></svg>
+<h3>Respond and record</h3>
+<p>Acknowledge or resolve with a note. Every change is written to the incident timeline and <strong>invalid transitions are rejected by the server</strong>.</p>
+</article>
+<article class="does-card">
+<svg class="does-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Zm0 0v14m6-12v14"></path></svg>
+<h3>Map, 3D twin and video wall</h3>
+<p>A <strong>site plan that works offline</strong>, a three.js view of the campus where WebGL 2 is available, and a read-only control-room screen.</p>
+</article>
+</div>
+</section>
+
+<section id="decisions">
+<h2>Decisions that shaped it</h2>
+<p style="margin-bottom:16px">Each one is a written decision record with the options that were rejected.</p>
+<ul class="decisions">
+<sc-for list="{{adrs}}" as="a" hint-placeholder-count="6">
+<li><b>{{a.id}}</b><span><strong style="color:var(--ink)">{{a.title}}.</strong> {{a.why}}</span></li>
+</sc-for>
+</ul>
+</section>
+
+<section id="proof">
+<h2>How to check it</h2>
+<p>Open the console in two browser windows and acknowledge an incident in one: it updates in the other within a second, even when the two windows are on different API replicas. The incident lifecycle is enforced by the domain, and the end-to-end tests run against a real PostgreSQL.</p>
+</section>
+
+<section id="run">
+<h2>Run it</h2>
+<p style="margin-bottom:12px">One command brings up the whole stack. The demo accounts are listed in the repository README.</p>
+<pre style="margin:0;padding:16px 20px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-family:ui-monospace,Menlo,monospace;font-size:0.9rem;overflow-x:auto">pnpm docker:stack
+# Console     http://localhost:18080
+# API + docs  http://localhost:18080/api/docs</pre>
+<p style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
+<a class="btn btn-primary btn-sm" href="https://github.com/truongtankhanh/ops-command-center">Open the repository</a>
+<a class="btn btn-sm" href="Main.dc.html#work">All work</a>
+</p>
+</section>
+
+<nav class="pager" aria-label="More work">
+<a href="Main.dc.html#work"><small class="mono">Previous</small>Back to all work</a>
+<a href="Main.dc.html#work"><small class="mono">Next</small>IoT Telemetry Pipeline</a>
+</nav>
+</article>
+</div>
+</div>
+</main>
+
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3300}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { active: 'overview', menuOpen: false };
+}
+renderVals() {
+return {
+menuCls: this.state.menuOpen ? 'open' : '',
+menuExpanded: this.state.menuOpen ? 'true' : 'false',
+menuLabel: this.state.menuOpen ? 'Close menu' : 'Open menu',
+menuIcon: this.state.menuOpen ? 'M6 6l12 12M18 6 6 18' : 'M4 7h16M4 12h16M4 17h16',
+toggleMenu: () => this.setState({ menuOpen: !this.state.menuOpen }),
+toc: [['overview', 'Overview'], ['does', 'What it does'], ['decisions', 'Decisions'], ['proof', 'How to check it'], ['run', 'Run it']].map(([id, label]) => ({
+id,
+label,
+cls: this.state.active === id ? 'on' : '',
+current: this.state.active === id ? 'location' : undefined,
+pick: () => this.setState({ active: id })
+})),
+adrs: [
+{ id: 'ADR-0003', title: 'Domain events in-process, broadcast with Socket.IO', why: 'Consoles are updated by events, later amended by the outbox.' },
+{ id: 'ADR-0007', title: 'Transactional outbox for incident events', why: 'The event is written inside the transaction, so it is published only after commit.' },
+{ id: 'ADR-0008', title: 'Several API replicas, events fanned out through Postgres', why: 'A change on one replica reaches consoles connected to another.' },
+{ id: 'ADR-0009', title: 'Idempotent incident creation with an Idempotency-Key', why: 'A retried report does not create a second incident.' },
+{ id: 'ADR-0010', title: 'OIDC authentication for REST and WebSocket', why: 'Keycloak behind nginx; the API verifies access tokens as a resource server.' },
+{ id: 'ADR-0011', title: 'Role-based authorization and the timeline actor', why: 'Permission-based checks on the server and an actor on every timeline entry.' }
+]
+};
+}
+}
+</script>
+</body>
+</html>
