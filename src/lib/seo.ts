@@ -1,4 +1,5 @@
 import type { Resume } from '../content/types';
+import { routes, type Route } from '../routes';
 
 /** Skill items without the parenthetical detail: "AWS (ECS, CDK)" becomes "AWS". */
 function skillNames(resume: Resume): string[] {
@@ -100,14 +101,21 @@ export function headTags(resume: Resume, page: PageMeta): string {
   return tags.join('\n    ');
 }
 
-export function sitemapXml(resume: Resume, lastmod: string): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${resume.siteUrl}</loc>
+/** The indexable routes as absolute URLs. `noindex` routes stay out, because a sitemap only lists what should be found. */
+export function sitemapXml(resume: Resume, lastmod: string, list: Route[] = routes(resume)): string {
+  const urls = list
+    .filter((route) => !route.noindex)
+    .map(
+      (route) => `  <url>
+    <loc>${new URL(route.path.replace(/^\//, ''), resume.siteUrl).href}</loc>
     <lastmod>${lastmod}</lastmod>
   </url>
-</urlset>
+`,
+    )
+    .join('');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}</urlset>
 `;
 }
 

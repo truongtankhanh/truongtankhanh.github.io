@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resume } from '../content/resume';
+import { routes } from '../routes';
 import { findPhoneNumber } from './privacy';
 import { headTags, homeMeta, jsonLdScript, pageMeta, personJsonLd, robotsTxt, sitemapXml } from './seo';
 
@@ -59,10 +60,42 @@ describe('person JSON-LD', () => {
 });
 
 describe('sitemap and robots', () => {
+  const origin = 'https://truongtankhanh.github.io';
+  const locs = (xml: string) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]!);
+
   it('uses absolute URLs on the site origin', () => {
-    expect(resume.siteUrl).toMatch(/^https:\/\/[\w.-]+\/$/);
-    expect(sitemapXml(resume, '2026-10-23')).toContain(`<loc>${resume.siteUrl}</loc>`);
-    expect(robotsTxt(resume)).toContain(`Sitemap: ${resume.siteUrl}sitemap.xml`);
+    expect(resume.siteUrl).toBe(`${origin}/`);
+    const xml = sitemapXml(resume, '2026-10-23');
+    expect(locs(xml)).toEqual([`${origin}/`]);
+    expect(xml).toContain('<lastmod>2026-10-23</lastmod>');
+    expect(robotsTxt(resume)).toContain(`Sitemap: ${origin}/sitemap.xml`);
+  });
+
+  it('lists the home page now and each case study once it exists, from the route list', () => {
+    const withStudy = {
+      ...resume,
+      projects: resume.projects.map((p, i) =>
+        i === 0 ? { ...p, caseStudy: { slug: 'ops-command-center', lead: 'L', role: 'R', status: 'S' } } : p,
+      ),
+    };
+    expect(routes(withStudy).map((r) => r.path)).toEqual(['/', '/work/ops-command-center/']);
+    expect(locs(sitemapXml(withStudy, '2026-10-23'))).toEqual([
+      `${origin}/`,
+      `${origin}/work/ops-command-center/`,
+    ]);
+  });
+
+  it('leaves noindex pages (the CV page and the 404 page) out', () => {
+    const list = [{ path: '/' }, { path: '/cv/', noindex: true }, { path: '/404.html', noindex: true }];
+    const found = locs(sitemapXml(resume, '2026-10-23', list));
+    expect(found).toEqual([`${origin}/`]);
+  });
+
+  it('allows every crawler in robots.txt and blocks nothing, so a noindex tag can be read', () => {
+    const txt = robotsTxt(resume);
+    expect(txt).toMatch(/^User-agent: \*$/m);
+    expect(txt).toMatch(/^Allow: \/$/m);
+    expect(txt).not.toMatch(/^Disallow:/m);
   });
 });
 
