@@ -2,12 +2,31 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { resume } from './resume';
 import { formatRange, parseMonth } from '../lib/dates';
+import { emphasis, stripEmphasis } from '../lib/emphasis';
 import { findPhoneNumber } from '../lib/privacy';
 
 const toIndex = (m: `${number}-${number}`) => {
   const { year, month } = parseMonth(m);
   return year * 12 + month;
 };
+
+/** The bullets as the CV words them, before key phrases were marked with `**`. Edit both when the wording changes. */
+const CV_BULLETS = [
+  'Designed the monorepo architecture (pnpm workspaces and Turborepo): two apps and nine shared packages.',
+  'Broke the full scope into 44 implementation-ready tickets across every feature epic, checked against the Figma designs.',
+  'Designed the live camera integration, relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.',
+  'Set the key technical decisions: 2D maps with MapLibre and deck.gl, single sign-on with an in-app permission model, and a single on-prem Docker Compose deployment.',
+  'Still building the operator-view app hands-on.',
+  'Primary developer of the core data processing and provisioning features (Node.js, TypeORM, PostgreSQL).',
+  'Shipped services as Docker images to AWS ECR, running on Kubernetes; reviewed the team’s code and tests.',
+  'Designed and maintain the team’s Claude Code pipelines used daily on NestJS, Angular and React code: diff-scoped self-review before PM review, API documentation with drift detection, test and lint scaffolding, and the ticket pipeline that delivered the command-center monorepo.',
+  'Brandtmall, three years: built the AWS ECS services that keep Tmall listings in sync (S3, DynamoDB, AWS Translate); in phase two, led the move from JavaScript to TypeScript microservices on MySQL and owned image processing.',
+  'Sole core developer of an eBay US listing service and core developer of a 95Point integration, owning staging and production releases.',
+  'Primary developer of the Mercari integration and developer and code reviewer on the Yahoo Shopping integration (TypeScript, AWS CDK, RDS, TypeORM).',
+  'Proposed, built and ran an internal serverless tool (API Gateway, React, CloudFront) that replaced direct edits of files on S3 with controlled, auditable updates.',
+  'Web APIs with ASP.NET Core and Entity Framework Core, and Angular UI, for an AI-driven web platform.',
+  'React Native apps connected to the company’s ERP system.',
+];
 
 describe('dates', () => {
   it('formats open and closed ranges', () => {
@@ -163,6 +182,28 @@ describe('resume content', () => {
     expect(resume.cv.fileName).toMatch(/^[\w.-]+\.pdf$/);
     expect(resume.cv.pdf).toBe(`/${resume.cv.fileName}`);
     expect(resume.cv.fileName).toBe(resume.cvPdf);
+  });
+
+  describe('experience bullets', () => {
+    const bullets = resume.experience.flatMap((r) => r.work.flatMap((w) => w.points));
+
+    it('keeps the CV wording exactly, apart from the emphasis markers', () => {
+      expect(bullets.map(stripEmphasis)).toEqual(CV_BULLETS);
+    });
+
+    it('marks a key phrase in every bullet, never the whole bullet, with balanced markers', () => {
+      for (const bullet of bullets) {
+        const parts = emphasis(bullet); // throws on an unbalanced or empty marker
+        expect(
+          parts.some((p) => p.strong),
+          bullet,
+        ).toBe(true);
+        expect(
+          parts.every((p) => p.strong),
+          bullet,
+        ).toBe(false);
+      }
+    });
   });
 
   it('keeps a phone number off the public page', () => {

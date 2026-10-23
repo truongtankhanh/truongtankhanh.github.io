@@ -20,6 +20,7 @@ export interface Role {
 export interface Engagement {
   name?: string;
   context?: string;
+  /** Bullets. A key phrase may be wrapped in `**double asterisks**`; see `src/lib/emphasis.ts`. */
   points: string[];
   link?: Link;
 }

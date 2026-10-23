@@ -5,6 +5,7 @@ import '@fontsource/be-vietnam-pro/800.css';
 
 import { resume } from './content/resume';
 import { formatMonth } from './lib/dates';
+import { stripEmphasis } from './lib/emphasis';
 import { Contours } from './components/Contours';
 import { Platform } from './components/Platform';
 import { SiteHeader } from './components/SiteHeader';
@@ -99,7 +100,7 @@ export function App() {
                       {w.context && <p className="engagement-context">{w.context}</p>}
                       <ul>
                         {w.points.map((pt) => (
-                          <li key={pt}>{pt}</li>
+                          <li key={pt}>{stripEmphasis(pt)}</li>
                         ))}
                       </ul>
                       {w.link && (

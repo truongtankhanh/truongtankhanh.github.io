@@ -140,26 +140,26 @@ export const resume: Resume = {
           context:
             'Command-center portal for operations in Singapore: an operator console and a multi-screen video wall with live cameras, maps and incidents.',
           points: [
-            'Designed the monorepo architecture (pnpm workspaces and Turborepo): two apps and nine shared packages.',
-            'Broke the full scope into 44 implementation-ready tickets across every feature epic, checked against the Figma designs.',
-            'Designed the live camera integration, relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.',
-            'Set the key technical decisions: 2D maps with MapLibre and deck.gl, single sign-on with an in-app permission model, and a single on-prem Docker Compose deployment.',
-            'Still building the operator-view app hands-on.',
+            'Designed the monorepo architecture (pnpm workspaces and Turborepo): **two apps and nine shared packages**.',
+            'Broke the full scope into **44 implementation-ready tickets** across every feature epic, checked against the Figma designs.',
+            'Designed the live **camera integration**, relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.',
+            'Set the key technical decisions: **2D maps with MapLibre and deck.gl**, **single sign-on** with an in-app permission model, and a **single on-prem Docker Compose deployment**.',
+            'Still building the **operator-view app hands-on**.',
           ],
         },
         {
           name: 'IoT building-management platform',
           context: 'Backend that processes and serves IoT data for an automated building-management system.',
           points: [
-            'Primary developer of the core data processing and provisioning features (Node.js, TypeORM, PostgreSQL).',
-            'Shipped services as Docker images to AWS ECR, running on Kubernetes; reviewed the team’s code and tests.',
+            'Primary developer of the **core data processing and provisioning features** (Node.js, TypeORM, PostgreSQL).',
+            'Shipped services as **Docker images to AWS ECR**, running on **Kubernetes**; reviewed the team’s code and tests.',
           ],
           link: { label: 'Related open-source work', href: `${GH}/iot-telemetry-pipeline` },
         },
         {
           name: 'AI-assisted engineering workflow',
           points: [
-            'Designed and maintain the team’s Claude Code pipelines used daily on NestJS, Angular and React code: diff-scoped self-review before PM review, API documentation with drift detection, test and lint scaffolding, and the ticket pipeline that delivered the command-center monorepo.',
+            'Designed and maintain the team’s **Claude Code pipelines** used daily on NestJS, Angular and React code: **diff-scoped self-review** before PM review, **API documentation with drift detection**, test and lint scaffolding, and the **ticket pipeline** that delivered the command-center monorepo.',
           ],
           link: { label: 'Public edition', href: `${GH}/claude-code-pipelines` },
         },
@@ -175,10 +175,10 @@ export const resume: Resume = {
       work: [
         {
           points: [
-            'Brandtmall, three years: built the AWS ECS services that keep Tmall listings in sync (S3, DynamoDB, AWS Translate); in phase two, led the move from JavaScript to TypeScript microservices on MySQL and owned image processing.',
-            'Sole core developer of an eBay US listing service and core developer of a 95Point integration, owning staging and production releases.',
-            'Primary developer of the Mercari integration and developer and code reviewer on the Yahoo Shopping integration (TypeScript, AWS CDK, RDS, TypeORM).',
-            'Proposed, built and ran an internal serverless tool (API Gateway, React, CloudFront) that replaced direct edits of files on S3 with controlled, auditable updates.',
+            '**Brandtmall, three years**: built the AWS ECS services that keep Tmall listings in sync (S3, DynamoDB, AWS Translate); in phase two, **led the move from JavaScript to TypeScript microservices** on MySQL and owned image processing.',
+            '**Sole core developer** of an eBay US listing service and core developer of a 95Point integration, owning staging and production releases.',
+            '**Primary developer** of the Mercari integration and developer and code reviewer on the Yahoo Shopping integration (TypeScript, AWS CDK, RDS, TypeORM).',
+            'Proposed, built and ran an **internal serverless tool** (API Gateway, React, CloudFront) that replaced direct edits of files on S3 with controlled, auditable updates.',
           ],
         },
       ],
@@ -191,7 +191,7 @@ export const resume: Resume = {
       work: [
         {
           points: [
-            'Web APIs with ASP.NET Core and Entity Framework Core, and Angular UI, for an AI-driven web platform.',
+            'Web APIs with **ASP.NET Core** and Entity Framework Core, and **Angular** UI, for an AI-driven web platform.',
           ],
         },
       ],
@@ -201,7 +201,7 @@ export const resume: Resume = {
       title: 'Mobile Developer',
       start: '2018-12',
       end: '2020-02',
-      work: [{ points: ['React Native apps connected to the company’s ERP system.'] }],
+      work: [{ points: ['**React Native** apps connected to the company’s ERP system.'] }],
     },
   ],
 
