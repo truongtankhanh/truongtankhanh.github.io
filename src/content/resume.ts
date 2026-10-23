@@ -5,7 +5,7 @@ const GH = 'https://github.com/truongtankhanh';
 export const resume: Resume = {
   name: 'Trương Tấn Khánh',
   nameAscii: 'Truong Tan Khanh',
-  headline: 'Project Lead and full-stack engineer',
+  headline: 'Team Lead and full-stack engineer',
   intro: [
     'I take systems from requirements to production: architecture, ticket-level planning, documentation that stands up to client review, and hands-on implementation of the hardest parts.',
     'Today I lead the engineering of operations platforms for clients in Singapore: NestJS backends, React and Angular frontends, IoT and live-video integrations, and the infrastructure they run on. I have been shipping production software since 2018.',
