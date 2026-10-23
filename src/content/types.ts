@@ -41,6 +41,17 @@ export interface Project {
 export interface SkillGroup {
   name: string;
   items: string[];
+  /** Where the group was used: each entry is a `Project.name` or a `Role.company`, so the claim can be checked. */
+  usedIn: string[];
+}
+
+/** A career figure for the hero strip. Every one must trace to a fact elsewhere in the content. */
+export interface Metric {
+  /** Kept exactly as in the CV, with its "~" or "+". */
+  value: string;
+  label: string;
+  /** Short caption saying where the figure comes from. */
+  source: string;
 }
 
 export interface Resume {
@@ -49,6 +60,8 @@ export interface Resume {
   nameAscii: string;
   headline: string;
   intro: string[];
+  /** The six technologies the CV summary names; each also appears in a skill group. */
+  coreStack: string[];
   location: string;
   timezone: string;
   availability: string;
@@ -58,6 +71,8 @@ export interface Resume {
   /** File name of the public CV PDF, built into `dist/` by `scripts/build-pdf.js`. */
   cvPdf: string;
   links: { github: string; linkedin: string };
+  /** In career order, early to recent. */
+  metrics: Metric[];
   projects: Project[];
   experience: Role[];
   skills: SkillGroup[];

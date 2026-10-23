@@ -46,6 +46,72 @@ describe('resume content', () => {
     }
   });
 
+  describe('metrics', () => {
+    const metric = (value: string) => resume.metrics.find((m) => m.value === value)!;
+    const company = (name: string) => resume.experience.find((r) => r.company === name)!;
+    const project = (id: string) => resume.projects.find((p) => p.id === id)!;
+
+    it('has the five figures in career order, each with a label and a source', () => {
+      expect(resume.metrics.map((m) => m.value)).toEqual(['7+', '5+', '3+', '~50', '~10k/s']);
+      for (const m of resume.metrics) {
+        expect(m.label.trim()).not.toBe('');
+        expect(m.source.trim()).not.toBe('');
+      }
+    });
+
+    it('takes "7+" from the earliest role and the intro', () => {
+      const earliest = resume.experience.map((r) => r.start).sort()[0]!;
+      const now = new Date();
+      const months = now.getFullYear() * 12 + now.getMonth() + 1 - toIndex(earliest);
+      expect(Math.floor(months / 12)).toBeGreaterThanOrEqual(7);
+      expect(earliest).toBe('2018-12');
+      expect(metric('7+').source).toBe('Since December 2018');
+      expect(resume.intro.join(' ')).toContain('since 2018');
+    });
+
+    it('takes "5+" from the marketplaces named in the NewIT summary, written as a lower bound', () => {
+      const named = ['Tmall', 'eBay US', 'Mercari', '95Point', 'Yahoo Shopping'];
+      for (const name of named) {
+        expect(company('NewIT Vietnam').summary).toContain(name);
+        expect(metric('5+').source).toContain(name);
+      }
+      expect(metric('5+').source).toMatch(/ and more$/);
+    });
+
+    it('takes "3+" and "~50" from the Surbana Jurong summary', () => {
+      const surbana = company('Surbana Jurong');
+      expect(surbana.summary).toContain('three or more developers');
+      expect(surbana.summary).toContain('about 50 repositories');
+      expect(surbana.start).toBe('2024-04');
+      expect(metric('3+').source).toContain('since April 2024');
+    });
+
+    it('takes "~10k/s" from the proof of the telemetry pipeline', () => {
+      expect(project('telemetry').proof).toContain('About 10,000 messages a second on one replica');
+    });
+  });
+
+  describe('skills', () => {
+    it('lists six unique core technologies, each also in a skill group', () => {
+      expect(resume.coreStack).toHaveLength(6);
+      expect(new Set(resume.coreStack).size).toBe(6);
+      const items = new Set(resume.skills.flatMap((g) => g.items));
+      for (const tech of resume.coreStack) expect(items.has(tech), tech).toBe(true);
+    });
+
+    it('backs every skill group with at least one project or company from the data', () => {
+      const known = new Set([
+        ...resume.projects.map((p) => p.name),
+        ...resume.experience.map((r) => r.company),
+      ]);
+      for (const g of resume.skills) {
+        expect(g.usedIn.length, g.name).toBeGreaterThan(0);
+        expect(new Set(g.usedIn).size, g.name).toBe(g.usedIn.length);
+        for (const entry of g.usedIn) expect(known.has(entry), `${g.name}: ${entry}`).toBe(true);
+      }
+    });
+  });
+
   it('keeps a phone number off the public page', () => {
     expect(JSON.stringify(resume)).not.toMatch(/\b0\d{9}\b|\+84/);
   });

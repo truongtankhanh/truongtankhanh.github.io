@@ -10,6 +10,7 @@ export const resume: Resume = {
     'I design, build and ship systems end to end: system design, NestJS and Node.js backends, React and Angular frontends, and the DevOps that runs them. I take work from requirements to production, with documentation that stands up to client review.',
     'Today I work on operations platforms for clients in Singapore, from IoT and live-video integrations to the infrastructure they run on. I have been shipping production software since 2018.',
   ],
+  coreStack: ['Node.js', 'TypeScript', 'NestJS', 'React', 'Angular', 'PostgreSQL'],
   location: 'Lâm Đồng, Vietnam',
   timezone: 'UTC+7',
   availability: 'Open to remote full-stack engineering work, full-time, part-time or contract',
@@ -20,6 +21,18 @@ export const resume: Resume = {
     github: GH,
     linkedin: 'https://www.linkedin.com/in/truongtankhanh/',
   },
+
+  metrics: [
+    { value: '7+', label: 'years shipping production software', source: 'Since December 2018' },
+    {
+      value: '5+',
+      label: 'marketplaces integrated',
+      source: 'Tmall, eBay US, Mercari, 95Point, Yahoo Shopping and more',
+    },
+    { value: '3+', label: 'engineers led', source: 'Surbana Jurong, since April 2024' },
+    { value: '~50', label: 'repositories and services', source: 'NestJS, Angular, React, PostgreSQL' },
+    { value: '~10k/s', label: 'messages on one replica', source: 'Open-source telemetry pipeline' },
+  ],
 
   projects: [
     {
@@ -173,12 +186,18 @@ export const resume: Resume = {
         'MQTT',
         'RTSP and ONVIF streaming',
       ],
+      usedIn: ['Ops Command Center', 'IoT Telemetry Pipeline', 'Surbana Jurong', 'NewIT Vietnam'],
     },
     {
       name: 'Frontend',
       items: ['React', 'Angular', 'TanStack Query', 'Zustand', 'RxJS', 'Redux Saga', 'MapLibre', 'deck.gl'],
+      usedIn: ['Ops Command Center', 'Surbana Jurong'],
     },
-    { name: 'Data', items: ['PostgreSQL', 'MySQL', 'DynamoDB'] },
+    {
+      name: 'Data',
+      items: ['PostgreSQL', 'MySQL', 'DynamoDB'],
+      usedIn: ['IoT Telemetry Pipeline', 'NewIT Vietnam'],
+    },
     {
       name: 'Cloud and DevOps',
       items: [
@@ -189,6 +208,7 @@ export const resume: Resume = {
         'CI/CD with GitHub Actions',
         'Prometheus',
       ],
+      usedIn: ['Platform on AWS', 'Surbana Jurong'],
     },
     {
       name: 'Ways of working',
@@ -201,6 +221,7 @@ export const resume: Resume = {
         'Playwright and unit testing',
         'AI-assisted delivery with Claude Code',
       ],
+      usedIn: ['Architecture Decisions', 'Claude Code Pipelines', 'Surbana Jurong'],
     },
   ],
 
