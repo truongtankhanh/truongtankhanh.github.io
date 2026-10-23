@@ -264,20 +264,72 @@ export const resume: Resume = {
     {
       title: 'Design is written down',
       body: 'Decisions and tickets are documented and reviewed before code is written.',
+      evidence: [
+        {
+          text: 'Broke the full scope into 44 implementation-ready tickets across every feature epic, checked against the Figma designs.',
+          source: 'Integrated Command Platform, Surbana Jurong',
+        },
+        {
+          text: 'Twelve decision records with the options that were rejected and why.',
+          source: 'Architecture Decisions, public repository',
+        },
+      ],
     },
     {
       title: 'Simple scales',
       body: 'Framework-native solutions first; every new tool has to earn its place.',
+      evidence: [
+        {
+          text: 'A single on-prem Docker Compose deployment.',
+          source: 'Integrated Command Platform, Surbana Jurong',
+        },
+        {
+          text: 'Mock and production sources switch by configuration.',
+          source: 'Camera integration, Integrated Command Platform',
+        },
+      ],
     },
     {
       title: 'Standards are a team asset',
       body: 'Shared conventions and automated review let a small team move quickly across many repositories.',
+      evidence: [
+        {
+          text: 'Claude Code pipelines used daily on NestJS, Angular and React code: diff-scoped self-review before PM review.',
+          source: 'AI-assisted engineering workflow, Surbana Jurong',
+        },
+        {
+          text: 'API documentation with drift detection.',
+          source: 'AI-assisted engineering workflow, Surbana Jurong',
+        },
+      ],
     },
     {
       title: 'Leads still ship',
       body: 'I stay in the code, because good decisions come from knowing where the real complexity is.',
+      evidence: [
+        {
+          text: 'Still building the operator-view app hands-on.',
+          source: 'Integrated Command Platform, Surbana Jurong',
+        },
+        {
+          text: 'Primary developer of the core data processing and provisioning features.',
+          source: 'IoT building-management platform, Surbana Jurong',
+        },
+      ],
     },
   ],
+
+  leadership: {
+    figures: [
+      { value: '3+', label: 'engineers led' },
+      { value: '~50', label: 'repositories and services' },
+    ],
+    owns: [
+      'Turning requirements from the project manager into detailed designs and implementation plans',
+      'Reviewing the team’s code and tests',
+      'The team’s AI-assisted engineering workflow',
+    ],
+  },
 
   education: {
     school: 'Ton Duc Thang University',
@@ -289,7 +341,8 @@ export const resume: Resume = {
     { name: 'Vietnamese', level: 'Native' },
     {
       name: 'English',
-      level: 'Reads and writes technical documentation; speaks well enough for day-to-day work',
+      level: 'Working level',
+      detail: 'Reads and writes technical documentation; speaks well enough for day-to-day work',
     },
   ],
 };

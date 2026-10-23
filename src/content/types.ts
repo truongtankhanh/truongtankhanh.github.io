@@ -71,6 +71,12 @@ export interface Metric {
   source: string;
 }
 
+/** A line quoted from the work that backs a principle. `source` names the role, engagement or repository it comes from. */
+export interface Evidence {
+  text: string;
+  source: string;
+}
+
 export interface Resume {
   name: string;
   /** ASCII spelling for contexts that drop diacritics (file names, ATS). */
@@ -95,7 +101,9 @@ export interface Resume {
   projects: Project[];
   experience: Role[];
   skills: SkillGroup[];
-  principles: { title: string; body: string }[];
+  principles: { title: string; body: string; evidence: Evidence[] }[];
+  /** The scope card of "How I work". */
+  leadership: { figures: { value: string; label: string }[]; owns: string[] };
   education: { school: string; detail: string; start: number; end: number };
-  languages: { name: string; level: string }[];
+  languages: { name: string; level: string; detail?: string }[];
 }

@@ -206,6 +206,50 @@ describe('resume content', () => {
     });
   });
 
+  describe('principles and leadership', () => {
+    const plain = (text: string) => stripEmphasis(text).toLowerCase().replace(/\.+$/, '').trim();
+    // Where a line of evidence may come from, with the names its `source` has to mention.
+    const places = [
+      ...resume.experience.flatMap((r) =>
+        r.work.flatMap((w) => w.points.map((p) => ({ text: plain(p), names: [r.company, w.name ?? ''] }))),
+      ),
+      ...resume.projects.map((p) => ({ text: plain(p.proof), names: [p.name] })),
+    ];
+
+    it('backs every principle with one or two lines quoted from a bullet or a proof, naming where each comes from', () => {
+      for (const principle of resume.principles) {
+        expect(principle.evidence.length, principle.title).toBeGreaterThanOrEqual(1);
+        expect(principle.evidence.length, principle.title).toBeLessThanOrEqual(2);
+        for (const e of principle.evidence) {
+          const found = places.filter((place) => place.text.includes(plain(e.text)));
+          expect(found.length, e.text).toBeGreaterThan(0);
+          expect(
+            found.some((place) => place.names.some((name) => name !== '' && e.source.includes(name))),
+            `${e.text} (${e.source})`,
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('takes the leadership figures from the metrics', () => {
+      expect(resume.leadership.figures.length).toBeGreaterThan(0);
+      for (const f of resume.leadership.figures) {
+        const metric = resume.metrics.find((m) => m.value === f.value);
+        expect(metric?.label, f.value).toBe(f.label);
+      }
+      expect(resume.leadership.owns.length).toBeGreaterThan(0);
+    });
+
+    it('words the English level as a short level and a detail line', () => {
+      const english = resume.languages.find((l) => l.name === 'English')!;
+      expect(english.level).toBe('Working level');
+      expect(english.detail).toBe(
+        'Reads and writes technical documentation; speaks well enough for day-to-day work',
+      );
+      expect(JSON.stringify(resume)).not.toMatch(/improving spoken english/i);
+    });
+  });
+
   it('keeps a phone number off the public page', () => {
     // Serialising the whole object covers every field, including metrics, checks, case studies and the CV link.
     expect(findPhoneNumber(JSON.stringify(resume))).toBeUndefined();

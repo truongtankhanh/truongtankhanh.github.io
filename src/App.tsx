@@ -152,7 +152,7 @@ export function App() {
             {r.languages.map((l) => (
               <div key={l.name}>
                 <dt>{l.name}</dt>
-                <dd>{l.level}</dd>
+                <dd>{l.detail ? `${l.level}. ${l.detail}` : l.level}</dd>
               </div>
             ))}
           </dl>
