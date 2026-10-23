@@ -1,0 +1,833 @@
+/* Palette: a highland map. Mist paper, pine ink, contour green, and one amber signal colour that
+   only marks live things (the data moving through the platform diagram). */
+:root {
+  --paper: #f1f5f2;
+  --ink: #142621;
+  --muted: #53645d;
+  --pine: #1d5546;
+  --pine-strong: #143f34;
+  --pine-wash: #dde9e3;
+  --line: #c4d3cb;
+  --contour: #aec5ba;
+  --signal: #c7860f;
+  --on-pine: #f1f5f2;
+
+  --font: 'Be Vietnam Pro', system-ui, sans-serif;
+  --measure: 66ch;
+  --page: 74rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #0d1915;
+    --ink: #e2ebe6;
+    --muted: #93a79e;
+    --pine: #7cc7a8;
+    --pine-strong: #a3dcc4;
+    --pine-wash: #172b24;
+    --line: #2a4038;
+    --contour: #22382f;
+    --signal: #e9b64c;
+    --on-pine: #0d1915;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --paper: #0d1915;
+  --ink: #e2ebe6;
+  --muted: #93a79e;
+  --pine: #7cc7a8;
+  --pine-strong: #a3dcc4;
+  --pine-wash: #172b24;
+  --line: #2a4038;
+  --contour: #22382f;
+  --signal: #e9b64c;
+  --on-pine: #0d1915;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-feature-settings: 'tnum' 0;
+}
+
+a {
+  color: var(--pine);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+a:hover {
+  color: var(--pine-strong);
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 20;
+  padding: 0.5rem 1rem;
+  background: var(--pine);
+  color: var(--on-pine);
+  border-radius: 6px;
+}
+.skip:focus {
+  top: 1rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem var(--gutter);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.site-name {
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-header nav {
+  display: flex;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+.site-header nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding-block: 0.25rem;
+  border-bottom: 2px solid transparent;
+}
+.site-header nav a:hover,
+.site-header nav a[aria-current] {
+  color: var(--ink);
+  border-bottom-color: var(--pine);
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.icon-button svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon-button:hover {
+  border-color: var(--pine);
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.button:hover {
+  border-color: var(--pine);
+  color: var(--pine);
+  text-decoration: none;
+}
+.button-primary {
+  background: var(--pine);
+  border-color: var(--pine);
+  color: var(--on-pine);
+}
+.button-primary:hover {
+  background: var(--pine-strong);
+  border-color: var(--pine-strong);
+  color: var(--on-pine);
+}
+.button-small {
+  min-height: 2.25rem;
+  padding: 0 0.95rem;
+  font-size: 0.875rem;
+}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+main {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.section {
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+  border-top: 1px solid var(--line);
+}
+.section-head {
+  max-width: var(--measure);
+  margin-bottom: 2.25rem;
+}
+.section-head h2,
+.contact h2 {
+  font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.section-head p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+}
+
+/* ── Hero ───────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  padding-block: clamp(3.5rem, 10vw, 7.5rem) clamp(3rem, 7vw, 5rem);
+}
+.hero-art {
+  position: absolute;
+  z-index: -1;
+  inset: 0 calc(var(--gutter) * -1) 0 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.contours {
+  position: absolute;
+  top: 0;
+  right: -4rem;
+  width: min(46rem, 70vw);
+  height: auto;
+  /* Fade the lines out before they reach the text column and at the page edge. */
+  mask-image: linear-gradient(to right, transparent 8%, #000 48%, #000 82%, transparent 100%);
+}
+.contour {
+  fill: none;
+  stroke: var(--contour);
+  stroke-width: 1.2;
+}
+.contour-index {
+  stroke-width: 2.2;
+}
+.contour-peak {
+  fill: var(--signal);
+}
+.hero-text {
+  max-width: 42rem;
+}
+.hero h1 {
+  font-size: clamp(2.6rem, 8.5vw, 5.25rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  /* Vietnamese diacritics stack above the cap height; keep them clear of the header. */
+  padding-top: 0.12em;
+}
+.headline {
+  margin-top: 1rem;
+  font-size: clamp(1.2rem, 2.4vw, 1.45rem);
+  font-weight: 500;
+  color: var(--pine);
+}
+.intro {
+  margin-top: 1.1rem;
+  max-width: var(--measure);
+  font-size: 1.1rem;
+}
+.where {
+  margin-top: 1.25rem;
+  color: var(--muted);
+  font-size: 0.97rem;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 2rem;
+}
+
+/* ── Platform diagram ───────────────────────────────────────── */
+.diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font);
+  overflow: visible;
+}
+.diagram-narrow {
+  display: none;
+  max-width: 26rem;
+  margin-inline: auto;
+}
+@media (max-width: 40rem) {
+  .diagram-wide {
+    display: none;
+  }
+  .diagram-narrow {
+    display: block;
+  }
+}
+
+.frame {
+  fill: color-mix(in srgb, var(--pine-wash) 45%, transparent);
+  stroke: var(--line);
+  stroke-dasharray: 5 5;
+}
+.external rect {
+  fill: none;
+  stroke: var(--muted);
+  stroke-dasharray: 3 4;
+}
+.external text {
+  fill: var(--muted);
+  font-size: 13px;
+}
+.edge path {
+  stroke: var(--muted);
+  stroke-width: 1.4;
+  fill: none;
+}
+.arrowhead {
+  fill: var(--muted);
+}
+.edge text {
+  fill: var(--muted);
+  font-size: 12px;
+}
+.packets circle {
+  fill: var(--signal);
+}
+@media (prefers-reduced-motion: reduce) {
+  .packets {
+    display: none;
+  }
+}
+
+.node {
+  cursor: pointer;
+}
+.node rect {
+  fill: var(--paper);
+  stroke: var(--pine);
+  stroke-width: 1.5;
+}
+.node:hover rect {
+  fill: var(--pine-wash);
+}
+.node-title {
+  fill: var(--ink);
+  font-size: 16px;
+  font-weight: 600;
+}
+.node-sub {
+  fill: var(--muted);
+  font-size: 13px;
+}
+.node-tag,
+.node-lane {
+  fill: var(--ink);
+  font-size: 13.5px;
+}
+.node-tag,
+.node-lane-name {
+  font-weight: 600;
+}
+.node.is-selected rect {
+  fill: var(--pine);
+  stroke: var(--pine);
+}
+.node.is-selected text {
+  fill: var(--on-pine);
+}
+.node:focus {
+  outline: none;
+}
+.node:focus-visible rect {
+  stroke: var(--signal);
+  stroke-width: 3;
+}
+
+.platform-hint {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--pine);
+}
+.panel:not(:has(.panel-figure)) {
+  grid-template-columns: minmax(0, var(--measure));
+}
+.panel h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.panel-text p {
+  margin-top: 0.85rem;
+}
+.panel-proof {
+  color: var(--muted);
+}
+.panel-proof strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1.25rem 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+.stack li {
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  background: var(--pine-wash);
+  font-size: 0.85rem;
+}
+.panel-figure {
+  margin: 0;
+}
+.panel-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+.panel-figure figcaption {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+@media (max-width: 52rem) {
+  .panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Experience timeline ────────────────────────────────────── */
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.role {
+  display: grid;
+  grid-template-columns: 10rem minmax(0, var(--measure));
+  gap: 2rem;
+  position: relative;
+}
+/* The rail: a real sequence of jobs, newest first. */
+.role-body {
+  position: relative;
+  padding-left: 1.75rem;
+  padding-bottom: 2.75rem;
+  border-left: 1px solid var(--line);
+}
+.role:last-child .role-body {
+  padding-bottom: 0;
+}
+.role-body::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 0.45rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--pine);
+}
+.role:first-child .role-body::before {
+  background: var(--pine);
+}
+.role-dates {
+  padding-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.93rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.role h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.role-title {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--pine);
+}
+.role-summary {
+  margin-top: 0.75rem;
+}
+.engagement {
+  margin-top: 1.4rem;
+}
+.engagement h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.engagement-context {
+  margin-top: 0.3rem;
+  color: var(--muted);
+}
+.engagement ul {
+  margin: 0.6rem 0 0;
+  list-style: disc;
+  padding-left: 1.1rem;
+}
+.engagement li {
+  margin-top: 0.35rem;
+  padding-left: 0.2rem;
+}
+.engagement li::marker {
+  color: var(--pine);
+}
+.engagement-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.93rem;
+}
+@media (max-width: 44rem) {
+  .role {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .role-dates {
+    text-align: left;
+    padding-left: 1.75rem;
+    border-left: 1px solid var(--line);
+  }
+  .role-body::before {
+    top: -1.3rem;
+  }
+}
+
+/* ── Skills, principles, facts ──────────────────────────────── */
+.skills {
+  margin: 0;
+  max-width: 56rem;
+}
+.skill-group {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 1.5rem;
+  padding-block: 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+.skill-group:first-child {
+  border-top: 1px solid var(--line);
+}
+.skills dt {
+  font-weight: 600;
+}
+.skills dd {
+  margin: 0;
+}
+@media (max-width: 36rem) {
+  .skill-group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.2rem;
+  }
+}
+
+.principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 2rem 2.5rem;
+  max-width: 60rem;
+}
+.principle h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--pine);
+}
+.principle p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+.facts {
+  display: grid;
+  gap: 0.5rem;
+  margin: 3rem 0 0;
+  max-width: var(--measure);
+  font-size: 0.95rem;
+}
+.facts div {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 1rem;
+}
+.facts dt {
+  color: var(--muted);
+}
+.facts dd {
+  margin: 0;
+}
+
+/* ── Contact & footer ───────────────────────────────────────── */
+.contact p {
+  margin-top: 0.75rem;
+  max-width: var(--measure);
+  color: var(--muted);
+}
+.contact-email {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-size: clamp(1.35rem, 5vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.contact-links {
+  display: flex;
+  gap: 1.5rem;
+}
+.site-footer {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 2rem var(--gutter) 3rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.site-footer p + p {
+  margin-top: 0.35rem;
+}
+
+/* ── Small screens ──────────────────────────────────────────── */
+@media (max-width: 48rem) {
+  .site-header nav {
+    display: none;
+  }
+  .header-actions {
+    margin-left: auto;
+  }
+  .contours {
+    width: 22rem;
+    right: -7rem;
+    top: -3rem;
+    mask-image: radial-gradient(circle at 60% 45%, #000 20%, transparent 62%);
+  }
+}
+
+/* ── Print: the page becomes a two-page CV ─────────────────── */
+.print-only {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 15mm;
+  }
+  :root,
+  :root[data-theme='dark'] {
+    --paper: #fff;
+    --ink: #111;
+    --muted: #444;
+    --pine: #1d5546;
+    --line: #bbb;
+    --pine-wash: #fff;
+  }
+  body {
+    font-size: 9.6pt;
+    line-height: 1.42;
+    background: #fff;
+  }
+  .site-header,
+  .skip,
+  .hero-art,
+  .hero-actions,
+  .platform,
+  .section-head p,
+  .engagement-link,
+  .contact-links,
+  .site-footer {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  main {
+    max-width: none;
+    padding: 0;
+  }
+  .hero {
+    padding: 0 0 8pt;
+  }
+  .hero h1 {
+    font-size: 24pt;
+  }
+  .headline {
+    margin-top: 2pt;
+    font-size: 12pt;
+  }
+  .intro,
+  .where {
+    margin-top: 4pt;
+    max-width: none;
+    font-size: 9.6pt;
+  }
+  .where::after {
+    content: ' Email: ttkhanh100896@gmail.com. Web: truongtankhanh.github.io';
+  }
+  .section {
+    padding: 10pt 0 0;
+  }
+  .section-head {
+    margin-bottom: 6pt;
+    max-width: none;
+  }
+  .section-head h2,
+  .contact h2 {
+    font-size: 12.5pt;
+  }
+  .print-projects {
+    margin: 0;
+    padding-left: 12pt;
+  }
+  .print-projects li + li {
+    margin-top: 2pt;
+  }
+  .role {
+    grid-template-columns: 5.2rem minmax(0, 1fr);
+    gap: 10pt;
+    break-inside: auto;
+  }
+  .role-body {
+    padding-left: 10pt;
+    padding-bottom: 8pt;
+  }
+  .role h3 {
+    font-size: 11pt;
+  }
+  .role-title {
+    display: inline;
+    margin-left: 6pt;
+    font-size: 9.6pt;
+  }
+  .role-summary,
+  .engagement,
+  .engagement-context {
+    margin-top: 3pt;
+  }
+  .engagement h4 {
+    font-size: 10pt;
+  }
+  .engagement ul {
+    margin-top: 2pt;
+  }
+  .engagement li {
+    margin-top: 1pt;
+    break-inside: avoid;
+  }
+  .role-dates {
+    font-size: 8.6pt;
+  }
+  .skill-group {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    padding-block: 2pt;
+    border: 0 !important;
+  }
+  .principles {
+    display: none;
+  }
+  .facts {
+    margin-top: 0;
+    max-width: none;
+    font-size: 9.6pt;
+  }
+  #approach .section-head h2 {
+    font-size: 0;
+  }
+  #approach .section-head h2::before {
+    content: 'Education and languages';
+    font-size: 12.5pt;
+  }
+  .contact {
+    display: none;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
