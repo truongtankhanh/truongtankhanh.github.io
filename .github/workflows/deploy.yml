@@ -29,6 +29,8 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      # The runner's Chrome prints the finished site to the public CV PDF in dist/.
+      - run: pnpm build:pdf
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

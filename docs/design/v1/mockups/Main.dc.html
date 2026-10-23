@@ -36,7 +36,7 @@
 </g>
 <g fill="none" stroke-linecap="round" stroke="#fff" stroke-opacity="0.6" stroke-width="1" transform="translate(-0.5 -0.9)">
 <path d="M12 16.2C15.5 13 21 13 27 16S38.5 19 42 15.8"/><path d="M27 16V46"/><path d="M27 34L43.6 22.8" stroke-opacity="0.48"/>
-</g></svg><span class="brand-text"><span class="brand-name" lang="vi">Trương Tấn Khánh</span><span class="brand-role">Team Lead - Full-stack Engineer</span></span></a>
+</g></svg><span class="brand-text"><span class="brand-name" lang="vi">Trương Tấn Khánh</span><span class="brand-role">Full-stack Engineer</span></span></a>
 <nav aria-label="Sections">
 <sc-for list="{{navItems}}" as="n" hint-placeholder-count="5">
 <a href="#{{n.id}}" class="{{n.cls}}" aria-current="{{n.current}}" onClick="{{n.pick}}">{{n.label}}</a>
@@ -69,8 +69,9 @@
 <div class="hero-text">
 <p class="mono meta">Lâm Đồng, Vietnam · UTC+7</p>
 <h1 id="name" lang="vi">Trương Tấn Khánh</h1>
-<p class="tagline">Team Lead - Full-stack Engineer</p>
-<p class="lead">I take systems from requirements to production: architecture, ticket-level planning, documentation that stands up to client review, and hands-on implementation of the hardest parts. Today I lead the engineering of operations platforms for clients in Singapore.</p>
+<p class="tagline">Full-stack Engineer</p>
+<p class="lead">I design, build and ship systems end to end: system design, NestJS and Node.js backends, React and Angular frontends, and the DevOps that runs them. Today I work on operations platforms for clients in Singapore.</p>
+<p class="avail">Open to remote full-stack engineering work, full-time, part-time or contract.</p>
 <div class="cta">
 <a class="btn btn-primary" href="mailto:ttkhanh100896@gmail.com" onClick="{{copyEmail}}" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>{{mailLabel}}</a>
 <a class="btn" href="Print-cv.dc.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path></svg>Download CV (PDF)</a>
@@ -81,7 +82,7 @@
 <div>
 <p class="mono">Currently</p>
 <p class="fact-main">Surbana Jurong</p>
-<p class="fact-sub">Leading engineering since April 2024, for clients in Singapore</p>
+<p class="fact-sub">Building operations platforms since April 2024, for clients in Singapore</p>
 </div>
 <div>
 <p class="mono">Open source</p>
@@ -133,6 +134,7 @@
 </ul>
 <div class="actions">
 <a class="btn btn-primary" href="Case-study.dc.html">Read the case study</a>
+<a class="btn" href="Case-study.dc.html#demo">Watch the demo</a>
 <a class="btn" href="https://github.com/truongtankhanh/ops-command-center">Repository</a>
 </div>
 </div>
@@ -277,7 +279,7 @@
 <div class="wrap">
 <div class="section-head">
 <div>
-<h2 id="approach-title">How I lead</h2>
+<h2 id="approach-title">How I work</h2>
 </div>
 </div>
 <div class="lead-scope">
@@ -321,7 +323,7 @@
 <div class="wrap">
 <div class="contact-copy">
 <h2 id="contact-title">Let’s talk</h2>
-<p>Email is the quickest way to reach me; I work in UTC+7.</p>
+<p>Open to remote full-stack engineering work, full-time, part-time or contract. Email is the quickest way to reach me; I work in UTC+7.</p>
 </div>
 <div class="contact-actions">
 <a class="mail-card {{mailCardCls}}" href="mailto:ttkhanh100896@gmail.com" onClick="{{copyEmail}}" aria-live="polite">
@@ -366,7 +368,7 @@ try { navigator.clipboard.writeText('ttkhanh100896@gmail.com'); } catch (e) {}
 this.setState({ copied: true });
 setTimeout(() => this.setState({ copied: false }), 2200);
 },
-navItems: [['work', 'Work'], ['experience', 'Experience'], ['skills', 'Skills'], ['approach', 'How I lead'], ['contact', 'Contact']].map(([id, label]) => ({
+navItems: [['work', 'Work'], ['experience', 'Experience'], ['skills', 'Skills'], ['approach', 'How I work'], ['contact', 'Contact']].map(([id, label]) => ({
 id,
 label,
 cls: this.state.active === id ? 'on' : '',
@@ -388,13 +390,13 @@ projects: [
 { name: 'Claude Code Pipelines', repo: GH + '/claude-code-pipelines', what: 'The AI-assisted workflow both systems were built with: each job is analysed, planned, applied and verified in separate stages a person can review.', statValue: 'Plan first', statLabel: 'plans are written before code', checks: ['Plans are written before code', 'File scope is fixed', 'Nothing is committed automatically', 'Real runs are published next to the commits they produced'], stack: ['Claude Code plugin', 'Markdown artifacts'] }
 ],
 roles: [
-{ cls: 'now', current: true, when: 'Apr 2024 – present', company: 'Surbana Jurong', title: 'Team Lead - Full-stack Engineer', summary: 'I lead a team of three or more developers across about 50 repositories and services, turning requirements from the project manager into detailed designs and implementation plans.', points: [], engagements: [
-{ name: 'Unified Command System', context: 'Command-center portal for island-wide operations in Singapore: an operator console and a three-projector video wall with live cameras, maps and incidents.', points: [
+{ cls: 'now', current: true, when: 'Apr 2024 – present', company: 'Surbana Jurong', title: 'Full-stack Engineer', summary: 'I lead a team of three or more developers across about 50 repositories and services, turning requirements from the project manager into detailed designs and implementation plans.', points: [], engagements: [
+{ name: 'Integrated Command Platform', context: 'Command-center portal for operations in Singapore: an operator console and a multi-screen video wall with live cameras, maps and incidents.', points: [
 P('Designed the monorepo architecture (pnpm workspaces and Turborepo): ', ['two apps and nine shared packages'], '.'),
 P('Broke the full scope into ', ['44 implementation-ready tickets'], ' across every feature epic, checked against the Figma designs.'),
-P('Designed the ', ['camera integration'], ' through the site’s video management system, relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.'),
-P('Set the key technical decisions: ', ['OneMap-based 2D maps with MapLibre and deck.gl'], ', ', ['Entra ID single sign-on'], ' with an in-app permission model, and a ', ['single on-prem Docker Compose deployment'], '.'),
-P('Build the ', ['operator-view app hands-on'], '.')
+P('Designed the live ', ['camera integration'], ', relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.'),
+P('Set the key technical decisions: ', ['2D maps with MapLibre and deck.gl'], ', ', ['single sign-on'], ' with an in-app permission model, and a ', ['single on-prem Docker Compose deployment'], '.'),
+P('Still building the ', ['operator-view app hands-on'], '.')
 ] },
 { name: 'IoT building-management platform', context: 'Backend that processes and serves IoT data for an automated building-management system.', points: [
 P('Primary developer of the ', ['core data processing and provisioning features'], ' (Node.js, TypeORM, PostgreSQL).'),
@@ -419,28 +421,28 @@ P(['React Native'], ' apps connected to the company’s ERP system.')
 ],
 principles: [
 { title: 'Design is written down', body: 'Decisions and tickets are documented and reviewed before code is written.', evidence: [
-{ text: 'Broke the full scope into 44 implementation-ready tickets across every feature epic, checked against the Figma designs.', src: 'Unified Command System, Surbana Jurong' },
+{ text: 'Broke the full scope into 44 implementation-ready tickets across every feature epic, checked against the Figma designs.', src: 'Integrated Command Platform, Surbana Jurong' },
 { text: 'Twelve decision records with the options that were rejected and why.', src: 'Architecture Decisions, public repository' }
 ] },
 { title: 'Simple scales', body: 'Framework-native solutions first; every new tool has to earn its place.', evidence: [
-{ text: 'A single on-prem Docker Compose deployment.', src: 'Unified Command System, Surbana Jurong' },
-{ text: 'Mock and production sources switch by configuration.', src: 'Camera integration, Unified Command System' }
+{ text: 'A single on-prem Docker Compose deployment.', src: 'Integrated Command Platform, Surbana Jurong' },
+{ text: 'Mock and production sources switch by configuration.', src: 'Camera integration, Integrated Command Platform' }
 ] },
 { title: 'Standards are a team asset', body: 'Shared conventions and automated review let a small team move quickly across many repositories.', evidence: [
 { text: 'Claude Code pipelines used daily on NestJS, Angular and React code: diff-scoped self-review before PM review.', src: 'AI-assisted engineering workflow, Surbana Jurong' },
 { text: 'API documentation with drift detection.', src: 'AI-assisted engineering workflow, Surbana Jurong' }
 ] },
 { title: 'Leads still ship', body: 'I stay in the code, because good decisions come from knowing where the real complexity is.', evidence: [
-{ text: 'Build the operator-view app hands-on.', src: 'Unified Command System, Surbana Jurong' },
+{ text: 'Still building the operator-view app hands-on.', src: 'Integrated Command Platform, Surbana Jurong' },
 { text: 'Primary developer of the core data processing and provisioning features.', src: 'IoT building-management platform, Surbana Jurong' }
 ] }
 ],
 skills: [
-{ name: 'Backend', icon: 'M5 4h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 10h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2ZM7 7h.01M7 17h.01', items: ['Node.js', 'NestJS', 'TypeScript', 'TypeORM', 'REST and OpenAPI', 'Socket.IO', 'MQTT'], used: 'Ops Command Center, IoT Telemetry Pipeline, UCS, NewIT services' },
-{ name: 'Frontend', icon: 'M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM8 20h8M12 16v4', items: ['React', 'Angular', 'TanStack Query', 'Zustand', 'RxJS', 'MapLibre', 'deck.gl'], used: 'Ops Command Center console, UCS operator view' },
+{ name: 'Backend', icon: 'M5 4h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 10h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2ZM7 7h.01M7 17h.01', items: ['Node.js', 'NestJS', 'TypeScript', 'TypeORM', 'REST and OpenAPI', 'Microservices', 'Event-driven design', 'OIDC and single sign-on', 'Socket.IO', 'MQTT', 'RTSP and ONVIF streaming'], used: 'Ops Command Center, IoT Telemetry Pipeline, ICP, NewIT services' },
+{ name: 'Frontend', icon: 'M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM8 20h8M12 16v4', items: ['React', 'Angular', 'TanStack Query', 'Zustand', 'RxJS', 'Redux Saga', 'MapLibre', 'deck.gl'], used: 'Ops Command Center console, ICP operator view' },
 { name: 'Data', icon: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3', items: ['PostgreSQL', 'MySQL', 'DynamoDB'], used: 'Telemetry pipeline, NewIT integrations' },
-{ name: 'Cloud and delivery', icon: 'M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 8.5H7Z', items: ['AWS (ECS, CDK, RDS, S3, CloudFront, IoT Core)', 'Docker', 'Kubernetes', 'GitHub Actions', 'Prometheus'], used: 'Platform on AWS, IoT building-management platform' },
-{ name: 'Ways of working', icon: 'M6 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM18 15.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM8.5 6H14a3 3 0 0 1 3 3v6.5', items: ['Architecture decision records', 'Ticket-level planning', 'pnpm and Turborepo monorepos', 'Playwright and unit testing', 'AI-assisted delivery with Claude Code'], used: 'Architecture Decisions, Claude Code Pipelines, UCS' }
+{ name: 'Cloud and DevOps', icon: 'M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 8.5H7Z', items: ['AWS (ECS, CDK, RDS, S3, CloudFront, IoT Core)', 'Docker', 'Kubernetes', 'Infrastructure as code', 'CI/CD with GitHub Actions', 'Prometheus'], used: 'Platform on AWS, IoT building-management platform' },
+{ name: 'Ways of working', icon: 'M6 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM18 15.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM8.5 6H14a3 3 0 0 1 3 3v6.5', items: ['System design and C4 modelling', 'Architecture decision records', 'Ticket-level planning', 'Code review', 'pnpm and Turborepo monorepos', 'Playwright and unit testing', 'AI-assisted delivery with Claude Code'], used: 'Architecture Decisions, Claude Code Pipelines, ICP' }
 ]
 };
 }

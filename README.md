@@ -14,8 +14,11 @@ and React then hydrates the parts that are interactive.
 - **A diagram of the public work.** The five repositories it links to form one platform, so they are
   shown as one: an SVG diagram with a separate narrow layout for phones, keyboard-navigable as tabs
   (arrow keys, Home, End).
-- **Prints as a CV.** The print stylesheet turns the page into a two-page A4 CV; use _Print CV_ or
-  the browser's print, and save as PDF.
+- **A downloadable CV.** The print stylesheet turns the page into a two-page A4 CV, and
+  [`scripts/build-pdf.js`](scripts/build-pdf.js) prints the built site with headless Chrome into
+  `dist/Truong_Tan_Khanh_CV.pdf`, so the PDF always matches `resume.ts`. It has no phone number.
+- **Search and sharing.** The prerender writes `Person` JSON-LD, `sitemap.xml` and `robots.txt` from
+  the same content file ([`src/lib/seo.ts`](src/lib/seo.ts)); the share image is `public/images/og.png`.
 - **Light and dark themes** following the system setting, with a manual switch that is remembered
   and applied before first paint.
 - **Tests on the content** ([`resume.test.ts`](src/content/resume.test.ts)): roles in order and with
@@ -28,6 +31,7 @@ and React then hydrates the parts that are interactive.
 pnpm install
 pnpm dev        # http://localhost:5390
 pnpm build      # client build, server build, then prerender into dist/
+pnpm build:pdf  # after pnpm build: write dist/Truong_Tan_Khanh_CV.pdf (needs Chrome; set CHROME_PATH if not found)
 pnpm preview    # serve dist/
 ```
 
@@ -39,9 +43,11 @@ pnpm preview    # serve dist/
 builds, and publishes `dist/` to GitHub Pages on every push to `main`. Pull requests run the checks
 without deploying.
 
+In CI, `pnpm build:pdf` runs after `pnpm build` on the runner's Chrome, so a failed PDF blocks the deploy.
+
 The build has three steps: `vite build` for the browser bundle, `vite build --ssr` for a Node build
 of the same app, and [`scripts/prerender.js`](scripts/prerender.js), which renders the app once and
-writes the HTML into `dist/index.html`.
+writes the HTML into `dist/index.html`, plus the JSON-LD, sitemap and robots files.
 
 ## Credits
 

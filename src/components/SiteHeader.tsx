@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { resume } from '../content/resume';
 
 type Theme = 'light' | 'dark';
 
@@ -70,9 +71,9 @@ export function SiteHeader() {
             )}
           </svg>
         </button>
-        <button type="button" className="button button-small" onClick={() => window.print()}>
-          Print CV
-        </button>
+        <a className="button button-small" href={`/${resume.cvPdf}`} download={resume.cvPdf}>
+          Download CV
+        </a>
       </div>
     </header>
   );

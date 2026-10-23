@@ -5,15 +5,17 @@ const GH = 'https://github.com/truongtankhanh';
 export const resume: Resume = {
   name: 'Trương Tấn Khánh',
   nameAscii: 'Truong Tan Khanh',
-  headline: 'Full-stack engineer',
+  headline: 'Full-stack Engineer',
   intro: [
-    'I take systems from requirements to production: architecture, ticket-level planning, documentation that stands up to client review, and hands-on implementation of the hardest parts.',
-    'Today I lead the engineering of operations platforms for clients in Singapore: NestJS backends, React and Angular frontends, IoT and live-video integrations, and the infrastructure they run on. I have been shipping production software since 2018.',
+    'I design, build and ship systems end to end: system design, NestJS and Node.js backends, React and Angular frontends, and the DevOps that runs them. I take work from requirements to production, with documentation that stands up to client review.',
+    'Today I work on operations platforms for clients in Singapore, from IoT and live-video integrations to the infrastructure they run on. I have been shipping production software since 2018.',
   ],
   location: 'Lâm Đồng, Vietnam',
   timezone: 'UTC+7',
-  availability: 'Open to remote roles in technical leadership and full-stack engineering',
+  availability: 'Open to remote full-stack engineering work, full-time, part-time or contract',
   email: 'ttkhanh100896@gmail.com',
+  siteUrl: 'https://truongtankhanh.github.io/',
+  cvPdf: 'Truong_Tan_Khanh_CV.pdf',
   links: {
     github: GH,
     linkedin: 'https://www.linkedin.com/in/truongtankhanh/',
@@ -80,21 +82,21 @@ export const resume: Resume = {
   experience: [
     {
       company: 'Surbana Jurong',
-      title: 'Project Lead, full-stack',
+      title: 'Full-stack Engineer',
       start: '2024-04',
       summary:
         'I lead a team of three or more developers across about 50 repositories and services, turning requirements from the project manager into detailed designs and implementation plans.',
       work: [
         {
-          name: 'Unified Command System',
+          name: 'Integrated Command Platform',
           context:
-            'Command-center portal for island-wide operations in Singapore: an operator console and a three-projector video wall with live cameras, maps and incidents.',
+            'Command-center portal for operations in Singapore: an operator console and a multi-screen video wall with live cameras, maps and incidents.',
           points: [
             'Designed the monorepo architecture (pnpm workspaces and Turborepo): two apps and nine shared packages.',
             'Broke the full scope into 44 implementation-ready tickets across every feature epic, checked against the Figma designs.',
-            'Designed the camera integration through the site’s video management system, relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.',
-            'Set the key technical decisions: OneMap-based 2D maps with MapLibre and deck.gl, Entra ID single sign-on with an in-app permission model, and a single on-prem Docker Compose deployment.',
-            'Build the operator-view app hands-on.',
+            'Designed the live camera integration, relayed to browsers by MediaMTX behind an adapter, so mock and production sources switch by configuration.',
+            'Set the key technical decisions: 2D maps with MapLibre and deck.gl, single sign-on with an in-app permission model, and a single on-prem Docker Compose deployment.',
+            'Still building the operator-view app hands-on.',
           ],
         },
         {
@@ -158,28 +160,43 @@ export const resume: Resume = {
   skills: [
     {
       name: 'Backend',
-      items: ['Node.js', 'NestJS', 'TypeScript', 'TypeORM', 'REST and OpenAPI', 'Socket.IO', 'MQTT'],
+      items: [
+        'Node.js',
+        'NestJS',
+        'TypeScript',
+        'TypeORM',
+        'REST and OpenAPI',
+        'Microservices',
+        'Event-driven design',
+        'OIDC and single sign-on',
+        'Socket.IO',
+        'MQTT',
+        'RTSP and ONVIF streaming',
+      ],
     },
     {
       name: 'Frontend',
-      items: ['React', 'Angular', 'TanStack Query', 'Zustand', 'RxJS', 'MapLibre', 'deck.gl'],
+      items: ['React', 'Angular', 'TanStack Query', 'Zustand', 'RxJS', 'Redux Saga', 'MapLibre', 'deck.gl'],
     },
     { name: 'Data', items: ['PostgreSQL', 'MySQL', 'DynamoDB'] },
     {
-      name: 'Cloud and delivery',
+      name: 'Cloud and DevOps',
       items: [
         'AWS (ECS, CDK, RDS, S3, CloudFront, IoT Core)',
         'Docker',
         'Kubernetes',
-        'GitHub Actions',
+        'Infrastructure as code',
+        'CI/CD with GitHub Actions',
         'Prometheus',
       ],
     },
     {
       name: 'Ways of working',
       items: [
+        'System design and C4 modelling',
         'Architecture decision records',
         'Ticket-level planning',
+        'Code review',
         'pnpm and Turborepo monorepos',
         'Playwright and unit testing',
         'AI-assisted delivery with Claude Code',
@@ -214,6 +231,9 @@ export const resume: Resume = {
   },
   languages: [
     { name: 'Vietnamese', level: 'Native' },
-    { name: 'English', level: 'Reads and writes technical documentation; improving spoken English' },
+    {
+      name: 'English',
+      level: 'Reads and writes technical documentation; speaks well enough for day-to-day work',
+    },
   ],
 };

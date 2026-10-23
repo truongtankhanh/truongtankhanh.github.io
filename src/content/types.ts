@@ -53,6 +53,10 @@ export interface Resume {
   timezone: string;
   availability: string;
   email: string;
+  /** Canonical origin with a trailing slash; absolute URLs in the head, sitemap and JSON-LD start here. */
+  siteUrl: string;
+  /** File name of the public CV PDF, built into `dist/` by `scripts/build-pdf.js`. */
+  cvPdf: string;
   links: { github: string; linkedin: string };
   projects: Project[];
   experience: Role[];

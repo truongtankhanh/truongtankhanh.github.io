@@ -41,6 +41,9 @@ export function App() {
               <a className="button button-primary" href={`mailto:${r.email}`}>
                 Email me
               </a>
+              <a className="button" href={`/${r.cvPdf}`} download={r.cvPdf}>
+                Download CV (PDF)
+              </a>
               <a className="button" href={r.links.github}>
                 GitHub
               </a>
@@ -128,7 +131,7 @@ export function App() {
 
         <section id="approach" className="section" aria-labelledby="approach-title">
           <div className="section-head">
-            <h2 id="approach-title">How I lead</h2>
+            <h2 id="approach-title">How I work</h2>
           </div>
           <div className="principles">
             {r.principles.map((p) => (
@@ -163,6 +166,9 @@ export function App() {
             {r.email}
           </a>
           <p className="contact-links">
+            <a href={`/${r.cvPdf}`} download={r.cvPdf}>
+              Download CV (PDF)
+            </a>
             <a href={r.links.github}>GitHub</a>
             <a href={r.links.linkedin}>LinkedIn</a>
           </p>
