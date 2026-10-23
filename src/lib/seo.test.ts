@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resume } from '../content/resume';
-import { jsonLdScript, personJsonLd, robotsTxt, sitemapXml } from './seo';
+import { headTags, homeMeta, jsonLdScript, pageMeta, personJsonLd, robotsTxt, sitemapXml } from './seo';
 
 describe('person JSON-LD', () => {
   const data = personJsonLd(resume);
@@ -42,5 +42,74 @@ describe('public CV PDF', () => {
       `'${resume.cvPdf}'`,
     );
     expect(readFileSync(new URL('../../index.html', import.meta.url), 'utf8')).toContain(`/${resume.cvPdf}`);
+  });
+});
+
+describe('page head', () => {
+  const count = (html: string, pattern: RegExp) => (html.match(pattern) ?? []).length;
+  const home = headTags(resume, homeMeta(resume));
+
+  it('gives the home page one title, one canonical and matching Open Graph tags', () => {
+    expect(count(home, /<title>/g)).toBe(1);
+    expect(home).toContain(`<title>${resume.name}, ${resume.headline}</title>`);
+    expect(count(home, /rel="canonical"/g)).toBe(1);
+    expect(home).toContain(`<link rel="canonical" href="${resume.siteUrl}" />`);
+    expect(home).toContain(`<meta property="og:url" content="${resume.siteUrl}" />`);
+    expect(home).toContain(`<meta property="og:title" content="${resume.name}, ${resume.headline}" />`);
+    expect(home).not.toContain('name="robots"');
+  });
+
+  it('describes the home page and keeps the open-to-work line in both descriptions', () => {
+    const meta = homeMeta(resume);
+    expect(meta.description).toContain('Open to remote full-stack work');
+    expect(meta.shareDescription).toContain('Open to remote full-stack work');
+    expect(home).toContain(`<meta name="description" content="${meta.description}" />`);
+    expect(home).toContain(`<meta property="og:description" content="${meta.shareDescription}" />`);
+  });
+
+  it('points the share image at an absolute URL and states its size, alt text and card type', () => {
+    expect(home).toContain(`<meta property="og:image" content="${resume.siteUrl}images/og.png" />`);
+    expect(home).toContain('<meta property="og:image:width" content="1200" />');
+    expect(home).toContain('<meta property="og:image:height" content="630" />');
+    expect(home).toMatch(/<meta property="og:image:alt" content="[^"]{20,}" \/>/);
+    expect(home).toContain('<meta name="twitter:card" content="summary_large_image" />');
+  });
+
+  it('embeds the person JSON-LD', () => {
+    expect(count(home, /<script type="application\/ld\+json">/g)).toBe(1);
+  });
+
+  it('gives a noindex page a robots tag and neither a canonical nor an og:url', () => {
+    const tags = headTags(resume, {
+      title: 'Page not found',
+      description: 'Not here.',
+      path: '/404.html',
+      type: 'website',
+      noindex: true,
+      image: { path: 'images/og.png', alt: 'Share image' },
+    });
+    expect(tags).toContain('<meta name="robots" content="noindex" />');
+    expect(tags).not.toContain('rel="canonical"');
+    expect(tags).not.toContain('og:url');
+    expect(count(tags, /<title>/g)).toBe(1);
+  });
+
+  it('escapes quotes and angle brackets in a title', () => {
+    const tags = headTags(resume, { ...homeMeta(resume), title: 'A "B" <C> & D', jsonLd: [] });
+    expect(tags).toContain('<title>A &quot;B&quot; &lt;C&gt; &amp; D</title>');
+  });
+
+  it('has a page for the home path only, for now', () => {
+    expect(pageMeta(resume, '/').path).toBe('/');
+    expect(() => pageMeta(resume, '/nowhere/')).toThrow(/No page/);
+  });
+
+  it('leaves the per-page tags out of index.html and keeps both markers', () => {
+    const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+    expect(html).toContain('<!--app-head-->');
+    expect(html).toContain('<!--app-html-->');
+    for (const tag of ['rel="canonical"', 'property="og:', 'name="description"', 'name="twitter:card"']) {
+      expect(html).not.toContain(tag);
+    }
   });
 });
