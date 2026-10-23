@@ -15,7 +15,8 @@ describe('Logo', () => {
       </>,
     );
     const ids = gradientIds(html);
-    expect(ids).toHaveLength(15);
+    // Six gradients per metallic mark: plate, rim, silver, gold, aqua and sun.
+    expect(ids).toHaveLength(18);
     expect(new Set(ids).size).toBe(ids.length);
   });
 

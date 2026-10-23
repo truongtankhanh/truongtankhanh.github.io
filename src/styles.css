@@ -172,6 +172,230 @@ p {
   text-wrap: pretty;
 }
 
+/* ── Metal surface primitives (V1-01.4) ─────────────────────── */
+/* Shared pieces of the flat metal finish: a 1 px silver rim, a soft shadow, firm corners, no bevel and no
+   press-down. Phase 2 to 4 components use these classes and do not rebuild the finish. They sit after the
+   base rules so `.btn` wins over the global `:focus-visible` radius and `a:hover` colour. */
+
+/* Plate: a light card whose rim is drawn by the border-box layer. Padding and layout belong to the component. */
+.plate,
+.plate-dark {
+  border: 1px solid transparent;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+.plate {
+  background:
+    linear-gradient(180deg, var(--plate-top), var(--plate-bot)) padding-box,
+    linear-gradient(145deg, var(--silver-hi), var(--silver-lo) 50%, var(--silver-hi)) border-box;
+  color: var(--ink);
+}
+/* Dark plate: the featured card, the core band and "What it does". Same treatment on `--band`. */
+.plate-dark {
+  background:
+    linear-gradient(var(--band), var(--band)) padding-box,
+    linear-gradient(145deg, var(--silver-hi), var(--silver-lo) 50%, var(--silver-hi)) border-box;
+  color: var(--on-band);
+}
+.plate-dark :focus-visible,
+.btn-on-band:focus-visible {
+  outline-color: var(--gold);
+}
+
+/* Buttons: `.btn` is the secondary (56 px), `.btn-primary` the filled one, `.btn-small` is 44 px. Add
+   `.btn-on-band` on a blue band or a dark plate. `.btn-text` is the plain link for GitHub and LinkedIn. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 3.5rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--steel);
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--plate-top), var(--plate-bot));
+  box-shadow: 0 1px 2px rgba(11, 27, 51, 0.18);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+  text-decoration: none;
+}
+.btn-primary {
+  border-color: var(--btn-edge);
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bot));
+  color: var(--btn-ink);
+}
+.btn-primary:hover {
+  border-color: var(--btn-edge);
+  color: var(--btn-ink);
+  filter: brightness(1.07);
+}
+.btn-small {
+  min-height: 2.75rem;
+  padding: 0 var(--space-2);
+  font-size: 0.9375rem;
+}
+/* On a band the primary turns silver. The ink is fixed, because the band is deep blue in both themes. */
+.btn-on-band {
+  border-color: color-mix(in srgb, var(--on-band) 45%, transparent);
+  background: color-mix(in srgb, var(--on-band) 7%, transparent);
+  color: var(--on-band);
+}
+.btn-on-band:hover {
+  border-color: var(--on-band);
+  color: var(--on-band);
+}
+.btn-primary.btn-on-band {
+  border-color: var(--silver-lo);
+  background: linear-gradient(180deg, #ffffff, #c9d6e8);
+  color: #0b2447;
+}
+.btn-primary.btn-on-band:hover {
+  border-color: var(--silver-lo);
+  color: #0b2447;
+}
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2.75rem;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+.btn-text:hover {
+  color: var(--accent-strong);
+  text-decoration-thickness: 2px;
+}
+.btn-text.btn-on-band,
+.btn-text.btn-on-band:hover {
+  border: 0;
+  background: none;
+  color: var(--on-band);
+}
+
+/* Silver chip: a small label for a stack or a skill. */
+.chip {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border: 1px solid var(--steel);
+  border-radius: 6px;
+  background: linear-gradient(180deg, var(--plate-top), var(--wash));
+  color: var(--muted);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Metallic text, for large type on a blue band only. The solid colour is the fallback: it shows wherever
+   `background-clip: text` is missing, in forced-colors mode and on paper (print drops backgrounds). */
+.text-silver {
+  color: #fff;
+}
+.text-gold {
+  color: var(--gold);
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .text-silver,
+  .text-gold {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .text-silver {
+    background-image: linear-gradient(135deg, #ffffff 0%, #dde6f3 38%, #a9bbd3 66%, #f6f9fd 100%);
+  }
+  .text-gold {
+    background-image: linear-gradient(90deg, #f6e2a6 0%, #e3bf6b 45%, #b98a2e 100%);
+  }
+}
+@media (forced-colors: active) {
+  .text-silver,
+  .text-gold {
+    background: none;
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+  }
+  .plate,
+  .plate-dark,
+  .btn,
+  .chip {
+    background: Canvas;
+    border-color: CanvasText;
+    color: CanvasText;
+  }
+  .btn-primary {
+    background: ButtonFace;
+    color: ButtonText;
+  }
+}
+@media print {
+  .text-silver,
+  .text-gold {
+    background: none;
+    color: var(--ink);
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+/* Section head: a short blue bar over the title, the one-line intro, and a 2 px steel rule that fades out. */
+.sec-head {
+  display: grid;
+  gap: var(--space-2) var(--space-5);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, var(--steel), var(--silver-lo) 55%, transparent) 1;
+}
+@media (min-width: 60rem) {
+  .sec-head {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    align-items: start;
+  }
+}
+.sec-head h2 {
+  position: relative;
+  padding-top: var(--space-3);
+  font-size: clamp(1.75rem, 1.2rem + 2.5vw, var(--text-section));
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+.sec-head h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3rem;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--silver-lo), var(--accent));
+}
+.sec-head p {
+  max-width: 60ch;
+  padding-top: var(--space-3);
+  color: var(--muted);
+}
+@media (forced-colors: active) {
+  .sec-head {
+    border-image: none;
+    border-bottom-color: CanvasText;
+  }
+  .sec-head h2::before {
+    background: CanvasText;
+  }
+}
+
 .skip {
   position: absolute;
   left: 1rem;
