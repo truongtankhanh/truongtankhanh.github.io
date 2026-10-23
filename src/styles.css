@@ -1,50 +1,117 @@
-/* Palette: a highland map. Mist paper, pine ink, contour green, and one amber signal colour that
-   only marks live things (the data moving through the platform diagram). */
+/* Palette: ocean blue and black as the base, white and silver (metal feeds water) around it, and
+   metallic gold as the one warm colour. Both themes are checked for contrast by tokens.test.ts. */
 :root {
-  --paper: #f1f5f2;
-  --ink: #142621;
-  --muted: #53645d;
-  --pine: #1d5546;
-  --pine-strong: #143f34;
-  --pine-wash: #dde9e3;
-  --line: #c4d3cb;
-  --contour: #aec5ba;
-  --signal: #c7860f;
-  --on-pine: #f1f5f2;
+  --paper: #f4f7fb;
+  --surface: #ffffff;
+  --ink: #0b1b33;
+  --muted: #4a5b73;
+  --accent: #1b4f9c;
+  --accent-strong: #123a78;
+  --on-accent: #ffffff;
+  --wash: #e6eef9;
+  --line: #d3deec;
+  --contour: #b9cbe4;
+  --band: #0b2447;
+  --on-band: #eef4ff;
+  --gold: #e3bf6b;
+  --glow: #7fd0ff;
+  --signal: #b8862b;
+  --focus: #8a6310;
+  --silver-hi: #ffffff;
+  --silver-lo: #a9b8cd;
+  --steel: #6f84a1;
+  --plate-top: #ffffff;
+  --plate-bot: #eef2f8;
+  --plate-edge: #9aabc2;
+  --hi: rgba(255, 255, 255, 0.9);
+  --btn-top: #2a63b6;
+  --btn-bot: #123a78;
+  --btn-edge: #0a2550;
+  --btn-ink: #ffffff;
+  --shadow: 0 1px 2px rgba(11, 27, 51, 0.06), 0 12px 32px -12px rgba(11, 27, 51, 0.2);
 
   --font: 'Be Vietnam Pro', system-ui, sans-serif;
   --measure: 66ch;
   --page: 74rem;
   --gutter: clamp(1rem, 4vw, 2.5rem);
+
+  /* Type scale */
+  --text-display: 4rem;
+  --text-section: 2.5rem;
+  --text-role: 1.375rem;
+  --text-body: 1.0625rem;
+  --text-label: 0.75rem;
+
+  /* Spacing, in steps of 8 px */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 2.5rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-10: 5rem;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --paper: #0d1915;
-    --ink: #e2ebe6;
-    --muted: #93a79e;
-    --pine: #7cc7a8;
-    --pine-strong: #a3dcc4;
-    --pine-wash: #172b24;
-    --line: #2a4038;
-    --contour: #22382f;
-    --signal: #e9b64c;
-    --on-pine: #0d1915;
+    --paper: #07142a;
+    --surface: #0e2140;
+    --ink: #e8eefc;
+    --muted: #9db0d0;
+    --accent: #6aa9ff;
+    --accent-strong: #9cc4ff;
+    --on-accent: #07142a;
+    --wash: #12305c;
+    --line: #223a63;
+    --contour: #1d3a66;
+    --band: #0f2b57;
+    --on-band: #eaf1ff;
+    --signal: #e3bf6b;
+    --focus: #e3bf6b;
+    --silver-hi: #9bb3d8;
+    --silver-lo: #2b4a7a;
+    --steel: #b4c6e3;
+    --plate-top: #16315c;
+    --plate-bot: #0e2140;
+    --plate-edge: #060f20;
+    --hi: rgba(255, 255, 255, 0.14);
+    --btn-top: #8dbcff;
+    --btn-bot: #5a97f0;
+    --btn-edge: #2b4f8a;
+    --btn-ink: #07142a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 32px -12px rgba(0, 0, 0, 0.65);
     color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
-  --paper: #0d1915;
-  --ink: #e2ebe6;
-  --muted: #93a79e;
-  --pine: #7cc7a8;
-  --pine-strong: #a3dcc4;
-  --pine-wash: #172b24;
-  --line: #2a4038;
-  --contour: #22382f;
-  --signal: #e9b64c;
-  --on-pine: #0d1915;
+  --paper: #07142a;
+  --surface: #0e2140;
+  --ink: #e8eefc;
+  --muted: #9db0d0;
+  --accent: #6aa9ff;
+  --accent-strong: #9cc4ff;
+  --on-accent: #07142a;
+  --wash: #12305c;
+  --line: #223a63;
+  --contour: #1d3a66;
+  --band: #0f2b57;
+  --on-band: #eaf1ff;
+  --signal: #e3bf6b;
+  --focus: #e3bf6b;
+  --silver-hi: #9bb3d8;
+  --silver-lo: #2b4a7a;
+  --steel: #b4c6e3;
+  --plate-top: #16315c;
+  --plate-bot: #0e2140;
+  --plate-edge: #060f20;
+  --hi: rgba(255, 255, 255, 0.14);
+  --btn-top: #8dbcff;
+  --btn-bot: #5a97f0;
+  --btn-edge: #2b4f8a;
+  --btn-ink: #07142a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 32px -12px rgba(0, 0, 0, 0.65);
   color-scheme: dark;
 }
 
@@ -77,17 +144,17 @@ body {
 }
 
 a {
-  color: var(--pine);
+  color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
 }
 a:hover {
-  color: var(--pine-strong);
+  color: var(--accent-strong);
   text-decoration-thickness: 2px;
 }
 
 :focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -111,8 +178,8 @@ p {
   top: -4rem;
   z-index: 20;
   padding: 0.5rem 1rem;
-  background: var(--pine);
-  color: var(--on-pine);
+  background: var(--accent);
+  color: var(--on-accent);
   border-radius: 6px;
 }
 .skip:focus {
@@ -133,10 +200,24 @@ p {
   border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
 }
 .site-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
   font-weight: 600;
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
+}
+.brand-mark {
+  flex: none;
+  width: 48px;
+  height: 48px;
+}
+@media (max-width: 37.5rem) {
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+  }
 }
 .site-header nav {
   display: flex;
@@ -153,7 +234,7 @@ p {
 .site-header nav a:hover,
 .site-header nav a[aria-current] {
   color: var(--ink);
-  border-bottom-color: var(--pine);
+  border-bottom-color: var(--accent);
 }
 .header-actions {
   display: flex;
@@ -181,7 +262,7 @@ p {
   stroke-linejoin: round;
 }
 .icon-button:hover {
-  border-color: var(--pine);
+  border-color: var(--accent);
 }
 
 /* ── Buttons ────────────────────────────────────────────────── */
@@ -201,19 +282,19 @@ p {
   cursor: pointer;
 }
 .button:hover {
-  border-color: var(--pine);
-  color: var(--pine);
+  border-color: var(--accent);
+  color: var(--accent);
   text-decoration: none;
 }
 .button-primary {
-  background: var(--pine);
-  border-color: var(--pine);
-  color: var(--on-pine);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 .button-primary:hover {
-  background: var(--pine-strong);
-  border-color: var(--pine-strong);
-  color: var(--on-pine);
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: var(--on-accent);
 }
 .button-small {
   min-height: 2.25rem;
@@ -294,7 +375,7 @@ main {
   margin-top: 1rem;
   font-size: clamp(1.2rem, 2.4vw, 1.45rem);
   font-weight: 500;
-  color: var(--pine);
+  color: var(--accent);
 }
 .intro {
   margin-top: 1.1rem;
@@ -336,7 +417,7 @@ main {
 }
 
 .frame {
-  fill: color-mix(in srgb, var(--pine-wash) 45%, transparent);
+  fill: color-mix(in srgb, var(--wash) 45%, transparent);
   stroke: var(--line);
   stroke-dasharray: 5 5;
 }
@@ -375,11 +456,11 @@ main {
 }
 .node rect {
   fill: var(--paper);
-  stroke: var(--pine);
+  stroke: var(--accent);
   stroke-width: 1.5;
 }
 .node:hover rect {
-  fill: var(--pine-wash);
+  fill: var(--wash);
 }
 .node-title {
   fill: var(--ink);
@@ -400,11 +481,11 @@ main {
   font-weight: 600;
 }
 .node.is-selected rect {
-  fill: var(--pine);
-  stroke: var(--pine);
+  fill: var(--accent);
+  stroke: var(--accent);
 }
 .node.is-selected text {
-  fill: var(--on-pine);
+  fill: var(--on-accent);
 }
 .node:focus {
   outline: none;
@@ -427,7 +508,7 @@ main {
   align-items: start;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 2px solid var(--pine);
+  border-top: 2px solid var(--accent);
 }
 .panel:not(:has(.panel-figure)) {
   grid-template-columns: minmax(0, var(--measure));
@@ -457,7 +538,7 @@ main {
 .stack li {
   padding: 0.15rem 0.65rem;
   border-radius: 999px;
-  background: var(--pine-wash);
+  background: var(--wash);
   font-size: 0.85rem;
 }
 .panel-figure {
@@ -512,10 +593,10 @@ main {
   height: 11px;
   border-radius: 50%;
   background: var(--paper);
-  border: 2px solid var(--pine);
+  border: 2px solid var(--accent);
 }
 .role:first-child .role-body::before {
-  background: var(--pine);
+  background: var(--accent);
 }
 .role-dates {
   padding-top: 0.15rem;
@@ -533,7 +614,7 @@ main {
   margin-top: 0.2rem;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--pine);
+  color: var(--accent);
 }
 .role-summary {
   margin-top: 0.75rem;
@@ -559,7 +640,7 @@ main {
   padding-left: 0.2rem;
 }
 .engagement li::marker {
-  color: var(--pine);
+  color: var(--accent);
 }
 .engagement-link {
   display: inline-block;
@@ -619,7 +700,7 @@ main {
   font-size: 1.1rem;
   font-weight: 600;
   padding-left: 0.85rem;
-  border-left: 3px solid var(--pine);
+  border-left: 3px solid var(--accent);
 }
 .principle p {
   margin-top: 0.5rem;
@@ -702,11 +783,12 @@ main {
   :root,
   :root[data-theme='dark'] {
     --paper: #fff;
+    --surface: #fff;
     --ink: #111;
     --muted: #444;
-    --pine: #1d5546;
+    --accent: #1b4f9c;
     --line: #bbb;
-    --pine-wash: #fff;
+    --wash: #fff;
   }
   body {
     font-size: 9.6pt;

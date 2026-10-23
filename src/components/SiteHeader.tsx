@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { resume } from '../content/resume';
+import { Logo } from './Logo';
 
 type Theme = 'light' | 'dark';
 
@@ -52,6 +53,8 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <a className="site-name" href="#main" lang="vi">
+        {/* The plate carries its own colours, so the dark variant reads on both themes. */}
+        <Logo variant="dark" className="brand-mark" />
         Trương Tấn Khánh
       </a>
       <nav aria-label="Sections">
