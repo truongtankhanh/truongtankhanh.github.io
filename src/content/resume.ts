@@ -17,6 +17,7 @@ export const resume: Resume = {
   email: 'ttkhanh100896@gmail.com',
   siteUrl: 'https://truongtankhanh.github.io/',
   cvPdf: 'Truong_Tan_Khanh_CV.pdf',
+  cv: { pdf: '/Truong_Tan_Khanh_CV.pdf', fileName: 'Truong_Tan_Khanh_CV.pdf' },
   links: {
     github: GH,
     linkedin: 'https://www.linkedin.com/in/truongtankhanh/',
@@ -42,6 +43,12 @@ export const resume: Resume = {
       what: 'A real-time console for a campus control room: live incidents on a site map, the cameras covering each incident, and a response workflow where every action is recorded.',
       proof:
         'Incident lifecycle enforced by the domain, events published only after commit, end-to-end tests on a real PostgreSQL, and the whole stack up with one command.',
+      checks: [
+        'Incident lifecycle enforced by the domain',
+        'Events published only after commit',
+        'End-to-end tests on a real PostgreSQL',
+        'The whole stack up with one command',
+      ],
       stack: ['NestJS', 'React 19', 'MapLibre', 'three.js', 'Socket.IO', 'Keycloak', 'PostgreSQL'],
       image: {
         src: 'images/console-overview.webp',
@@ -56,6 +63,13 @@ export const resume: Resume = {
       what: 'Sensor readings from the campus arrive over MQTT, are stored in PostgreSQL, and turn into alerts that open and resolve incidents in the command center.',
       proof:
         'About 10,000 messages a second on one replica with no loss and no duplicates; alerts delivered through an outbox; ready for Kubernetes.',
+      checks: [
+        'About 10,000 messages a second on one replica with no loss and no duplicates',
+        'Alerts delivered through an outbox',
+        'Ready for Kubernetes',
+      ],
+      stat: { value: '~10k/s', label: 'messages on one replica' },
+      statSource: 'About 10,000 messages a second',
       stack: ['NestJS', 'MQTT 5', 'PostgreSQL', 'Prometheus', 'Kubernetes'],
       image: {
         src: 'images/occ-incident-from-telemetry.webp',
@@ -70,6 +84,13 @@ export const resume: Resume = {
       what: 'Both systems described as AWS CDK code: containers on ECS Fargate, RDS PostgreSQL, AWS IoT Core for devices, CloudFront and WAF in front.',
       proof:
         'cdk-nag security rules pass on every synth, least privilege is asserted in tests, and deploys use GitHub OIDC with no stored keys.',
+      checks: [
+        'cdk-nag security rules pass on every synth',
+        'Least privilege is asserted in tests',
+        'Deploys use GitHub OIDC with no stored keys',
+      ],
+      stat: { value: 'cdk-nag', label: 'security rules pass on every synth' },
+      statSource: 'cdk-nag security rules pass on every synth',
       stack: ['AWS CDK', 'TypeScript', 'ECS Fargate', 'RDS', 'IoT Core', 'CloudFront'],
     },
     {
@@ -79,6 +100,12 @@ export const resume: Resume = {
       what: 'The written design of the platform: C4 views, the decisions that cross system boundaries, and how a decision gets reviewed.',
       proof:
         'Twelve decision records with the options that were rejected and why, including one superseded when its assumption turned out wrong.',
+      checks: [
+        'Twelve decision records with the options that were rejected and why',
+        'Including one superseded when its assumption turned out wrong',
+      ],
+      stat: { value: '12', label: 'decision records' },
+      statSource: 'Twelve decision records',
       stack: ['ADRs', 'C4 model', 'Mermaid'],
     },
     {
@@ -88,6 +115,14 @@ export const resume: Resume = {
       what: 'The AI-assisted workflow both systems were built with: each job is analysed, planned, applied and verified in separate stages a person can review and correct.',
       proof:
         'Plans are written before code, file scope is fixed, nothing is committed automatically, and real runs are published next to the commits they produced.',
+      checks: [
+        'Plans are written before code',
+        'File scope is fixed',
+        'Nothing is committed automatically',
+        'Real runs are published next to the commits they produced',
+      ],
+      stat: { value: 'Plan first', label: 'plans are written before code' },
+      statSource: 'Plans are written before code',
       stack: ['Claude Code plugin', 'Markdown artifacts'],
     },
   ],

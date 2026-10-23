@@ -24,6 +24,15 @@ export interface Engagement {
   link?: Link;
 }
 
+/** The page behind a project card. Filled in V1-11 and V1-12; V1-10.1 adds the section fields the template needs. */
+export interface CaseStudy {
+  /** Last segment of the route, `/work/<slug>/`. */
+  slug: string;
+  lead: string;
+  role: string;
+  status: string;
+}
+
 export type ProjectId = 'occ' | 'telemetry' | 'aws' | 'adr' | 'pipelines';
 
 export interface Project {
@@ -34,8 +43,15 @@ export interface Project {
   what: string;
   /** The claim a reviewer can check in the repository. */
   proof: string;
+  /** The claims of `proof` as a checklist: split on its commas and semicolons, capitalisation changed, final "and" dropped. */
+  checks: string[];
+  /** One key figure for the project card. The featured project has none. */
+  stat?: { value: string; label: string };
+  /** The words of `proof` that `stat` restates, quoted exactly, so no figure is invented. */
+  statSource?: string;
   stack: string[];
   image?: { src: string; alt: string; caption: string };
+  caseStudy?: CaseStudy;
 }
 
 export interface SkillGroup {
@@ -70,6 +86,8 @@ export interface Resume {
   siteUrl: string;
   /** File name of the public CV PDF, built into `dist/` by `scripts/build-pdf.js`. */
   cvPdf: string;
+  /** The public CV: `pdf` is the root-relative URL, `fileName` the ASCII name the download is saved under. */
+  cv: { pdf: string; fileName: string };
   links: { github: string; linkedin: string };
   /** In career order, early to recent. */
   metrics: Metric[];

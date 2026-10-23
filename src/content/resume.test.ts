@@ -112,6 +112,58 @@ describe('resume content', () => {
     });
   });
 
+  describe('project cards and case studies', () => {
+    /** Lower-case words with the separators and a dropped "and" after a comma or semicolon removed. */
+    const words = (text: string) =>
+      text
+        .toLowerCase()
+        .replace(/([,;])\s+and\s+/g, '$1 ')
+        .replace(/[,;.]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean);
+
+    it('gives every project its proof as a checklist that changes nothing but capitalisation and the final "and"', () => {
+      for (const p of resume.projects) {
+        expect(p.checks.length, p.name).toBeGreaterThan(1);
+        expect(words(p.checks.join(' ')), p.name).toEqual(words(p.proof));
+        for (const c of p.checks) expect(c, p.name).toMatch(/^[A-Z0-9]|^cdk-nag/);
+      }
+    });
+
+    it('gives a project a key figure only together with the words of its proof that it restates', () => {
+      for (const p of resume.projects) {
+        expect(Boolean(p.stat), p.name).toBe(Boolean(p.statSource));
+        if (!p.stat || !p.statSource) continue;
+        expect(p.stat.value.trim(), p.name).not.toBe('');
+        expect(p.stat.label.trim(), p.name).not.toBe('');
+        expect(p.proof, p.name).toContain(p.statSource);
+      }
+      expect(project('occ').stat).toBeUndefined();
+    });
+
+    it('gives a case study a unique URL slug and a lead', () => {
+      const studies = resume.projects.flatMap((p) => (p.caseStudy ? [p.caseStudy] : []));
+      const slugs = studies.map((s) => s.slug);
+      expect(new Set(slugs).size).toBe(slugs.length);
+      for (const s of studies) {
+        expect(s.slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+        expect(s.lead.trim()).not.toBe('');
+        expect(s.role.trim()).not.toBe('');
+        expect(s.status.trim()).not.toBe('');
+      }
+    });
+
+    function project(id: string) {
+      return resume.projects.find((p) => p.id === id)!;
+    }
+  });
+
+  it('points the CV link at an ASCII file name that matches the PDF build', () => {
+    expect(resume.cv.fileName).toMatch(/^[\w.-]+\.pdf$/);
+    expect(resume.cv.pdf).toBe(`/${resume.cv.fileName}`);
+    expect(resume.cv.fileName).toBe(resume.cvPdf);
+  });
+
   it('keeps a phone number off the public page', () => {
     expect(JSON.stringify(resume)).not.toMatch(/\b0\d{9}\b|\+84/);
   });
