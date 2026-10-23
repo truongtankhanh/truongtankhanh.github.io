@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resume } from '../content/resume';
+import { findPhoneNumber } from './privacy';
 import { headTags, homeMeta, jsonLdScript, pageMeta, personJsonLd, robotsTxt, sitemapXml } from './seo';
 
 describe('person JSON-LD', () => {
@@ -21,10 +22,39 @@ describe('person JSON-LD', () => {
   it('keeps a phone number out and survives being embedded in HTML', () => {
     const tag = jsonLdScript(data);
     expect(tag).toMatch(/^<script type="application\/ld\+json">/);
-    expect(tag).not.toMatch(/\b0\d{9}\b|\+84/);
+    expect(findPhoneNumber(tag)).toBeUndefined();
     const json = tag.slice(tag.indexOf('>') + 1, tag.lastIndexOf('</script>'));
     expect(json).not.toContain('<');
     expect(JSON.parse(json).name).toBe(resume.name);
+  });
+
+  it('lists the public facts and nothing else: no phone, no address beyond the country', () => {
+    expect(Object.keys(data).sort()).toEqual(
+      [
+        '@context',
+        '@type',
+        'name',
+        'alternateName',
+        'jobTitle',
+        'url',
+        'email',
+        'address',
+        'sameAs',
+        'knowsAbout',
+        'worksFor',
+      ].sort(),
+    );
+    expect(data.url).toBe(resume.siteUrl);
+    expect(data.email).toBe(`mailto:${resume.email}`);
+    expect(data.address).toEqual({ '@type': 'PostalAddress', addressCountry: 'VN' });
+  });
+
+  it('knows about every core technology', () => {
+    for (const tech of resume.coreStack) expect(data.knowsAbout).toContain(tech);
+  });
+
+  it('passes the privacy check as part of the whole home page head', () => {
+    expect(findPhoneNumber(headTags(resume, homeMeta(resume)))).toBeUndefined();
   });
 });
 
