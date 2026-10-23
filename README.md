@@ -26,7 +26,7 @@ and React then hydrates the parts that are interactive.
 
 ```bash
 pnpm install
-pnpm dev        # http://localhost:5173
+pnpm dev        # http://localhost:5390
 pnpm build      # client build, server build, then prerender into dist/
 pnpm preview    # serve dist/
 ```
