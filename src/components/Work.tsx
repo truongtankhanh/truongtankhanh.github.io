@@ -88,6 +88,13 @@ function ProjectCard({ project }: { project: Project }) {
       </ul>
       <Chips items={project.stack} />
       <div className="project-foot">
+        {/* Only a project with a case study page links to it, as on the featured card. */}
+        {project.caseStudy && (
+          <a href={`/work/${project.caseStudy.slug}/`}>
+            Read the case study
+            <span className="sr-only"> for {project.name}</span>
+          </a>
+        )}
         <RepoLink project={project}>View repository</RepoLink>
       </div>
     </article>

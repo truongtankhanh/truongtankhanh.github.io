@@ -47,6 +47,19 @@ describe('Work', () => {
     expect(markup).toMatch(/<a [^>]*href="\/work\/ops-command-center\/"[^>]*>Read the case study<\/a>/);
   });
 
+  it('links a card to its case study only when that project has one, and names the project for screen readers', () => {
+    const [second, ...rest] = others as [Project, ...Project[]];
+    const withStudy = { ...second, caseStudy: sampleCaseStudy('iot-telemetry-pipeline') };
+    const cards = render([featured, withStudy, ...rest])
+      .split('<article class="project-card')
+      .slice(1);
+    expect(cards[0]).toContain(
+      '<a href="/work/iot-telemetry-pipeline/">Read the case study<span class="sr-only"> for ' + second.name,
+    );
+    for (const card of cards.slice(1)) expect(card).not.toContain('Read the case study');
+    expect(render([featured, ...others])).not.toContain('/work/');
+  });
+
   it('gives each of the other projects a card with its key figure, checks, stack and repository link', () => {
     const markup = render();
     const cards = markup.split('<article class="project-card').slice(1);

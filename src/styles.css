@@ -1561,6 +1561,9 @@ p {
   transform: rotate(-45deg);
 }
 .project-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
   margin-top: auto;
   padding-top: var(--space-2);
   border-top: 1px solid var(--line);
