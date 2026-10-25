@@ -1825,6 +1825,8 @@ p {
 }
 
 /* ── Experience timeline ────────────────────────────────────── */
+/* Dates on the left (sticky while the role scrolls), a rail with a node per role, then the role. The key phrase of
+   every bullet is strong ink and the rest the quieter colour, so the bold phrases can be read on their own. */
 .timeline {
   margin: 0;
   padding: 0;
@@ -1832,95 +1834,180 @@ p {
 }
 .role {
   display: grid;
-  grid-template-columns: 10rem minmax(0, var(--measure));
-  gap: 2rem;
+  grid-template-columns: 190px 28px minmax(0, 1fr);
+  gap: 0 28px;
+}
+.role-when {
+  position: sticky;
+  top: calc(var(--header-h) + 1.25rem);
+  align-self: start;
+  padding-top: 8px;
+}
+.role-dates {
+  color: var(--ink);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.role-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.role-rail {
   position: relative;
 }
-/* The rail: a real sequence of jobs, newest first. */
+.role-rail::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  bottom: -4px;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--line);
+}
+.role-rail i {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: var(--surface);
+}
+/* The open role: a filled node with a halo, and a line that fades under it. */
+.is-current .role-rail::before {
+  background: linear-gradient(var(--accent), var(--line) 220px);
+}
+.is-current .role-rail i {
+  background: var(--accent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.role:last-child .role-rail::before {
+  display: none;
+}
 .role-body {
-  position: relative;
-  padding-left: 1.75rem;
-  padding-bottom: 2.75rem;
-  border-left: 1px solid var(--line);
+  padding-bottom: 72px;
 }
 .role:last-child .role-body {
   padding-bottom: 0;
 }
-.role-body::before {
-  content: '';
-  position: absolute;
-  left: -6px;
-  top: 0.45rem;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--accent);
-}
-.role:first-child .role-body::before {
-  background: var(--accent);
-}
-.role-dates {
-  padding-top: 0.15rem;
-  color: var(--muted);
-  font-size: 0.93rem;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
 .role h3 {
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 .role-title {
   display: block;
-  margin-top: 0.2rem;
-  font-size: 1rem;
-  font-weight: 500;
+  margin-top: 6px;
   color: var(--accent);
-}
-.role-summary {
-  margin-top: 0.75rem;
-}
-.engagement {
-  margin-top: 1.4rem;
-}
-.engagement h4 {
   font-size: 1.05rem;
   font-weight: 600;
+  letter-spacing: 0;
 }
-.engagement-context {
-  margin-top: 0.3rem;
+.role-summary {
+  max-width: 66ch;
+  margin-top: 20px;
   color: var(--muted);
 }
+.engagement {
+  margin-top: 24px;
+}
+.engagement:not(.is-flat) {
+  padding: 24px 28px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+}
+.engagement h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.engagement-context {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
 .engagement ul {
-  margin: 0.6rem 0 0;
-  list-style: disc;
-  padding-left: 1.1rem;
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
 }
 .engagement li {
-  margin-top: 0.35rem;
-  padding-left: 0.2rem;
+  position: relative;
+  padding-left: 22px;
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.6;
 }
-.engagement li::marker {
-  color: var(--accent);
+.engagement li::before {
+  content: '';
+  position: absolute;
+  top: 0.7em;
+  left: 2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.engagement strong {
+  color: var(--ink);
+  font-weight: 700;
 }
 .engagement-link {
   display: inline-block;
-  margin-top: 0.6rem;
+  margin-top: 12px;
   font-size: 0.93rem;
 }
-@media (max-width: 44rem) {
+
+/* Below 960 px the dates sit above the role and the rail stays on the left. */
+@container (width < 960px) {
   .role {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 0 var(--space-2);
   }
-  .role-dates {
-    text-align: left;
-    padding-left: 1.75rem;
-    border-left: 1px solid var(--line);
+  .role-when {
+    position: static;
+    display: flex;
+    grid-column: 2;
+    grid-row: 1;
+    align-items: center;
+    gap: 12px;
+    padding: 0 0 12px;
   }
-  .role-body::before {
-    top: -1.3rem;
+  .role-badge {
+    margin-top: 0;
+  }
+  .role-rail {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .role-body {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .role h3 {
+    font-size: 1.6rem;
+  }
+}
+@container (width < 600px) {
+  .engagement:not(.is-flat) {
+    padding: 20px;
   }
 }
 
@@ -2157,40 +2244,110 @@ p {
   .print-projects li + li {
     margin-top: 2pt;
   }
+  /* The timeline is a screen design. The CV keeps its two columns, its line with a dot per role, and plain text. */
   .role {
     grid-template-columns: 5.2rem minmax(0, 1fr);
     gap: 10pt;
     break-inside: auto;
   }
+  .role-rail,
+  .role-badge,
+  .engagement li::before {
+    display: none;
+  }
+  .role-when {
+    position: static;
+    padding-top: 0;
+  }
   .role-body {
+    position: relative;
     padding-left: 10pt;
     padding-bottom: 8pt;
+    border-left: 1px solid var(--line);
+  }
+  .role:last-child .role-body {
+    padding-bottom: 0;
+  }
+  .role-body::before {
+    content: '';
+    position: absolute;
+    top: 0.45rem;
+    left: -6px;
+    width: 11px;
+    height: 11px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+  .role:first-child .role-body::before {
+    background: var(--accent);
   }
   .role h3 {
     font-size: 11pt;
+    font-weight: 600;
+    letter-spacing: normal;
+    line-height: 1.2;
   }
   .role-title {
     display: inline;
+    margin-top: 0;
     margin-left: 6pt;
     font-size: 9.6pt;
+    font-weight: 500;
   }
   .role-summary,
   .engagement,
   .engagement-context {
     margin-top: 3pt;
   }
+  .role-summary {
+    max-width: none;
+    color: inherit;
+  }
+  .engagement:not(.is-flat) {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
   .engagement h4 {
     font-size: 10pt;
+    font-weight: 600;
+  }
+  .engagement-context {
+    font-size: inherit;
   }
   .engagement ul {
+    display: block;
     margin-top: 2pt;
+    padding-left: 1.1rem;
+    list-style: disc;
   }
   .engagement li {
     margin-top: 1pt;
+    padding-left: 0.2rem;
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
     break-inside: avoid;
   }
+  .engagement li::marker {
+    color: var(--accent);
+  }
+  .engagement strong {
+    color: inherit;
+    font-weight: inherit;
+  }
   .role-dates {
+    padding-top: 0.15rem;
+    color: var(--muted);
+    font-family: inherit;
     font-size: 8.6pt;
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-align: right;
+    text-transform: none;
   }
   .skill-group {
     grid-template-columns: 9rem minmax(0, 1fr);

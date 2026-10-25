@@ -4,8 +4,7 @@ import '@fontsource/be-vietnam-pro/600.css';
 import '@fontsource/be-vietnam-pro/800.css';
 
 import { resume } from './content/resume';
-import { formatMonth } from './lib/dates';
-import { stripEmphasis } from './lib/emphasis';
+import { Experience } from './components/Experience';
 import { Hero } from './components/Hero';
 import { SiteHeader } from './components/SiteHeader';
 import { Work } from './components/Work';
@@ -29,45 +28,7 @@ export function App() {
         <div className="page">
           <Work projects={r.projects} architecture={r.architecture} />
 
-          <section id="experience" className="section" aria-labelledby="experience-title">
-            <div className="section-head">
-              <h2 id="experience-title">Experience</h2>
-            </div>
-            <ol className="timeline">
-              {r.experience.map((role) => (
-                <li key={role.company} className="role">
-                  <p className="role-dates">
-                    <time dateTime={role.start}>{formatMonth(role.start)}</time>
-                    {' – '}
-                    {role.end ? <time dateTime={role.end}>{formatMonth(role.end)}</time> : 'present'}
-                  </p>
-                  <div className="role-body">
-                    <h3>
-                      {role.company}
-                      <span className="role-title">{role.title}</span>
-                    </h3>
-                    {role.summary && <p className="role-summary">{role.summary}</p>}
-                    {role.work.map((w, i) => (
-                      <div key={w.name ?? i} className="engagement">
-                        {w.name && <h4>{w.name}</h4>}
-                        {w.context && <p className="engagement-context">{w.context}</p>}
-                        <ul>
-                          {w.points.map((pt) => (
-                            <li key={pt}>{stripEmphasis(pt)}</li>
-                          ))}
-                        </ul>
-                        {w.link && (
-                          <a className="engagement-link" href={w.link.href}>
-                            {w.link.label}
-                          </a>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
+          <Experience roles={r.experience} />
 
           <section id="skills" className="section" aria-labelledby="skills-title">
             <div className="section-head">
