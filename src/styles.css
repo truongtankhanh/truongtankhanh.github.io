@@ -51,6 +51,7 @@
   --space-6: 3rem;
   --space-8: 4rem;
   --space-10: 5rem;
+  --header-h: 4.75rem;
   color-scheme: light;
 }
 
@@ -464,7 +465,7 @@ p {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: var(--space-3);
-  min-height: 76px;
+  min-height: var(--header-h);
   padding-inline: clamp(20px, 3.6vw, 56px);
 }
 
@@ -747,7 +748,8 @@ p {
 }
 
 /* ── Layout ─────────────────────────────────────────────────── */
-main {
+/* The column of every section below the hero; the hero is a full-width band and draws its own column. */
+.page {
   max-width: var(--page);
   margin: 0 auto;
   padding: 0 var(--gutter);
@@ -773,10 +775,473 @@ main {
 }
 
 /* ── Hero ───────────────────────────────────────────────────── */
+/* A full-width band in the colour of the header; it starts under the header, so the two are one piece even where
+   the header is see-through. Behind the content a ring of sun rays turns very slowly, and
+   waves drift along the foot; the front wave is the page colour and closes the band. Every loop is off for
+   visitors who ask for reduced motion (see the end of this block). */
 .hero {
   position: relative;
-  padding-block: clamp(3.5rem, 10vw, 7.5rem) clamp(3rem, 7vw, 5rem);
+  margin-top: calc(var(--header-h) * -1);
+  padding-block: calc(var(--header-h) + clamp(4.5rem, 8vw, 6.5rem)) 7.5rem;
+  background: var(--band);
+  color: var(--on-band);
+  overflow: hidden;
 }
+.hero :focus-visible {
+  outline-color: var(--gold);
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.hero-sun {
+  position: absolute;
+  top: -260px;
+  right: -220px;
+  width: 760px;
+  height: 760px;
+  pointer-events: none;
+}
+.hero-sun circle {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gold) 32%, transparent);
+  stroke-width: 1.2;
+}
+.hero-sun line {
+  stroke: color-mix(in srgb, var(--gold) 28%, transparent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.hero-waves {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 64px;
+  pointer-events: none;
+}
+.hero-waves svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+}
+.wave-back,
+.wave-mid {
+  width: 200%;
+}
+.wave-back {
+  fill: color-mix(in srgb, var(--on-band) 14%, transparent);
+}
+.wave-mid {
+  fill: color-mix(in srgb, var(--on-band) 8%, transparent);
+}
+.wave-front {
+  width: 100%;
+  fill: var(--paper);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+}
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: var(--space-4);
+  color: color-mix(in srgb, var(--on-band) 75%, transparent);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hero-meta::before {
+  content: '';
+  flex: none;
+  width: 40px;
+  height: 2px;
+  background: var(--gold);
+}
+.hero h1 {
+  font-size: 5.25rem;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  /* The gradient is clipped to the text, so the padding gives the stacked Vietnamese diacritics room to paint. */
+  padding-block: 0.12em 0.06em;
+}
+.headline {
+  margin-top: 1.75rem;
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.intro {
+  max-width: 36rem;
+  margin-top: 1.75rem;
+  color: color-mix(in srgb, var(--on-band) 82%, transparent);
+  font-size: 1.1rem;
+  line-height: 1.65;
+}
+.where {
+  max-width: 50ch;
+  margin-top: 1.4rem;
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.where-place {
+  display: none;
+}
+/* Four equal plates, symmetrical: two columns, one on a phone. */
+.hero-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 540px;
+  margin-top: var(--space-5);
+}
+.hero-actions .btn {
+  width: 100%;
+}
+.hero-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-4);
+  margin: 3.25rem 0 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--on-band) 24%, transparent);
+}
+.hero-facts dt {
+  color: color-mix(in srgb, var(--on-band) 66%, transparent);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hero-facts dd {
+  margin: 0;
+}
+.fact-main {
+  margin-top: var(--space-1);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.fact-sub {
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--on-band) 74%, transparent);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+.hero .fact-link,
+.hero .fact-link:hover {
+  color: var(--gold);
+  text-underline-offset: 0.25em;
+}
+.hero .fact-link:hover {
+  color: var(--on-band);
+}
+
+/* Technology stack: four glass layers on a data bus. The platform tilts back a little; a light-blue pulse runs down
+   the bus and each layer steps forward, lights its edge and wakes its bus node as the pulse reaches it. */
+.hero-stack {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  padding-left: 48px;
+  transform: perspective(1400px) rotateY(-6deg) rotateX(1deg);
+  transform-origin: left center;
+}
+.hero-stack::before {
+  content: '';
+  position: absolute;
+  top: 56px;
+  bottom: 56px;
+  left: 13px;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--on-band) 38%, transparent),
+    color-mix(in srgb, var(--on-band) 16%, transparent)
+  );
+}
+.hero-stack::after {
+  content: '';
+  position: absolute;
+  top: 56px;
+  left: 10px;
+  width: 9px;
+  height: 84px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, transparent, var(--glow) 65%, var(--on-band));
+  filter: drop-shadow(0 0 10px var(--glow));
+  opacity: 0;
+}
+.hero-layer {
+  position: relative;
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2) 16px;
+  padding: 22px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background:
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--on-band) 13%, var(--band)),
+        color-mix(in srgb, var(--on-band) 4%, var(--band))
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--on-band) 46%, transparent),
+        color-mix(in srgb, var(--on-band) 8%, transparent)
+      )
+      border-box;
+  box-shadow:
+    0 22px 44px -22px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 color-mix(in srgb, var(--on-band) 14%, transparent);
+}
+/* The bus node and the short feeder from the bus to the card. */
+.hero-layer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -42px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border: 2px solid color-mix(in srgb, var(--on-band) 55%, transparent);
+  border-radius: 4px;
+  background: var(--band);
+  transform: rotate(45deg);
+}
+.hero-layer::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -28px;
+  width: 28px;
+  height: 2px;
+  background: color-mix(in srgb, var(--on-band) 26%, transparent);
+}
+.hero-layer-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.hero-layer-head span {
+  color: color-mix(in srgb, var(--on-band) 88%, transparent);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.hero-layer-icon {
+  box-sizing: content-box;
+  width: 24px;
+  height: 24px;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--on-band) 30%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--on-band) 10%, transparent);
+  color: var(--on-band);
+  stroke-width: 1.7;
+}
+.hero-layer ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hero-layer li {
+  padding: 6px 13px;
+  border: 1px solid color-mix(in srgb, var(--on-band) 30%, transparent);
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--on-band) 90%, transparent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.hero-layer li.is-core {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-color: var(--on-band);
+  background: var(--on-band);
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.6);
+  color: var(--band);
+  font-weight: 700;
+}
+.hero-layer li.is-core::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-sun {
+    animation: sun-turn 180s linear infinite;
+  }
+  .wave-back {
+    animation: wave-drift 22s linear infinite;
+  }
+  .wave-mid {
+    animation: wave-drift 34s linear infinite reverse;
+  }
+  .hero-stack::after {
+    animation: stack-pulse 4.8s linear infinite;
+  }
+  .hero-layer,
+  .hero-layer::before {
+    animation: 4.8s ease-out infinite;
+  }
+  .hero-layer {
+    animation-name: layer-glow;
+  }
+  .hero-layer::before {
+    animation-name: layer-node;
+  }
+  .hero-layer:nth-child(1),
+  .hero-layer:nth-child(1)::before {
+    animation-delay: 0.35s;
+  }
+  .hero-layer:nth-child(2),
+  .hero-layer:nth-child(2)::before {
+    animation-delay: 1.25s;
+  }
+  .hero-layer:nth-child(3),
+  .hero-layer:nth-child(3)::before {
+    animation-delay: 2.15s;
+  }
+  .hero-layer:nth-child(4),
+  .hero-layer:nth-child(4)::before {
+    animation-delay: 3.05s;
+  }
+}
+@keyframes sun-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes wave-drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes stack-pulse {
+  0% {
+    top: 56px;
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  72% {
+    top: calc(100% - 140px);
+    opacity: 1;
+  }
+  76%,
+  100% {
+    top: calc(100% - 140px);
+    opacity: 0;
+  }
+}
+@keyframes layer-glow {
+  0% {
+    transform: translateX(0);
+  }
+  3%,
+  14% {
+    transform: translateX(12px);
+    box-shadow:
+      0 0 0 1.5px var(--glow),
+      0 0 34px color-mix(in srgb, var(--glow) 40%, transparent),
+      0 22px 44px -22px rgba(0, 0, 0, 0.55);
+  }
+  26%,
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes layer-node {
+  0%,
+  26%,
+  100% {
+    background: var(--band);
+    border-color: color-mix(in srgb, var(--on-band) 55%, transparent);
+    box-shadow: none;
+  }
+  3%,
+  14% {
+    background: var(--glow);
+    border-color: var(--glow);
+    box-shadow: 0 0 14px var(--glow);
+  }
+}
+
+@container (width < 960px) {
+  .hero {
+    padding-top: calc(var(--header-h) + 4.5rem);
+  }
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero h1 {
+    font-size: 4.5rem;
+  }
+  .hero-stack {
+    max-width: 600px;
+    transform: none;
+  }
+}
+@container (width < 600px) {
+  .hero h1 {
+    font-size: 3.25rem;
+  }
+  .headline {
+    margin-top: 1.25rem;
+    font-size: 1.3rem;
+  }
+  .intro {
+    font-size: 1.05rem;
+  }
+  .hero-actions,
+  .hero-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-facts {
+    margin-top: 2.25rem;
+  }
+  /* The label sits above its chips. */
+  .hero-layer {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 18px;
+  }
+  .hero-layer-head {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Left from the old hero until V1-06.3 retires `Contours.tsx` and these rules together. */
 .hero-art {
   position: absolute;
   z-index: -1;
@@ -803,39 +1268,6 @@ main {
 }
 .contour-peak {
   fill: var(--signal);
-}
-.hero-text {
-  max-width: 42rem;
-}
-.hero h1 {
-  font-size: clamp(2.6rem, 8.5vw, 5.25rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.02;
-  /* Vietnamese diacritics stack above the cap height; keep them clear of the header. */
-  padding-top: 0.12em;
-}
-.headline {
-  margin-top: 1rem;
-  font-size: clamp(1.2rem, 2.4vw, 1.45rem);
-  font-weight: 500;
-  color: var(--accent);
-}
-.intro {
-  margin-top: 1.1rem;
-  max-width: var(--measure);
-  font-size: 1.1rem;
-}
-.where {
-  margin-top: 1.25rem;
-  color: var(--muted);
-  font-size: 0.97rem;
-}
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 2rem;
 }
 
 /* ── Platform diagram ───────────────────────────────────────── */
@@ -1240,7 +1672,12 @@ main {
   .site-header,
   .skip,
   .hero-art,
+  .hero-sun,
+  .hero-waves,
+  .hero-meta,
   .hero-actions,
+  .hero-facts,
+  .hero-stack,
   .platform,
   .section-head p,
   .engagement-link,
@@ -1251,25 +1688,56 @@ main {
   .print-only {
     display: block;
   }
-  main {
+  .page {
     max-width: none;
     padding: 0;
   }
+  /* The hero band is plain text on paper in print: the name, the role, the intro and one line of where and how. */
   .hero {
+    margin-top: 0;
     padding: 0 0 8pt;
+    background: none;
+    color: var(--ink);
+    overflow: visible;
+  }
+  .hero-inner {
+    max-width: none;
+    padding: 0;
+  }
+  .hero-grid {
+    display: block;
   }
   .hero h1 {
+    padding-block: 0.12em 0;
     font-size: 24pt;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
   }
-  .headline {
+  .headline,
+  .headline.text-gold {
     margin-top: 2pt;
+    color: var(--accent);
     font-size: 12pt;
+    font-weight: 500;
+    letter-spacing: normal;
+    line-height: inherit;
   }
   .intro,
   .where {
     margin-top: 4pt;
     max-width: none;
     font-size: 9.6pt;
+    font-weight: 400;
+    line-height: inherit;
+  }
+  .intro {
+    color: var(--ink);
+  }
+  .where {
+    color: var(--muted);
+  }
+  .where-place {
+    display: inline;
   }
   .where::after {
     content: ' Email: ttkhanh100896@gmail.com. Web: truongtankhanh.github.io';

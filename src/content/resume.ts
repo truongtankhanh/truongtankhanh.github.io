@@ -11,6 +11,28 @@ export const resume: Resume = {
     'Today I work on operations platforms for clients in Singapore, from IoT and live-video integrations to the infrastructure they run on. I have been shipping production software since 2018.',
   ],
   coreStack: ['Node.js', 'TypeScript', 'NestJS', 'React', 'Angular', 'PostgreSQL'],
+  heroStack: [
+    {
+      id: 'frontend',
+      label: 'Frontend',
+      group: 'Frontend',
+      items: ['React', 'Angular', 'MapLibre', 'deck.gl'],
+    },
+    {
+      id: 'backend',
+      label: 'Backend',
+      group: 'Backend',
+      items: ['Node.js', 'TypeScript', 'NestJS', 'Socket.IO'],
+    },
+    { id: 'data', label: 'Data', group: 'Data', items: ['PostgreSQL', 'MySQL', 'DynamoDB'] },
+    {
+      id: 'cloud',
+      label: 'Cloud',
+      group: 'Cloud and DevOps',
+      items: ['AWS', 'Docker', 'Kubernetes', 'GitHub Actions'],
+    },
+  ],
+  currentlyNote: 'Leading engineering for clients in Singapore',
   location: 'Lâm Đồng, Vietnam',
   timezone: 'UTC+7',
   availability: 'Open to remote full-stack engineering work, full-time, part-time or contract',

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { resume } from './resume';
-import { formatRange, parseMonth } from '../lib/dates';
+import { formatMonthLong, formatRange, parseMonth } from '../lib/dates';
 import { emphasis, stripEmphasis } from '../lib/emphasis';
 import { findPhoneNumber } from '../lib/privacy';
 
@@ -32,6 +32,11 @@ describe('dates', () => {
   it('formats open and closed ranges', () => {
     expect(formatRange('2024-04')).toBe('Apr 2024 – present');
     expect(formatRange('2020-07', '2024-02')).toBe('Jul 2020 – Feb 2024');
+  });
+
+  it('spells a month out for running text', () => {
+    expect(formatMonthLong('2024-04')).toBe('April 2024');
+    expect(formatMonthLong('2018-12')).toBe('December 2018');
   });
 
   it('rejects months that are not YYYY-MM', () => {
@@ -176,6 +181,34 @@ describe('resume content', () => {
     function project(id: string) {
       return resume.projects.find((p) => p.id === id)!;
     }
+  });
+
+  describe('hero', () => {
+    it('draws four layers whose tools all come from the skill group they name', () => {
+      expect(resume.heroStack.map((l) => l.id)).toEqual(['frontend', 'backend', 'data', 'cloud']);
+      for (const layer of resume.heroStack) {
+        const group = resume.skills.find((g) => g.name === layer.group);
+        expect(group, `${layer.label} names a skill group`).toBeDefined();
+        for (const item of layer.items) {
+          // "AWS" stands for "AWS (ECS, CDK, ...)" and "GitHub Actions" for "CI/CD with GitHub Actions".
+          expect(
+            group!.items.some((i) => i.includes(item)),
+            `${item} is in ${layer.group}`,
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('shows every core tool in the stack, once', () => {
+      const shown = resume.heroStack.flatMap((l) => l.items);
+      expect(new Set(shown).size).toBe(shown.length);
+      for (const tool of resume.coreStack) expect(shown).toContain(tool);
+    });
+
+    it('has a current role for the "Currently" fact, and a note for it', () => {
+      expect(resume.experience.some((r) => !r.end)).toBe(true);
+      expect(resume.currentlyNote.trim()).not.toBe('');
+    });
   });
 
   it('points the CV link at an ASCII file name that matches the PDF build', () => {

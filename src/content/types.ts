@@ -62,6 +62,17 @@ export interface SkillGroup {
   usedIn: string[];
 }
 
+export type StackLayerId = 'frontend' | 'backend' | 'data' | 'cloud';
+
+/** One layer of the hero's technology stack. `items` are picks from the skill group named `group`. */
+export interface StackLayer {
+  id: StackLayerId;
+  label: string;
+  /** The `SkillGroup.name` the items come from, so each one can be checked against the skills list. */
+  group: string;
+  items: string[];
+}
+
 /** A career figure for the hero strip. Every one must trace to a fact elsewhere in the content. */
 export interface Metric {
   /** Kept exactly as in the CV, with its "~" or "+". */
@@ -85,6 +96,10 @@ export interface Resume {
   intro: string[];
   /** The six technologies the CV summary names; each also appears in a skill group. */
   coreStack: string[];
+  /** The four layers drawn in the hero, front to back. */
+  heroStack: StackLayer[];
+  /** The "Currently" fact of the hero, after the company and before "since <start of the current role>". */
+  currentlyNote: string;
   location: string;
   timezone: string;
   availability: string;

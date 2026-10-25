@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { resume } from '../content/resume';
+import { Icon } from './Icon';
 import { Logo } from './Logo';
 
 type Theme = 'light' | 'dark';
@@ -12,25 +13,10 @@ const SECTIONS = [
   { id: 'contact', label: 'Contact' },
 ];
 
-const MOON = 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z';
-const SUN =
-  'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5v2m0 16v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M2 12h2m16 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4';
-const DOWNLOAD = 'M12 3v12m0 0-4-4m4 4 4-4M4 21h16';
-const MENU = 'M4 7h16M4 12h16M4 17h16';
-const CLOSE = 'M6 6l12 12M18 6 6 18';
-
 function currentTheme(): Theme {
   const saved = document.documentElement.dataset.theme;
   if (saved === 'light' || saved === 'dark') return saved;
   return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-function Icon({ path }: { path: string }) {
-  return (
-    <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d={path} />
-    </svg>
-  );
 }
 
 export function SiteHeader() {
@@ -118,7 +104,7 @@ export function SiteHeader() {
             onClick={toggleTheme}
             aria-label="Switch colour theme"
           >
-            <Icon path={theme === 'dark' ? SUN : MOON} />
+            <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
           </button>
           {resume.cv.published && (
             <a
@@ -127,7 +113,7 @@ export function SiteHeader() {
               download={resume.cv.fileName}
               aria-label="Download CV"
             >
-              <Icon path={DOWNLOAD} />
+              <Icon name="download" />
               <span>Download CV</span>
             </a>
           )}
@@ -140,7 +126,7 @@ export function SiteHeader() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <Icon path={menuOpen ? CLOSE : MENU} />
+            <Icon name={menuOpen ? 'close' : 'menu'} />
           </button>
         </div>
       </div>
@@ -162,7 +148,7 @@ export function SiteHeader() {
           </a>
         ))}
         <button type="button" className="menu-theme" onClick={toggleTheme}>
-          <Icon path={theme === 'dark' ? SUN : MOON} />
+          <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
           Switch colour theme
         </button>
       </div>
