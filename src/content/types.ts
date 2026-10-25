@@ -93,8 +93,11 @@ export interface Resume {
   siteUrl: string;
   /** File name of the public CV PDF, built into `dist/` by `scripts/build-pdf.js`. */
   cvPdf: string;
-  /** The public CV: `pdf` is the root-relative URL, `fileName` the ASCII name the download is saved under. */
-  cv: { pdf: string; fileName: string };
+  /**
+   * The public CV: `pdf` is the root-relative URL, `fileName` the ASCII name the download is saved under.
+   * `published` stays false until V1-14 ships the new file; the header hides its link until then.
+   */
+  cv: { pdf: string; fileName: string; published: boolean };
   links: { github: string; linkedin: string };
   /** In career order, early to recent. */
   metrics: Metric[];

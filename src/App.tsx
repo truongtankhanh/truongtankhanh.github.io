@@ -16,7 +16,8 @@ const BUILT = __BUILD_DATE__;
 export function App() {
   const r = resume;
   return (
-    <>
+    // The container for the `@container` queries: the layout follows this box, not the window.
+    <div className="site">
       <a className="skip" href="#main">
         Skip to content
       </a>
@@ -185,6 +186,6 @@ export function App() {
           Last built <time dateTime={BUILT}>{BUILT}</time>.
         </p>
       </footer>
-    </>
+    </div>
   );
 }

@@ -17,7 +17,7 @@ export const resume: Resume = {
   email: 'ttkhanh100896@gmail.com',
   siteUrl: 'https://truongtankhanh.github.io/',
   cvPdf: 'Truong_Tan_Khanh_CV.pdf',
-  cv: { pdf: '/Truong_Tan_Khanh_CV.pdf', fileName: 'Truong_Tan_Khanh_CV.pdf' },
+  cv: { pdf: '/Truong_Tan_Khanh_CV.pdf', fileName: 'Truong_Tan_Khanh_CV.pdf', published: false },
   links: {
     github: GH,
     linkedin: 'https://www.linkedin.com/in/truongtankhanh/',
