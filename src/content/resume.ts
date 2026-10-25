@@ -11,6 +11,7 @@ export const resume: Resume = {
     'Today I work on operations platforms for clients in Singapore, from IoT and live-video integrations to the infrastructure they run on. I have been shipping production software since 2018.',
   ],
   coreStack: ['Node.js', 'TypeScript', 'NestJS', 'React', 'Angular', 'PostgreSQL'],
+  coreStackNote: 'Node.js and TypeScript systems with NestJS, Angular, React and PostgreSQL',
   heroStack: [
     {
       id: 'frontend',
@@ -247,6 +248,7 @@ export const resume: Resume = {
 
   skills: [
     {
+      kind: 'backend',
       name: 'Backend',
       items: [
         'Node.js',
@@ -264,16 +266,19 @@ export const resume: Resume = {
       usedIn: ['Ops Command Center', 'IoT Telemetry Pipeline', 'Surbana Jurong', 'NewIT Vietnam'],
     },
     {
+      kind: 'frontend',
       name: 'Frontend',
       items: ['React', 'Angular', 'TanStack Query', 'Zustand', 'RxJS', 'Redux Saga', 'MapLibre', 'deck.gl'],
       usedIn: ['Ops Command Center', 'Surbana Jurong'],
     },
     {
+      kind: 'data',
       name: 'Data',
       items: ['PostgreSQL', 'MySQL', 'DynamoDB'],
       usedIn: ['IoT Telemetry Pipeline', 'NewIT Vietnam'],
     },
     {
+      kind: 'cloud',
       name: 'Cloud and DevOps',
       items: [
         'AWS (ECS, CDK, RDS, S3, CloudFront, IoT Core)',
@@ -286,6 +291,7 @@ export const resume: Resume = {
       usedIn: ['Platform on AWS', 'Surbana Jurong'],
     },
     {
+      kind: 'practice',
       name: 'Ways of working',
       items: [
         'System design and C4 modelling',

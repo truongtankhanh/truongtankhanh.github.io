@@ -14,6 +14,7 @@ const PATHS = {
   database:
     'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
   cloud: 'M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 8.5H7Z',
+  layers: 'm12 3 9 5-9 5-9-5 9-5ZM3 13l9 5 9-5',
 } as const;
 
 export type IconName = keyof typeof PATHS;

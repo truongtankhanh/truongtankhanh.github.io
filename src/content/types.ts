@@ -55,7 +55,11 @@ export interface Project {
   caseStudy?: CaseStudy;
 }
 
+/** What a skill group is about; the card picks its icon from it. */
+export type SkillKind = 'backend' | 'frontend' | 'data' | 'cloud' | 'practice';
+
 export interface SkillGroup {
+  kind: SkillKind;
   name: string;
   items: string[];
   /** Where the group was used: each entry is a `Project.name` or a `Role.company`, so the claim can be checked. */
@@ -111,6 +115,8 @@ export interface Resume {
   intro: string[];
   /** The six technologies the CV summary names; each also appears in a skill group. */
   coreStack: string[];
+  /** The line under "Core stack": the CV's own summary of those tools. Every `coreStack` entry is named in it. */
+  coreStackNote: string;
   /** The four layers drawn in the hero, front to back. */
   heroStack: StackLayer[];
   /** The "Currently" fact of the hero, after the company and before "since <start of the current role>". */

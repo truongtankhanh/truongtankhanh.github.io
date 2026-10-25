@@ -7,6 +7,7 @@ import { resume } from './content/resume';
 import { Experience } from './components/Experience';
 import { Hero } from './components/Hero';
 import { SiteHeader } from './components/SiteHeader';
+import { Skills } from './components/Skills';
 import { Work } from './components/Work';
 
 // Fixed at build time (see vite.config.ts) so server and client render the same date.
@@ -30,19 +31,7 @@ export function App() {
 
           <Experience roles={r.experience} />
 
-          <section id="skills" className="section" aria-labelledby="skills-title">
-            <div className="section-head">
-              <h2 id="skills-title">Skills</h2>
-            </div>
-            <dl className="skills">
-              {r.skills.map((g) => (
-                <div key={g.name} className="skill-group">
-                  <dt>{g.name}</dt>
-                  <dd>{g.items.join(', ')}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
+          <Skills groups={r.skills} coreStack={r.coreStack} coreStackNote={r.coreStackNote} />
 
           <section id="approach" className="section" aria-labelledby="approach-title">
             <div className="section-head">

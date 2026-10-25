@@ -2011,6 +2011,157 @@ p {
   }
 }
 
+/* ── Skills ─────────────────────────────────────────────────── */
+/* The core stack leads in large type on a dark plate; then one card per group, three on the first row and two on
+   the second, each ending with the places the group was used. */
+.core {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3) 48px;
+  padding: 40px 48px;
+}
+.core-label,
+.skill-used-label {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.core-label {
+  color: color-mix(in srgb, var(--on-band) 72%, transparent);
+}
+.core-note {
+  margin-top: 10px;
+  color: color-mix(in srgb, var(--on-band) 82%, transparent);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.core-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.core-list li {
+  display: flex;
+  align-items: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+.core-list li + li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin: 0 20px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--on-band) 45%, transparent);
+}
+
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.skill-grid > li {
+  display: flex;
+  grid-column: span 2;
+}
+.skill-grid > li:nth-child(n + 4) {
+  grid-column: span 3;
+}
+.skill-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding: 28px;
+}
+.skill-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.skill-icon {
+  box-sizing: content-box;
+  width: 24px;
+  height: 24px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--wash);
+  color: var(--accent);
+}
+.skill-head h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.skill-chips .chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.skill-used {
+  margin-top: auto;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.skill-used-label {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--accent);
+  font-size: 0.65rem;
+}
+
+@container (width < 960px) {
+  .core {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-4);
+  }
+  .skill-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .skill-grid > li,
+  .skill-grid > li:nth-child(n + 4) {
+    grid-column: 1 / -1;
+  }
+}
+@container (width < 600px) {
+  .core {
+    padding: 28px var(--space-3);
+  }
+  .core-list li {
+    font-size: 1.3rem;
+  }
+  .core-list li + li::before {
+    margin: 0 12px;
+  }
+  .skill-card {
+    padding: 22px;
+  }
+}
+
 /* ── Skills, principles, facts ──────────────────────────────── */
 .skills {
   margin: 0;
@@ -2141,6 +2292,8 @@ p {
   .hero-facts,
   .hero-stack,
   .metrics,
+  .core,
+  .skill-grid,
   .featured,
   .project-grid,
   .arch,
