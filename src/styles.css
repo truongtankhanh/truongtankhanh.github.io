@@ -782,7 +782,7 @@ p {
 .hero {
   position: relative;
   margin-top: calc(var(--header-h) * -1);
-  padding-block: calc(var(--header-h) + clamp(4.5rem, 8vw, 6.5rem)) 7.5rem;
+  padding-block: calc(var(--header-h) + clamp(4.5rem, 8vw, 6.5rem)) 4.5rem;
   background: var(--band);
   color: var(--on-band);
   overflow: hidden;
@@ -1197,6 +1197,47 @@ p {
   }
 }
 
+/* Career figures: the bottom row of the band. A rule above each column, then the figure, its label and its source. */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0 var(--space-4);
+  margin: 5.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.metrics li {
+  position: relative;
+  padding-top: var(--space-3);
+}
+.metrics li::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: color-mix(in srgb, var(--on-band) 28%, transparent);
+}
+.metric-value {
+  display: block;
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+.metric-label {
+  display: block;
+  margin-top: var(--space-2);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.metric-source {
+  display: block;
+  margin-top: 6px;
+  color: color-mix(in srgb, var(--on-band) 68%, transparent);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
 @container (width < 960px) {
   .hero {
     padding-top: calc(var(--header-h) + 4.5rem);
@@ -1210,6 +1251,11 @@ p {
   .hero-stack {
     max-width: 600px;
     transform: none;
+  }
+  .metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4) var(--space-3);
+    margin-top: 3.5rem;
   }
 }
 @container (width < 600px) {
@@ -1226,6 +1272,17 @@ p {
   .hero-actions,
   .hero-facts {
     grid-template-columns: minmax(0, 1fr);
+  }
+  /* Two columns; an odd one out at the end spans both. */
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px var(--space-2);
+  }
+  .metrics li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  .metric-value {
+    font-size: 2.5rem;
   }
   .hero-facts {
     margin-top: 2.25rem;
@@ -1678,6 +1735,7 @@ p {
   .hero-actions,
   .hero-facts,
   .hero-stack,
+  .metrics,
   .platform,
   .section-head p,
   .engagement-link,

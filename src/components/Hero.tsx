@@ -3,6 +3,7 @@ import { formatMonthLong } from '../lib/dates';
 import { EmailLink } from './EmailLink';
 import { Icon } from './Icon';
 import { HeroStack } from './HeroStack';
+import { Metrics } from './Metrics';
 
 const SUN_SIZE = 760;
 const SUN_RAYS = 36;
@@ -127,6 +128,7 @@ export function Hero({ resume: r }: { resume: Resume }) {
           </div>
           <HeroStack layers={r.heroStack} coreStack={r.coreStack} />
         </div>
+        <Metrics metrics={r.metrics} />
       </div>
     </section>
   );
