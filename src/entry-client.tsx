@@ -1,5 +1,6 @@
 import { hydrateRoot } from 'react-dom/client';
-import { App } from './App';
+import { Page } from './Page';
 import './styles.css';
 
-hydrateRoot(document.getElementById('root')!, <App />);
+// Hydrate the page the server rendered for this URL.
+hydrateRoot(document.getElementById('root')!, <Page path={location.pathname} />);
