@@ -4,3 +4,4 @@ dist-ssr
 dist-pdf
 *.log
 .DS_Store
+.lighthouseci

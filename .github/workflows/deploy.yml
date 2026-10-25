@@ -42,6 +42,26 @@ jobs:
         with:
           path: dist
 
+  # Lighthouse against the dist/ that the build job uploaded, so a failing format check or test never waits for it.
+  # Chrome comes with the runner; budgets and URLs are in lighthouserc.json. It runs here only, never on the owner's
+  # machine, and the deploy job does not wait for it.
+  quality:
+    name: Lighthouse budgets
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: pages
+      - run: mkdir dist && tar -xf pages/artifact.tar -C dist
+      - run: pnpm dlx @lhci/cli@0.14.0 autorun
+
   deploy:
     name: Deploy to GitHub Pages
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
