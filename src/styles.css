@@ -3602,6 +3602,14 @@ p {
 .cv-links li {
   position: relative;
 }
+/* On screen the links are touch targets, at least 24 px high; on paper they stay in line with the text. */
+@media screen {
+  .cv-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
+}
 .cv-links li + li::before {
   content: '';
   position: absolute;

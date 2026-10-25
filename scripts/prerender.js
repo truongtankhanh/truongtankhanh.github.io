@@ -19,6 +19,16 @@ const count = (html, pattern) => (html.match(pattern) ?? []).length;
 /** `/work/x/` is written as `dist/work/x/index.html`; a path with a file name, such as `/404.html`, as itself. */
 const fileOf = (path) => (path.endsWith('/') ? `${path}index.html` : path);
 
+// The CV page is mostly text in a sheet whose size follows the font, so a late font moves it (layout shift). Its
+// Latin faces are preloaded; other pages keep the default, so their first paint is not delayed by 90 KB of fonts.
+const cssHref = template.match(/<link rel="stylesheet"[^>]*href="([^"]+\.css)"/)?.[1];
+const css = cssHref ? await readFile(`${root}dist${cssHref}`, 'utf8') : '';
+const cvFonts = [
+  ...css.matchAll(/\/assets\/be-vietnam-pro-latin-(?:400|500|600|800)-normal-[\w-]+\.woff2/g),
+].map((m) => m[0]);
+if (cvFonts.length === 0)
+  throw new Error('no Latin Be Vietnam Pro font found in the built CSS to preload on /cv/');
+
 const written = [];
 for (const route of pages()) {
   const file = fileOf(route.path);
@@ -27,6 +37,13 @@ for (const route of pages()) {
   for (const [marker, value] of Object.entries({ '<!--app-html-->': body, '<!--app-head-->': head })) {
     if (!html.includes(marker)) throw new Error(`dist/index.html has no ${marker} marker`);
     html = html.replace(marker, () => value);
+  }
+
+  if (route.path === '/cv/') {
+    const links = cvFonts.map(
+      (href) => `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>`,
+    );
+    html = html.replace('</head>', () => `    ${links.join('\n    ')}\n  </head>`);
   }
 
   if (count(html, /<title>/g) !== 1) throw new Error(`dist${file} must have exactly one <title>`);
