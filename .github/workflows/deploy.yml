@@ -61,6 +61,23 @@ jobs:
           path: pages
       - run: mkdir dist && tar -xf pages/artifact.tar -C dist
       - run: pnpm dlx @lhci/cli@0.14.0 autorun
+      # The reports are kept whether or not a budget failed. They sit in a hidden folder, which upload-artifact skips
+      # unless asked. Nothing leaves GitHub: no third-party service and no token.
+      - uses: actions/upload-artifact@v4
+        id: lighthouse-report
+        if: always()
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+          include-hidden-files: true
+          retention-days: 14
+      # Scores of the median run per page, the budgets that failed, and the link to the artefact, in the job summary.
+      # A problem here must not hide the result of the budgets, so it never fails the job.
+      - run: node scripts/lighthouse-summary.js >> "$GITHUB_STEP_SUMMARY"
+        if: always()
+        continue-on-error: true
+        env:
+          REPORT_URL: ${{ steps.lighthouse-report.outputs.artifact-url }}
 
   deploy:
     name: Deploy to GitHub Pages
