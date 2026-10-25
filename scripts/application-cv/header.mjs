@@ -6,6 +6,7 @@
 // `cv/private.json` (V1-21.1) and is written once, in the contact line, and nowhere else.
 import { ExternalHyperlink, Footer, ImageRun, PageNumber, Paragraph, Tab, TextRun } from 'docx';
 import { STYLE } from './styles.mjs';
+import { displayUrl } from './text.mjs';
 
 /**
  * The monogram of `docs/design/v1/brand/logo-mark-on-light.svg`, rendered once with headless Chrome at 330 x 330 px on a
@@ -21,13 +22,6 @@ const VIETNAMESE = { value: 'vi-VN' };
 
 const SEPARATOR = ' · ';
 
-/** A link as people read it, the rule of `displayUrl` in `src/lib/urls.ts`. */
-const display = (href) =>
-  href
-    .replace(/^https?:\/\//, '')
-    .replace(/^www\./, '')
-    .replace(/\/$/, '');
-
 const link = (text, href) =>
   new ExternalHyperlink({ link: href, children: [new TextRun({ text, style: STYLE.hyperlink })] });
 
@@ -41,9 +35,9 @@ function phoneRun(phone) {
 function contactRuns(resume, phone) {
   const links = [
     [resume.email, `mailto:${resume.email}`],
-    [display(resume.siteUrl), resume.siteUrl],
-    [display(resume.links.github), resume.links.github],
-    [display(resume.links.linkedin), resume.links.linkedin],
+    [displayUrl(resume.siteUrl), resume.siteUrl],
+    [displayUrl(resume.links.github), resume.links.github],
+    [displayUrl(resume.links.linkedin), resume.links.linkedin],
   ].map(([text, href]) => link(text, href));
   return [phoneRun(phone), ...links].flatMap((run, i) => (i === 0 ? [run] : [new TextRun(SEPARATOR), run]));
 }

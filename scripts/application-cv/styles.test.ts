@@ -44,6 +44,7 @@ interface Sheet {
     | 'date'
     | 'caption'
     | 'contact'
+    | 'roleTitle'
     | 'footer'
     | 'strong'
     | 'hyperlink'
@@ -110,6 +111,7 @@ describe('application CV style sheet', () => {
         'Date',
         'List Bullet',
         'Normal',
+        'Role Title',
         'Subtitle',
         'Title',
         'caption',

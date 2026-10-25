@@ -1,18 +1,15 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
   Document,
-  Packer,
   Paragraph,
   TextRun,
   type Footer,
   type IPropertiesOptions,
   type ISectionOptions,
 } from 'docx';
-import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { resume } from '../../src/content/resume';
+import { paragraphs, unpack } from './docxParts';
 
 interface Builders {
   LOGO_FILE: URL;
@@ -36,47 +33,23 @@ const PHONE = '+1 555 0100';
 const logo = readFileSync(LOGO_FILE);
 
 /** Packs a document with the block, the footer and one heading, and returns the XML parts the checks read. */
-async function build(phone = PHONE) {
-  const document = new Document({
-    ...createStyles(),
-    sections: [
-      {
-        properties: { page: PAGE },
-        footers: { default: buildFooter({ resume }) },
-        children: [
-          ...buildFirstBlock({ resume, phone, logo }),
-          new Paragraph({ style: STYLE.heading1, children: [new TextRun('Summary')] }),
-        ],
-      },
-    ],
-  });
-  const dir = mkdtempSync(join(tmpdir(), 'application-cv-'));
-  try {
-    const file = join(dir, 'cv.docx');
-    writeFileSync(file, await Packer.toBuffer(document));
-    const part = (name: string) => {
-      const out = spawnSync('unzip', ['-p', file, name], { encoding: 'utf8' });
-      if (out.status !== 0) throw new Error(`cannot read ${name}: ${out.stderr}`);
-      return out.stdout;
-    };
-    const listing = spawnSync('unzip', ['-Z1', file], { encoding: 'utf8' }).stdout.split('\n');
-    return {
-      body: part('word/document.xml'),
-      footer: part('word/footer1.xml'),
-      rels: part('word/_rels/document.xml.rels'),
-      // The listing has an entry for the folder itself; only the files in it are pictures.
-      media: listing.filter((name) => name.startsWith('word/media/') && !name.endsWith('/')),
-    };
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
-
-/** The text of each paragraph, in order, without the markup. */
-const paragraphs = (xml: string) =>
-  [...xml.matchAll(/<w:p[ >].*?<\/w:p>/gs)].map((p) =>
-    [...p[0].matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/g)].map((t) => t[1]).join(''),
+function build(phone = PHONE) {
+  return unpack(
+    new Document({
+      ...createStyles(),
+      sections: [
+        {
+          properties: { page: PAGE },
+          footers: { default: buildFooter({ resume }) },
+          children: [
+            ...buildFirstBlock({ resume, phone, logo }),
+            new Paragraph({ style: STYLE.heading1, children: [new TextRun('Summary')] }),
+          ],
+        },
+      ],
+    }),
   );
+}
 
 let doc: Awaited<ReturnType<typeof build>>;
 beforeAll(async () => {

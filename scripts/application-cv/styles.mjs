@@ -68,6 +68,7 @@ export const STYLE = {
   date: 'Date',
   caption: 'Caption',
   contact: 'Contact',
+  roleTitle: 'RoleTitle',
   footer: 'Footer',
   strong: 'Strong',
   hyperlink: 'Hyperlink',
@@ -207,6 +208,15 @@ export function createStyles({ font = FONT.fallback } = {}) {
           spacing: { before: SPACING.after, after: 0 },
           border: { bottom: { style: 'single', size: 12, space: 8, color: COLORS.accent } },
         },
+      },
+      {
+        // The title of a role, under its company line (V1-20.3): body size in accent, kept with what follows.
+        id: STYLE.roleTitle,
+        name: 'Role Title',
+        basedOn: STYLE.normal,
+        next: STYLE.normal,
+        run: { ...base, color: COLORS.accent },
+        paragraph: { keepNext: true, keepLines: true },
       },
       {
         // The footer of every page: a steel rule, the name and role at the left, "page X of Y" at the right.
