@@ -1,0 +1,6 @@
+{
+  "$comment": "Copy this file to cv/private.json (a local folder that is never committed) and replace the placeholder. phone: your Vietnamese number, in the national form (a leading zero and nine more digits) or with the country code of Vietnam, spaces or dashes allowed. linkedin (optional): an https address to use instead of the one in resume.ts. extraProjects and overrides: the details that only the application edition has (see V1-21.3). A key that starts with a dollar sign is ignored.",
+  "phone": "REPLACE_WITH_YOUR_PHONE_NUMBER",
+  "extraProjects": [],
+  "overrides": {}
+}
