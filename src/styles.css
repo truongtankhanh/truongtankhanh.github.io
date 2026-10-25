@@ -28,6 +28,20 @@
   --btn-ink: #ffffff;
   --shadow: 0 1px 2px rgba(11, 27, 51, 0.06), 0 12px 32px -12px rgba(11, 27, 51, 0.2);
 
+  /* Colours that do not change with the theme: the metal gradients of display text, the light plate on a band
+     (the bands are deep blue in both themes), and the two colours that shadows are mixed from. */
+  --silver-1: #ffffff;
+  --silver-2: #dde6f3;
+  --silver-3: #a9bbd3;
+  --silver-4: #f6f9fd;
+  --gold-hi: #f6e2a6;
+  --gold-lo: #b98a2e;
+  --plate-light-top: #ffffff;
+  --plate-light-bot: #c9d6e8;
+  --plate-light-ink: #0b2447;
+  --shade: #000000;
+  --shade-ink: #0b1b33;
+
   --font: 'Be Vietnam Pro', system-ui, sans-serif;
   --measure: 66ch;
   --page: 74rem;
@@ -108,6 +122,23 @@
   --btn-ink: #07142a;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 32px -12px rgba(0, 0, 0, 0.65);
   color-scheme: dark;
+}
+
+/* The CV prints dark ink on white, whichever theme the visitor uses. It is the last token block, so it wins; the
+   `:not([data-theme='light'])` selector gives it the same weight as the dark rule for visitors whose system is dark. */
+@media print {
+  :root,
+  :root[data-theme='dark'],
+  :root:not([data-theme='light']) {
+    --paper: #fff;
+    --surface: #fff;
+    --ink: #111;
+    --muted: #444;
+    --accent: #1b4f9c;
+    --line: #bbb;
+    --wash: #fff;
+    color-scheme: light;
+  }
 }
 
 *,
@@ -209,7 +240,7 @@ p {
   border: 1px solid var(--steel);
   border-radius: 10px;
   background: linear-gradient(180deg, var(--plate-top), var(--plate-bot));
-  box-shadow: 0 1px 2px rgba(11, 27, 51, 0.18);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--shade-ink) 18%, transparent);
   color: var(--ink);
   font: inherit;
   font-size: 1rem;
@@ -249,12 +280,12 @@ p {
 }
 .btn-primary.btn-on-band {
   border-color: var(--silver-lo);
-  background: linear-gradient(180deg, #ffffff, #c9d6e8);
-  color: #0b2447;
+  background: linear-gradient(180deg, var(--plate-light-top), var(--plate-light-bot));
+  color: var(--plate-light-ink);
 }
 .btn-primary.btn-on-band:hover {
   border-color: var(--silver-lo);
-  color: #0b2447;
+  color: var(--plate-light-ink);
 }
 .btn-text {
   display: inline-flex;
@@ -295,7 +326,7 @@ p {
 /* Metallic text, for large type on a blue band only. The solid colour is the fallback: it shows wherever
    `background-clip: text` is missing, in forced-colors mode and on paper (print drops backgrounds). */
 .text-silver {
-  color: #fff;
+  color: var(--silver-1);
 }
 .text-gold {
   color: var(--gold);
@@ -308,10 +339,16 @@ p {
     -webkit-text-fill-color: transparent;
   }
   .text-silver {
-    background-image: linear-gradient(135deg, #ffffff 0%, #dde6f3 38%, #a9bbd3 66%, #f6f9fd 100%);
+    background-image: linear-gradient(
+      135deg,
+      var(--silver-1) 0%,
+      var(--silver-2) 38%,
+      var(--silver-3) 66%,
+      var(--silver-4) 100%
+    );
   }
   .text-gold {
-    background-image: linear-gradient(90deg, #f6e2a6 0%, #e3bf6b 45%, #b98a2e 100%);
+    background-image: linear-gradient(90deg, var(--gold-hi) 0%, var(--gold) 45%, var(--gold-lo) 100%);
   }
 }
 @media (forced-colors: active) {
@@ -541,7 +578,7 @@ p {
 .site-header nav a[aria-current] {
   background: var(--on-band);
   color: var(--band);
-  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--shade) 55%, transparent);
 }
 .site-header nav a[aria-current]::before {
   content: '';
@@ -612,7 +649,7 @@ p {
   padding: 12px clamp(20px, 3.6vw, 56px) 20px;
   background: var(--band);
   border-bottom: 1px solid color-mix(in srgb, var(--on-band) 14%, transparent);
-  box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 24px 40px -24px color-mix(in srgb, var(--shade) 60%, transparent);
 }
 .site-menu a,
 .menu-theme {
@@ -999,7 +1036,7 @@ p {
       )
       border-box;
   box-shadow:
-    0 22px 44px -22px rgba(0, 0, 0, 0.55),
+    0 22px 44px -22px color-mix(in srgb, var(--shade) 55%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--on-band) 14%, transparent);
 }
 /* The bus node and the short feeder from the bus to the card. */
@@ -1073,7 +1110,7 @@ p {
   gap: 8px;
   border-color: var(--on-band);
   background: var(--on-band);
-  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--shade) 60%, transparent);
   color: var(--band);
   font-weight: 700;
 }
@@ -1163,7 +1200,7 @@ p {
     box-shadow:
       0 0 0 1.5px var(--glow),
       0 0 34px color-mix(in srgb, var(--glow) 40%, transparent),
-      0 22px 44px -22px rgba(0, 0, 0, 0.55);
+      0 22px 44px -22px color-mix(in srgb, var(--shade) 55%, transparent);
   }
   26%,
   100% {
@@ -1208,7 +1245,9 @@ p {
 }
 .metric-value {
   display: block;
-  font-size: 3.5rem;
+  /* The gradient is painted inside the box only, so the figure has to fit its column: it shrinks with the page
+     where five columns get narrow, and is at full size from about 1190 px. */
+  font-size: clamp(2.5rem, 4.9cqi, 3.5rem);
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 1;
@@ -1346,7 +1385,7 @@ p {
   justify-content: center;
   padding: 48px 48px 48px 44px;
   border-left: 1px solid color-mix(in srgb, var(--on-band) 14%, transparent);
-  background: color-mix(in srgb, black 20%, var(--band));
+  background: color-mix(in srgb, var(--shade) 20%, var(--band));
 }
 .featured-side h4 {
   margin-bottom: 12px;
@@ -2413,7 +2452,7 @@ p {
   padding: 28px 32px;
   border-radius: 12px;
   background: linear-gradient(180deg, var(--on-band), color-mix(in srgb, var(--on-band) 85%, var(--steel)));
-  box-shadow: 0 1px 2px rgba(11, 27, 51, 0.22);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--shade-ink) 22%, transparent);
   color: var(--band);
   text-decoration: none;
 }
@@ -2553,20 +2592,10 @@ p {
     size: A4;
     margin: 14mm 15mm;
   }
-  :root,
-  :root[data-theme='dark'] {
-    --paper: #fff;
-    --surface: #fff;
-    --ink: #111;
-    --muted: #444;
-    --accent: #1b4f9c;
-    --line: #bbb;
-    --wash: #fff;
-  }
   body {
     font-size: 9.6pt;
     line-height: 1.42;
-    background: #fff;
+    background: var(--paper);
   }
   /* The header is hidden in print, so the wrapper needs no containment that could affect page breaks. */
   .site {

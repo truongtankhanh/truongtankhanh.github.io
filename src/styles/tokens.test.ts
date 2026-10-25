@@ -61,3 +61,17 @@ describe('focus ring on the bands', () => {
     expect(contrast(dark['focus']!, dark['band']!)).toBeGreaterThanOrEqual(3);
   });
 });
+
+describe('stylesheet', () => {
+  // Everything after the token blocks (they end where the first rule of the page begins).
+  const rules = css.slice(css.indexOf('*,\n*::before')).replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('has the token blocks before the first rule', () => {
+    expect(css.indexOf('*,\n*::before')).toBeGreaterThan(css.indexOf(":root[data-theme='dark']"));
+  });
+
+  it('has no literal colour below the token blocks, so both themes and print follow the tokens', () => {
+    const literals = rules.match(/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(|\b(?:white|black)\b(?![-\w])/gi);
+    expect(literals).toBeNull();
+  });
+});
