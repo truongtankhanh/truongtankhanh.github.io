@@ -1,7 +1,9 @@
 // Builds the public CV PDF from the finished site, so it cannot drift from src/content/resume.ts.
 // It serves dist/ on localhost, prints the /cv/ page with headless Chrome (the page is laid out for
 // A4 and paginated by its own @page rules) and writes dist/<cvPdf>. Run it after `pnpm build`.
-// CI runs it on the runner's Chrome; locally set CHROME_PATH if Chrome is not found.
+// CI runs it on the runner's Chrome (the deploy workflow); locally set CHROME_PATH if Chrome is not found.
+// It is not part of `pnpm build` or `pnpm test`, and it is not run from the editor terminal: rendering a PDF
+// is heavy, and the job logs the size and the page count.
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
@@ -13,6 +15,10 @@ import { fileURLToPath } from 'node:url';
 
 // Keep in sync with `cvPdf` in src/content/resume.ts (a test checks it).
 const CV_PDF = 'Truong_Tan_Khanh_CV.pdf';
+
+// The metal gradients and shadows of the print design add weight. If the file passes this, flatten the shadows
+// of `/cv/` (`styles.css`, the `cv-*` block) to a single solid line and measure again.
+const MAX_BYTES = 600 * 1024;
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 if (!existsSync(join(dist, 'index.html')))
@@ -80,7 +86,14 @@ try {
   });
   if (exit !== 0 || !existsSync(out)) throw new Error(`Chrome did not write the PDF (exit ${exit})`);
   const { size } = await stat(out);
-  console.log(`wrote dist/${CV_PDF} (${Math.round(size / 1024)} KB)`);
+  const bytes = await readFile(out);
+  if (bytes.subarray(0, 5).toString('latin1') !== '%PDF-') throw new Error(`dist/${CV_PDF} is not a PDF`);
+  if (size > MAX_BYTES) {
+    throw new Error(`dist/${CV_PDF} is ${Math.round(size / 1024)} KB, over the ${MAX_BYTES / 1024} KB limit`);
+  }
+  // Informational: the CV is meant to be four A4 pages. The page tree of a Chrome PDF reads `/Type /Pages ... /Count n`.
+  const pages = /\/Type\s*\/Pages\b[^>]*?\/Count\s+(\d+)/.exec(bytes.toString('latin1'))?.[1];
+  console.log(`wrote dist/${CV_PDF} (${Math.round(size / 1024)} KB, ${pages ?? 'unknown number of'} pages)`);
 } finally {
   server.close();
   await rm(profile, { recursive: true, force: true });
