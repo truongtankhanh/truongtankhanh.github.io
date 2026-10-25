@@ -10,12 +10,10 @@
   --on-accent: #ffffff;
   --wash: #e6eef9;
   --line: #d3deec;
-  --contour: #b9cbe4;
   --band: #0b2447;
   --on-band: #eef4ff;
   --gold: #e3bf6b;
   --glow: #7fd0ff;
-  --signal: #b8862b;
   --focus: #8a6310;
   --silver-hi: #ffffff;
   --silver-lo: #a9b8cd;
@@ -66,10 +64,8 @@
     --on-accent: #07142a;
     --wash: #12305c;
     --line: #223a63;
-    --contour: #1d3a66;
     --band: #0f2b57;
     --on-band: #eaf1ff;
-    --signal: #e3bf6b;
     --focus: #e3bf6b;
     --silver-hi: #9bb3d8;
     --silver-lo: #2b4a7a;
@@ -96,10 +92,8 @@
   --on-accent: #07142a;
   --wash: #12305c;
   --line: #223a63;
-  --contour: #1d3a66;
   --band: #0f2b57;
   --on-band: #eaf1ff;
-  --signal: #e3bf6b;
   --focus: #e3bf6b;
   --silver-hi: #9bb3d8;
   --silver-lo: #2b4a7a;
@@ -1307,35 +1301,6 @@ p {
   }
 }
 
-/* Left from the old hero until V1-06.3 retires `Contours.tsx` and these rules together. */
-.hero-art {
-  position: absolute;
-  z-index: -1;
-  inset: 0 calc(var(--gutter) * -1) 0 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.contours {
-  position: absolute;
-  top: 0;
-  right: -4rem;
-  width: min(46rem, 70vw);
-  height: auto;
-  /* Fade the lines out before they reach the text column and at the page edge. */
-  mask-image: linear-gradient(to right, transparent 8%, #000 48%, #000 82%, transparent 100%);
-}
-.contour {
-  fill: none;
-  stroke: var(--contour);
-  stroke-width: 1.2;
-}
-.contour-index {
-  stroke-width: 2.2;
-}
-.contour-peak {
-  fill: var(--signal);
-}
-
 /* ── Public work ────────────────────────────────────────────── */
 /* The lead project on a dark plate, with what a reviewer can check beside it; then a card for each other project:
    the key figure leads, the checks follow, the repository link is the footer. */
@@ -1859,174 +1824,6 @@ p {
   }
 }
 
-/* ── Platform diagram ───────────────────────────────────────── */
-.diagram {
-  display: block;
-  width: 100%;
-  height: auto;
-  font-family: var(--font);
-  overflow: visible;
-}
-.diagram-narrow {
-  display: none;
-  max-width: 26rem;
-  margin-inline: auto;
-}
-@media (max-width: 40rem) {
-  .diagram-wide {
-    display: none;
-  }
-  .diagram-narrow {
-    display: block;
-  }
-}
-
-.frame {
-  fill: color-mix(in srgb, var(--wash) 45%, transparent);
-  stroke: var(--line);
-  stroke-dasharray: 5 5;
-}
-.external rect {
-  fill: none;
-  stroke: var(--muted);
-  stroke-dasharray: 3 4;
-}
-.external text {
-  fill: var(--muted);
-  font-size: 13px;
-}
-.edge path {
-  stroke: var(--muted);
-  stroke-width: 1.4;
-  fill: none;
-}
-.arrowhead {
-  fill: var(--muted);
-}
-.edge text {
-  fill: var(--muted);
-  font-size: 12px;
-}
-.packets circle {
-  fill: var(--signal);
-}
-@media (prefers-reduced-motion: reduce) {
-  .packets {
-    display: none;
-  }
-}
-
-.node {
-  cursor: pointer;
-}
-.node rect {
-  fill: var(--paper);
-  stroke: var(--accent);
-  stroke-width: 1.5;
-}
-.node:hover rect {
-  fill: var(--wash);
-}
-.node-title {
-  fill: var(--ink);
-  font-size: 16px;
-  font-weight: 600;
-}
-.node-sub {
-  fill: var(--muted);
-  font-size: 13px;
-}
-.node-tag,
-.node-lane {
-  fill: var(--ink);
-  font-size: 13.5px;
-}
-.node-tag,
-.node-lane-name {
-  font-weight: 600;
-}
-.node.is-selected rect {
-  fill: var(--accent);
-  stroke: var(--accent);
-}
-.node.is-selected text {
-  fill: var(--on-accent);
-}
-.node:focus {
-  outline: none;
-}
-.node:focus-visible rect {
-  stroke: var(--signal);
-  stroke-width: 3;
-}
-
-.platform-hint {
-  margin-top: 0.75rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: clamp(1.5rem, 4vw, 3rem);
-  align-items: start;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 2px solid var(--accent);
-}
-.panel:not(:has(.panel-figure)) {
-  grid-template-columns: minmax(0, var(--measure));
-}
-.panel h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-.panel-text p {
-  margin-top: 0.85rem;
-}
-.panel-proof {
-  color: var(--muted);
-}
-.panel-proof strong {
-  color: var(--ink);
-  font-weight: 600;
-}
-.stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin: 1.25rem 0 1.5rem;
-  padding: 0;
-  list-style: none;
-}
-.stack li {
-  padding: 0.15rem 0.65rem;
-  border-radius: 999px;
-  background: var(--wash);
-  font-size: 0.85rem;
-}
-.panel-figure {
-  margin: 0;
-}
-.panel-figure img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-}
-.panel-figure figcaption {
-  margin-top: 0.6rem;
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-@media (max-width: 52rem) {
-  .panel {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 /* ── Experience timeline ────────────────────────────────────── */
 .timeline {
   margin: 0;
@@ -2220,16 +2017,6 @@ p {
   margin-top: 0.35rem;
 }
 
-/* ── Small screens ──────────────────────────────────────────── */
-@media (max-width: 48rem) {
-  .contours {
-    width: 22rem;
-    right: -7rem;
-    top: -3rem;
-    mask-image: radial-gradient(circle at 60% 45%, #000 20%, transparent 62%);
-  }
-}
-
 /* ── Print: the page becomes a two-page CV ─────────────────── */
 .print-only {
   display: none;
@@ -2260,7 +2047,6 @@ p {
   }
   .site-header,
   .skip,
-  .hero-art,
   .hero-sun,
   .hero-waves,
   .hero-meta,
@@ -2271,7 +2057,6 @@ p {
   .featured,
   .project-grid,
   .arch,
-  .platform,
   .section-head p,
   .sec-head p,
   .engagement-link,

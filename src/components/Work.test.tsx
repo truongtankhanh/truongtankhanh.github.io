@@ -4,13 +4,9 @@ import { resume } from '../content/resume';
 import type { Project } from '../content/types';
 import { Work } from './Work';
 
-const render = (projects: Project[]) =>
+const render = (projects: Project[] = resume.projects) =>
   // React separates adjacent text nodes with `<!-- -->`; drop them so the text reads as written.
   renderToString(<Work projects={projects} architecture={resume.architecture} />).replaceAll('<!-- -->', '');
-
-/** The cards, the featured project and the head: everything before the platform diagram, which has its own panel. */
-const html = (projects: Project[] = resume.projects) => render(projects).split('<div class="platform"')[0]!;
-
 const [featured, ...others] = resume.projects as [Project, ...Project[]];
 
 /** The markup of the first element that starts with `open`, up to and including its closing `tag`. */
@@ -21,13 +17,13 @@ function block(markup: string, open: string, tag: string) {
 
 describe('Work', () => {
   it('is the work section, labelled by its heading', () => {
-    const markup = html();
+    const markup = render();
     expect(markup).toContain('<section id="work" class="section" aria-labelledby="work-title">');
     expect(markup).toContain('<h2 id="work-title">Public work</h2>');
   });
 
   it('features the first project with its description, stack and repository', () => {
-    const card = block(html(), '<article class="featured', 'article');
+    const card = block(render(), '<article class="featured', 'article');
     expect(card).toContain(`<h3>${featured.name}</h3>`);
     expect(card).toContain(featured.what);
     for (const item of featured.stack) expect(card).toContain(`<li class="chip">${item}</li>`);
@@ -35,23 +31,23 @@ describe('Work', () => {
   });
 
   it('lists what can be checked in the code, in the words of the project checks', () => {
-    const side = block(html(), '<div class="featured-side">', 'ul');
+    const side = block(render(), '<div class="featured-side">', 'ul');
     expect(side).toContain('What you can check in the code');
     for (const check of featured.checks) expect(side).toContain(`<span>${check}</span>`);
   });
 
   it('links to the case study only for a project that has one', () => {
-    expect(html()).not.toContain('Read the case study');
+    expect(render()).not.toContain('Read the case study');
     const withStudy = {
       ...featured,
       caseStudy: { slug: 'ops-command-center', lead: 'x', role: 'x', status: 'x' },
     };
-    const markup = html([withStudy, ...others]);
+    const markup = render([withStudy, ...others]);
     expect(markup).toMatch(/<a [^>]*href="\/work\/ops-command-center\/"[^>]*>Read the case study<\/a>/);
   });
 
   it('gives each of the other projects a card with its key figure, checks, stack and repository link', () => {
-    const markup = html();
+    const markup = render();
     const cards = markup.split('<article class="project-card').slice(1);
     expect(cards).toHaveLength(others.length);
     others.forEach((p, i) => {
@@ -68,12 +64,12 @@ describe('Work', () => {
   });
 
   it('shows every proof without a click, as the checks of its project', () => {
-    const markup = html();
+    const markup = render();
     for (const p of resume.projects) for (const check of p.checks) expect(markup).toContain(check);
   });
 
   it('links every repository on this GitHub account, and no card is a link by itself', () => {
-    const markup = html();
+    const markup = render();
     const repoLinks = [...markup.matchAll(/<a [^>]*href="(https:\/\/github\.com[^"]+)"/g)].map((m) => m[1]);
     expect(repoLinks).toEqual(resume.projects.map((p) => p.repo));
     for (const href of repoLinks) expect(href).toMatch(/^https:\/\/github\.com\/truongtankhanh\/[\w.-]+$/);

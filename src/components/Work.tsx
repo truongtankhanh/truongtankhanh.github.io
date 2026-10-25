@@ -1,7 +1,6 @@
 import type { Architecture, Project } from '../content/types';
 import { ArchDiagram } from './ArchDiagram';
 import { Icon } from './Icon';
-import { Platform } from './Platform';
 
 function Chips({ items }: { items: string[] }) {
   return (
@@ -95,7 +94,7 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-/** The public work: the lead project, a card for each of the others, how they fit together and, until V1-06.3, the platform diagram. */
+/** The public work: the lead project, a card for each of the others, and how they fit together. */
 export function Work({ projects, architecture }: { projects: Project[]; architecture: Architecture }) {
   const [featured, ...others] = projects;
   return (
@@ -116,7 +115,6 @@ export function Work({ projects, architecture }: { projects: Project[]; architec
         ))}
       </ul>
       <ArchDiagram architecture={architecture} projects={projects} />
-      <Platform projects={projects} />
 
       {/* Printed CVs can't use the diagram, so print gets a plain list instead. */}
       <ul className="print-only print-projects">
