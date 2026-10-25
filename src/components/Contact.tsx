@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import type { Resume } from '../content/types';
+import { CV_PATH } from '../routes';
 import { displayUrl } from '../lib/urls';
 import { EmailLink } from './EmailLink';
 import { Icon, type IconName } from './Icon';
@@ -80,6 +81,12 @@ export function Contact({ resume: r }: { resume: Resume }) {
             />
             <Tile href={r.cv.pdf} name="Download CV" note="PDF" icon="download" download={r.cv.fileName} />
           </div>
+          {/* The one place that offers the CV page to print: the header keeps a single, primary CV action. */}
+          <p className="contact-print">
+            <a className="btn-text btn-on-band" href={CV_PATH}>
+              Print the CV
+            </a>
+          </p>
         </div>
       </div>
     </section>

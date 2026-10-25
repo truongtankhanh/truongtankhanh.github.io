@@ -40,4 +40,11 @@ describe('Contact', () => {
     expect(tiles[2]).toContain(`href="${resume.cv.pdf}" download="${resume.cv.fileName}"`);
     expect(tiles[2]).toContain('<span class="tile-name">Download CV</span>');
   });
+
+  it('adds a quiet "Print the CV" link to the CV page, outside the tiles and not as a button', () => {
+    const markup = render();
+    expect(markup).toContain('<a class="btn-text btn-on-band" href="/cv/">Print the CV</a>');
+    expect(markup.indexOf('Print the CV')).toBeGreaterThan(markup.lastIndexOf('<a class="tile"'));
+    expect(markup.match(/href="\/cv\/"/g)).toHaveLength(1);
+  });
 });

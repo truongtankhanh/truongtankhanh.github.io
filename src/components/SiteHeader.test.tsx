@@ -66,6 +66,11 @@ describe('SiteHeader', () => {
     expect(html()).toContain('aria-label="Switch colour theme"');
   });
 
+  it('has no link to the CV page: the print link is in the contact band only', () => {
+    expect(html()).not.toContain('/cv/');
+    expect(html()).not.toMatch(/Print/);
+  });
+
   describe('Download CV', () => {
     it('is hidden until the CV is published, so it never links to a 404', () => {
       expect(resume.cv.published).toBe(false);

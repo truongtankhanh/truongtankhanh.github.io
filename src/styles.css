@@ -3423,6 +3423,7 @@ p {
   .hero-sun,
   .hero-waves,
   .hero-actions,
+  .contact-print,
   .btn {
     display: none !important;
   }
