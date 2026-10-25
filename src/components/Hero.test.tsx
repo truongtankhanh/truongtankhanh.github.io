@@ -69,6 +69,16 @@ describe('Hero', () => {
     }
   });
 
+  it('gives each layer a hidden ring and a hidden lit node, drawn once and faded by the loop', () => {
+    const markup = html();
+    expect(markup.match(/<span class="hero-layer-glow" aria-hidden="true"><\/span>/g)).toHaveLength(
+      resume.heroStack.length,
+    );
+    expect(markup.match(/<span class="hero-layer-node" aria-hidden="true"><\/span>/g)).toHaveLength(
+      resume.heroStack.length,
+    );
+  });
+
   it('hides the sun and the waves from assistive technology', () => {
     const markup = html();
     expect(markup).toMatch(/<svg class="hero-sun"[^>]*aria-hidden="true"/);

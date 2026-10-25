@@ -1027,11 +1027,11 @@ p {
   content: '';
   position: absolute;
   top: 56px;
+  bottom: 56px;
   left: 10px;
   width: 9px;
-  height: 84px;
-  border-radius: 5px;
-  background: linear-gradient(180deg, transparent, var(--glow) 65%, var(--on-band));
+  /* The element is the whole track and the pulse a strip at its top, so moving it down is a `translate`. */
+  background: linear-gradient(180deg, transparent, var(--glow) 65%, var(--on-band)) top / 100% 84px no-repeat;
   filter: drop-shadow(0 0 10px var(--glow));
   opacity: 0;
 }
@@ -1073,6 +1073,33 @@ p {
   border: 2px solid color-mix(in srgb, var(--on-band) 55%, transparent);
   border-radius: 4px;
   background: var(--band);
+  transform: rotate(45deg);
+}
+/* The ring around a layer and its lit bus node are drawn once and only fade in and out as the pulse passes, so the
+   loop moves nothing but opacity. Without motion they stay invisible. */
+.hero-layer-glow,
+.hero-layer-node {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+}
+.hero-layer-glow {
+  inset: -1px;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1.5px var(--glow),
+    0 0 34px color-mix(in srgb, var(--glow) 40%, transparent);
+}
+.hero-layer-node {
+  top: 50%;
+  left: -42px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border: 2px solid var(--glow);
+  border-radius: 4px;
+  background: var(--glow);
+  box-shadow: 0 0 14px var(--glow);
   transform: rotate(45deg);
 }
 .hero-layer::after {
@@ -1160,25 +1187,30 @@ p {
   /* Each shorthand names its keyframes: a minifier reads a shorthand without a name as `animation: none` and drops
      the duration and the loop, so the layers would flash once instead of pulsing. */
   .hero-layer {
-    animation: layer-glow 4.8s ease-out infinite;
+    animation: layer-step 4.8s ease-out infinite;
   }
-  .hero-layer::before {
-    animation: layer-node 4.8s ease-out infinite;
+  .hero-layer-glow,
+  .hero-layer-node {
+    animation: layer-pulse 4.8s ease-out infinite;
   }
   .hero-layer:nth-child(1),
-  .hero-layer:nth-child(1)::before {
+  .hero-layer:nth-child(1) > .hero-layer-glow,
+  .hero-layer:nth-child(1) > .hero-layer-node {
     animation-delay: 0.35s;
   }
   .hero-layer:nth-child(2),
-  .hero-layer:nth-child(2)::before {
+  .hero-layer:nth-child(2) > .hero-layer-glow,
+  .hero-layer:nth-child(2) > .hero-layer-node {
     animation-delay: 1.25s;
   }
   .hero-layer:nth-child(3),
-  .hero-layer:nth-child(3)::before {
+  .hero-layer:nth-child(3) > .hero-layer-glow,
+  .hero-layer:nth-child(3) > .hero-layer-node {
     animation-delay: 2.15s;
   }
   .hero-layer:nth-child(4),
-  .hero-layer:nth-child(4)::before {
+  .hero-layer:nth-child(4) > .hero-layer-glow,
+  .hero-layer:nth-child(4) > .hero-layer-node {
     animation-delay: 3.05s;
   }
 }
@@ -1194,52 +1226,44 @@ p {
 }
 @keyframes stack-pulse {
   0% {
-    top: 56px;
+    translate: 0 0;
     opacity: 0;
   }
   3% {
     opacity: 1;
   }
   72% {
-    top: calc(100% - 140px);
+    translate: 0 calc(100% - 84px);
     opacity: 1;
   }
   76%,
   100% {
-    top: calc(100% - 140px);
+    translate: 0 calc(100% - 84px);
     opacity: 0;
   }
 }
-@keyframes layer-glow {
+@keyframes layer-step {
   0% {
     transform: translateX(0);
   }
   3%,
   14% {
     transform: translateX(12px);
-    box-shadow:
-      0 0 0 1.5px var(--glow),
-      0 0 34px color-mix(in srgb, var(--glow) 40%, transparent),
-      0 22px 44px -22px color-mix(in srgb, var(--shade) 55%, transparent);
   }
   26%,
   100% {
     transform: translateX(0);
   }
 }
-@keyframes layer-node {
+@keyframes layer-pulse {
   0%,
   26%,
   100% {
-    background: var(--band);
-    border-color: color-mix(in srgb, var(--on-band) 55%, transparent);
-    box-shadow: none;
+    opacity: 0;
   }
   3%,
   14% {
-    background: var(--glow);
-    border-color: var(--glow);
-    box-shadow: 0 0 14px var(--glow);
+    opacity: 1;
   }
 }
 
@@ -1705,10 +1729,10 @@ p {
   position: absolute;
   top: -2px;
   left: 0;
-  width: 40px;
+  width: 100%;
   height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, transparent, var(--glow));
+  /* The element is the whole line and the pulse a strip at its start, so moving it along is a `translate`. */
+  background: linear-gradient(90deg, transparent, var(--glow)) left / 40px 100% no-repeat;
   filter: drop-shadow(0 0 5px var(--glow));
   opacity: 0;
 }
@@ -1738,69 +1762,82 @@ p {
   .arch-edge:nth-child(6) i::before {
     animation-delay: 2.4s;
   }
+  /* The glow of a box is a ring drawn once, on a pseudo-element, that fades in and out. */
   .arch-node:nth-child(3),
   .arch-node:nth-child(5),
   .arch-node:nth-child(7) {
+    position: relative;
+  }
+  .arch-node:nth-child(3)::after,
+  .arch-node:nth-child(5)::after,
+  .arch-node:nth-child(7)::after {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: 12px;
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--glow) 35%, transparent),
+      0 0 22px color-mix(in srgb, var(--glow) 50%, transparent);
+    opacity: 0;
+    pointer-events: none;
     animation: arch-glow 3.6s ease-out infinite;
   }
-  .arch-node:nth-child(3) {
+  .arch-node:nth-child(3)::after {
     animation-delay: 1s;
   }
-  .arch-node:nth-child(5) {
+  .arch-node:nth-child(5)::after {
     animation-delay: 2.2s;
   }
-  .arch-node:nth-child(7) {
+  .arch-node:nth-child(7)::after {
     animation-delay: 3.4s;
   }
 }
 @keyframes arch-pulse-x {
   0% {
-    left: 0;
+    translate: 0 0;
     opacity: 0;
   }
   4% {
     opacity: 1;
   }
   26% {
-    left: calc(100% - 40px);
+    translate: calc(100% - 40px) 0;
     opacity: 1;
   }
   30%,
   100% {
-    left: calc(100% - 40px);
+    translate: calc(100% - 40px) 0;
     opacity: 0;
   }
 }
 @keyframes arch-pulse-y {
   0% {
-    top: 0;
+    translate: 0 0;
     opacity: 0;
   }
   4% {
     opacity: 1;
   }
   26% {
-    top: calc(100% - 40px);
+    translate: 0 calc(100% - 40px);
     opacity: 1;
   }
   30%,
   100% {
-    top: calc(100% - 40px);
+    translate: 0 calc(100% - 40px);
     opacity: 0;
   }
 }
 @keyframes arch-glow {
   0% {
-    box-shadow: 0 0 0 0 transparent;
+    opacity: 0;
   }
   4% {
-    box-shadow:
-      0 0 0 4px color-mix(in srgb, var(--glow) 35%, transparent),
-      0 0 22px color-mix(in srgb, var(--glow) 50%, transparent);
+    opacity: 1;
   }
   24%,
   100% {
-    box-shadow: 0 0 0 0 transparent;
+    opacity: 0;
   }
 }
 
@@ -1852,8 +1889,8 @@ p {
     top: 0;
     left: -2px;
     width: 6px;
-    height: 40px;
-    background: linear-gradient(180deg, transparent, var(--glow));
+    height: 100%;
+    background: linear-gradient(180deg, transparent, var(--glow)) top / 100% 40px no-repeat;
   }
   @media (prefers-reduced-motion: no-preference) {
     .arch-edge i::before {
@@ -2763,7 +2800,10 @@ p {
   .hero-waves,
   .wave-top,
   .hero-stack::after,
+  .hero-layer-glow,
+  .hero-layer-node,
   .arch-edge i::before,
+  .arch-node::after,
   .site-header::after {
     display: none;
   }

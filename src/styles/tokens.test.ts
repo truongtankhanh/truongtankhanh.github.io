@@ -215,6 +215,25 @@ describe('motion budget', () => {
     }
   });
 
+  it('keeps every loop on the compositor: only opacity, translate, scale and transform change', () => {
+    const loops = [
+      'sun-turn',
+      'wave-drift',
+      'stack-pulse',
+      'layer-step',
+      'layer-pulse',
+      'arch-pulse-x',
+      'arch-pulse-y',
+      'arch-glow',
+    ];
+    const allowed = new Set(['opacity', 'translate', 'scale', 'transform']);
+    for (const name of loops) {
+      const own = all.filter((d) => d.context.includes(`@keyframes ${name}`));
+      expect(own.length, name).toBeGreaterThan(0);
+      for (const d of own) expect(allowed.has(d.property), `${name}: ${d.property}`).toBe(true);
+    }
+  });
+
   it('slows the waves to 30 s and 46 s and leaves the sun at 180 s', () => {
     const values = animations.map((a) => a.value);
     expect(values).toContain('wave-drift 30s linear infinite');

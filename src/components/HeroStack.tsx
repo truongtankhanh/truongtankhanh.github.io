@@ -21,6 +21,9 @@ export function HeroStack({ layers, coreStack }: HeroStackProps) {
     <div className="hero-stack" role="group" aria-label="Technology stack">
       {layers.map((layer) => (
         <div key={layer.id} className="hero-layer">
+          {/* Decoration: the ring and the lit bus node that fade in as the pulse reaches this layer. */}
+          <span className="hero-layer-glow" aria-hidden="true" />
+          <span className="hero-layer-node" aria-hidden="true" />
           <div className="hero-layer-head">
             <Icon name={LAYER_ICON[layer.id]} className="icon hero-layer-icon" />
             <span>{layer.label}</span>
