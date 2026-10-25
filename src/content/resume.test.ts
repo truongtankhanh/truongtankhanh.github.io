@@ -236,6 +236,61 @@ describe('resume content', () => {
       });
     });
 
+    describe('IoT Telemetry Pipeline case study', () => {
+      const telemetry = project('telemetry');
+      const study = telemetry.caseStudy!;
+
+      it('lives at the slug of its repository, with the role approved in Q9', () => {
+        expect(telemetry.repo.endsWith(`/${study.slug}`)).toBe(true);
+        expect(study.role).toBe('Author and maintainer');
+      });
+
+      it('shows the figure of the project card, so the page and the card say the same', () => {
+        expect(study.does.lead.figure.value).toBe(telemetry.stat!.value);
+        expect(study.does.lead.text).toContain('10,000 messages a second');
+        expect(study.does.lead.figure.label).toContain('nothing lost and no duplicates');
+      });
+
+      it('names the measurement that backs the figure: the script, the document and the command that repeats it', () => {
+        const text = study.check.join('\n');
+        expect(text).toContain('apps/simulator/src/bench.ts');
+        expect(text).toContain('pnpm --filter @itp/simulator bench -- --messages 100000');
+        expect(text).toContain('docs/benchmarks.md');
+        expect(text).toContain('deploy/bench/run-baseline.sh');
+      });
+
+      it('says that the two measurements are not comparable and names the limits of the design', () => {
+        const text = study.check.join('\n');
+        expect(text).toContain('not comparable');
+        expect(text).toContain('ADR-0002');
+        expect(study.overview[0]).toContain('not intended for production use');
+      });
+
+      it('lists the first six decision records of the repository, with a key phrase in each card', () => {
+        expect(study.decisions.map((d) => d.id)).toEqual([
+          'ADR-0001',
+          'ADR-0002',
+          'ADR-0003',
+          'ADR-0004',
+          'ADR-0005',
+          'ADR-0006',
+        ]);
+        for (const d of study.decisions) expect(d.title, d.id).not.toMatch(/[.`—]/);
+        expect(study.does.more).toHaveLength(3);
+        for (const c of [study.does.lead, ...study.does.more]) {
+          expect(
+            emphasis(c.text).some((part) => part.strong),
+            c.title,
+          ).toBe(true);
+        }
+      });
+
+      it('runs with the command of the README and holds no secret', () => {
+        expect(study.run.commands.startsWith('pnpm docker:demo\n')).toBe(true);
+        expect(JSON.stringify(study)).not.toMatch(/password|secret/i);
+      });
+    });
+
     function project(id: string) {
       return resume.projects.find((p) => p.id === id)!;
     }

@@ -179,6 +179,90 @@ export const resume: Resume = {
         alt: 'A server-room temperature incident in the command center, raised by the telemetry pipeline',
         caption: 'Three readings over 27 °C opened this incident; it resolved itself when the room cooled.',
       },
+      // Every sentence is quoted or paraphrased from README.md, docs/benchmarks.md or docs/adr/ of the repository at
+      // commit f830fa5; the source line of each is recorded in the pull request that added it.
+      caseStudy: {
+        slug: 'iot-telemetry-pipeline',
+        lead: 'Sensor telemetry from a campus, ingested over MQTT, stored in PostgreSQL, turned into alerts with hysteresis, and delivered as incidents to ops-command-center.',
+        role: 'Author and maintainer',
+        status: 'A V1 demonstration: synthetic devices, one command to run, not for production use',
+        overview: [
+          'This is a V1 demonstration system and is not intended for production use: devices and readings are synthetic, the broker allows anonymous clients, and the HTTP API has no authentication. Known data-loss and metric-accuracy limits are tracked as open V1 tasks in the repository.',
+          'The pipeline owns telemetry and ops-command-center owns incidents. Only a sustained, filtered breach crosses between them, as an incident in the right zone, authenticated with client credentials. Each side also runs without the other.',
+        ],
+        does: {
+          lead: {
+            title: 'Ingest that scales out',
+            text: 'Replicas share one **MQTT 5 shared subscription**, so ingest scales out by adding replicas. One replica takes about **10,000 messages a second** from the broker to committed rows, with nothing lost and no duplicates.',
+            figure: {
+              value: '~10k/s',
+              label: 'messages on one replica, with nothing lost and no duplicates',
+            },
+          },
+          more: [
+            {
+              icon: 'database',
+              title: 'Idempotent storage, measured loss',
+              text: 'Redelivered messages hit the primary key and rollups are computed from the rows actually inserted, so **duplicates never inflate counts**. Per-device sequence numbers expose every lost message as a metric.',
+            },
+            {
+              icon: 'circleCheck',
+              title: 'Alerts that do not flap',
+              text: 'A rule opens an alert only after **consecutive breaches** and clears it at a **separate clear threshold**: three readings over 27 °C open it, and it resolves when the temperature falls back below 25.5 °C.',
+            },
+            {
+              icon: 'server',
+              title: 'Reliable delivery to incidents',
+              text: 'Opening or clearing an alert writes an outbox row in the same transaction. A delivery worker creates the incident in ops-command-center with **lease-based claiming and backoff**, and resolves it when the alert clears.',
+            },
+          ],
+        },
+        decisions: [
+          {
+            id: 'ADR-0001',
+            title: 'Scale ingest horizontally with MQTT 5 shared subscriptions',
+            why: 'The broker load-balances messages across the replicas in the group, so scaling is adding replicas; nothing may rely on per-device in-memory state being complete.',
+          },
+          {
+            id: 'ADR-0002',
+            title: 'Acknowledge on receipt; bound and measure the loss window',
+            why: 'Acknowledging only after a commit would put one message in each batch, so it acknowledges on receipt, flushes every 250 ms or 1,000 readings, and counts every lost message as a sequence gap.',
+          },
+          {
+            id: 'ADR-0003',
+            title: 'Plain PostgreSQL: daily partitions and write-time rollups',
+            why: 'Retention is a DROP TABLE on an old partition, and the per-minute rollup is updated in the same transaction from the rows the insert returned, so it runs on any PostgreSQL 14 or later.',
+          },
+          {
+            id: 'ADR-0004',
+            title: 'Threshold rules with consecutive breaches and hysteresis',
+            why: 'A raise threshold, a separate clear threshold and a consecutive-breach count give one alert per real episode; a partial unique index allows one open alert per device and rule.',
+          },
+          {
+            id: 'ADR-0005',
+            title: 'Deliver alerts through a transactional outbox',
+            why: 'The delivery row is inserted in the same transaction as the alert, so ingest never waits on the command center and an outage only delays incidents; delivery is at least once.',
+          },
+          {
+            id: 'ADR-0006',
+            title: 'Authenticate to the command center with client credentials',
+            why: 'The pipeline is a confidential OAuth 2.0 client whose service account holds the technician role, and incident creation sends an Idempotency-Key so a retry returns the incident created the first time.',
+          },
+        ],
+        check: [
+          'Throughput is measured end to end, from messages published to the broker until every reading is committed in PostgreSQL, by apps/simulator/src/bench.ts (pnpm --filter @itp/simulator bench -- --messages 100000). The first measurement, on a 2 vCPU cloud VM, gave about 10,000 messages a second over three runs of 100,000 messages, with all 200,001 readings stored.',
+          'A later baseline on an Apple M3 Pro, with the service on the host and PostgreSQL 17 and Mosquitto in Docker, measured a median of 24,554 messages a second over three runs of 200,000 messages, again with every reading stored and no sequence gap. The two are not comparable: the machine, the PostgreSQL version and the commit differ. docs/benchmarks.md records both setups, and bash deploy/bench/run-baseline.sh --runs 3 --messages 200000 repeats the baseline.',
+          'Completeness is measured too: devices send a monotonically increasing seq and telemetry_sequence_gaps_total counts every lost message from a ledger in PostgreSQL, so the count holds across replicas. In the first benchmark it caught a broker silently dropping 10% of a burst under default settings.',
+          'pnpm e2e:ingest runs the service against a real PostgreSQL and a real Mosquitto with a fake ops-command-center: storage, duplicates, rejections, alert open, deliver, clear and resolve, gaps, and drain on shutdown. The repository also ships Kubernetes manifests with an HPA and a PodDisruptionBudget, which CI validates with kubeconform.',
+          'The limits are written down as well: acknowledging on receipt means a hard kill can lose the readings of one flush window, and zero loss would need a durable log in front (ADR-0002).',
+        ],
+        run: {
+          intro:
+            'One command brings up PostgreSQL, Mosquitto, the ingest service and a simulator running the server-room-overheat scenario. The alert opens about 25 s after start and clears about a minute later.',
+          commands:
+            'pnpm docker:demo\ncurl localhost:3100/api/alerts                    # opens ~25 s after start, clears about a minute later\ncurl "localhost:3100/api/devices/dc-env-01/readings?metric=temperature_c"\ncurl localhost:3100/metrics | grep telemetry_     # throughput, rejections, gaps, lag\nopen http://localhost:3100/api/docs               # OpenAPI (API_DOCS_ENABLED, on in the demo)',
+        },
+      },
     },
     {
       id: 'aws',

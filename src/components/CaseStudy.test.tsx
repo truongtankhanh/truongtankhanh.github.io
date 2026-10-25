@@ -6,7 +6,13 @@ import { resume } from '../content/resume';
 import type { Project, Resume } from '../content/types';
 import { CaseStudy } from './CaseStudy';
 
-const [first, second, ...others] = resume.projects as [Project, Project, ...Project[]];
+/** Projects as they were before any had a case study, so each test adds exactly the ones it needs. */
+const without = (p: Project): Project => {
+  const copy = { ...p };
+  delete copy.caseStudy;
+  return copy;
+};
+const [first, second, ...others] = resume.projects.map(without) as [Project, Project, ...Project[]];
 const withStudy = (project: Project, slug: string): Project => ({
   ...project,
   caseStudy: sampleCaseStudy(slug),

@@ -76,22 +76,35 @@ describe('sitemap and robots', () => {
   it('uses absolute URLs on the site origin', () => {
     expect(resume.siteUrl).toBe(`${origin}/`);
     const xml = sitemapXml(resume, '2026-10-23');
-    expect(locs(xml)).toEqual([`${origin}/`, `${origin}/work/ops-command-center/`]);
+    expect(locs(xml)).toEqual([
+      `${origin}/`,
+      `${origin}/work/ops-command-center/`,
+      `${origin}/work/iot-telemetry-pipeline/`,
+    ]);
     expect(xml).toContain('<lastmod>2026-10-23</lastmod>');
     expect(robotsTxt(resume)).toContain(`Sitemap: ${origin}/sitemap.xml`);
   });
 
-  it('lists the home page now and each case study once it exists, from the route list; the 404 page stays out', () => {
-    const withStudy = {
+  it('lists the home page, then a page for each project that has a case study, in project order; the 404 page stays out', () => {
+    // Independent of the real content: the first and the third project get a case study, the others none.
+    const withStudies = {
       ...resume,
-      projects: resume.projects.map((p, i) =>
-        i === 0 ? { ...p, caseStudy: sampleCaseStudy('ops-command-center') } : p,
-      ),
+      projects: resume.projects.map((p, i) => {
+        const copy = { ...p };
+        delete copy.caseStudy;
+        return i === 0 || i === 2 ? { ...copy, caseStudy: sampleCaseStudy(`study-${i}`) } : copy;
+      }),
     };
-    expect(routes(withStudy).map((r) => r.path)).toEqual(['/', '/work/ops-command-center/', '/404.html']);
-    expect(locs(sitemapXml(withStudy, '2026-10-23'))).toEqual([
+    expect(routes(withStudies).map((r) => r.path)).toEqual([
+      '/',
+      '/work/study-0/',
+      '/work/study-2/',
+      '/404.html',
+    ]);
+    expect(locs(sitemapXml(withStudies, '2026-10-23'))).toEqual([
       `${origin}/`,
-      `${origin}/work/ops-command-center/`,
+      `${origin}/work/study-0/`,
+      `${origin}/work/study-2/`,
     ]);
   });
 
@@ -190,7 +203,8 @@ describe('page head', () => {
     expect(tags).toContain(`<link rel="canonical" href="${resume.siteUrl}work/ops-command-center/" />`);
     expect(tags).not.toContain('name="robots"');
     expect(pageMeta(resume, '/work/ops-command-center/').path).toBe('/work/ops-command-center/');
-    expect(() => pageMeta(resume, '/work/iot-telemetry-pipeline/')).toThrow(/No page/);
+    expect(pageMeta(resume, '/work/iot-telemetry-pipeline/').path).toBe('/work/iot-telemetry-pipeline/');
+    expect(() => pageMeta(resume, '/work/platform-aws/')).toThrow(/No page/);
   });
 
   it('gives the 404 page its own title, a noindex tag, and no canonical or og:url', () => {
