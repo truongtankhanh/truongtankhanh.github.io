@@ -39,6 +39,36 @@ pnpm preview    # serve dist/
 
 `pnpm typecheck`, `pnpm test` and `pnpm format:check` run the same checks as CI.
 
+## The CV for applications (with a phone number)
+
+The site and its PDF never carry a phone number. The version I send to an employer who asks for it is a Word file
+built from the same `resume.ts` by [`scripts/build-application-cv.mjs`](scripts/build-application-cv.mjs), with the
+number added. It is not part of `pnpm build`, `pnpm test` or the deploy, and the number is never committed.
+
+First time on a machine:
+
+```bash
+cp scripts/application-cv/private.example.json cv/private.json
+```
+
+Then open `cv/private.json` (the `cv/` folder is local and kept out of Git through `.git/info/exclude`, so add that
+rule again on a fresh clone) and replace the placeholder in `phone` with the number, in the national form (a leading
+zero and nine digits) or with the country code of Vietnam; spaces, dots and dashes are fine. The script refuses any
+other form, and never prints what it read. `linkedin`, `extraProjects` and `overrides` are optional.
+
+Every time:
+
+```bash
+git check-ignore -v cv/private.json   # prints the rule that keeps it out of Git
+pnpm build:application-cv             # writes cv/application/Truong_Tan_Khanh_CV.docx
+pnpm build:application-cv --dry-run   # same file with "(phone on request)", in a temporary folder, no private file
+```
+
+The file is built from `resume.ts`, so after a change to the content, run the command again. It writes only in
+`cv/application/` and does not touch the older Word files in `cv/`. Fonts are Calibri, so it looks the same on any
+machine with Word. The styles are in [`scripts/application-cv/`](scripts/application-cv/); check the result in Word
+before sending it.
+
 ## How it is deployed
 
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) checks formatting, types and tests,
