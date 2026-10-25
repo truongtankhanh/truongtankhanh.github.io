@@ -212,7 +212,7 @@ export function CaseStudy({ resume, project }: { resume: Resume; project: Projec
                       <i />
                       <i />
                     </div>
-                    <Shot shot={project.image} />
+                    <Shot shot={project.image} lazy />
                   </div>
                   <figcaption className="cs-label cs-caption">{project.image.caption}</figcaption>
                 </figure>
