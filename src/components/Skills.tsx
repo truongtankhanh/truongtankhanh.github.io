@@ -1,7 +1,8 @@
 import type { SkillGroup, SkillKind } from '../content/types';
 import { Icon, type IconName } from './Icon';
 
-const GROUP_ICON: Record<SkillKind, IconName> = {
+/** The icon of each group; the CV page draws the same ones. */
+export const GROUP_ICON: Record<SkillKind, IconName> = {
   backend: 'server',
   frontend: 'monitor',
   data: 'database',

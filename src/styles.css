@@ -42,6 +42,21 @@
   --shade: #000000;
   --shade-ink: #0b1b33;
 
+  /* The CV page (`/cv/`). The sheet is white paper in both themes, so its colours do not follow the theme either. */
+  --cv-ink: #0b1b33;
+  --cv-body: #2c3d57;
+  --cv-muted: #4a5b73;
+  --cv-accent: #1b4f9c;
+  --cv-accent-deep: #123a78;
+  --cv-badge-top: #2a63b6;
+  --cv-line: #d3deec;
+  --cv-rim: #8a9db8;
+  --cv-rim-light: #b3c1d4;
+  --cv-silver: #a9b8cd;
+  --cv-steel: #6f84a1;
+  --cv-plate-bot: #eef2f8;
+  --cv-chip-bot: #dfe8f5;
+
   --font: 'Be Vietnam Pro', system-ui, sans-serif;
   --measure: 66ch;
   --page: 74rem;
@@ -3687,5 +3702,764 @@ p {
   a {
     color: inherit;
     text-decoration: none;
+  }
+}
+
+/* ── The CV page: the screen and print layout of frame 05 (V1-13.1) ─────────────── */
+/* Sizes are in px because the sheet is an A4 page: 96 px to the inch, so 11.5 px is 8.6 pt on paper. Everything is
+   plain text, plain borders and gradients (no `background-clip: text`, no raster), so the PDF stays selectable. Class
+   names start with `cv-` because the home page's print rules above also match names such as `.role` and `.contact`. */
+.cv {
+  page: cv;
+  min-height: 100vh;
+  padding: var(--space-2) var(--gutter) var(--space-8);
+  /* Small tinted areas (chips, badges, plates, nodes) must print with their colour, not as white. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cv-bar {
+  max-width: 210mm;
+  margin: 0 auto;
+}
+.cv-bar a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2.75rem;
+  font-weight: 600;
+}
+
+.cv-sheet {
+  max-width: 210mm;
+  margin: var(--space-1) auto 0;
+  padding: 14mm 15mm;
+  border: 1px solid var(--cv-line);
+  border-radius: 6px;
+  background: var(--silver-1);
+  box-shadow: var(--shadow);
+  color: var(--cv-ink);
+  font-family: var(--font);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.cv-sheet :where(ul, ol, dl, dd) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cv-sheet a {
+  color: var(--cv-accent);
+  text-decoration: none;
+}
+.cv-sheet a:hover {
+  color: var(--cv-accent-deep);
+  text-decoration: underline;
+}
+.cv-sheet strong {
+  font-weight: 600;
+  color: var(--cv-ink);
+}
+.cv-label {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Plate: a white-to-steel rim, a light inner top edge and a 2 px steel foot. Padding and radius are the component's. */
+.cv-plate {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(180deg, var(--silver-1), var(--cv-plate-bot)) padding-box,
+    linear-gradient(
+        145deg,
+        var(--silver-1) 0%,
+        var(--cv-silver) 38%,
+        var(--cv-steel) 64%,
+        var(--silver-1) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 1px 0 var(--silver-1),
+    0 2px 0 var(--cv-rim);
+  break-inside: avoid;
+}
+
+/* Raised type: a hard 1 px highlight and a soft shadow, as real text-shadow so the text stays text. */
+.cv-name,
+.cv-headline,
+.cv-figures b,
+.cv-scope-figures b,
+.cv-work-figure b {
+  text-shadow:
+    0 1px 0 var(--silver-1),
+    0 2px 2px color-mix(in srgb, var(--cv-ink) 20%, transparent);
+}
+
+.cv-chip {
+  padding: 3px 11px;
+  border: 1px solid var(--cv-rim);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--silver-1), var(--cv-chip-bot));
+  box-shadow: 0 1px 0 var(--cv-rim);
+  color: var(--cv-ink);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Header: a 5 px rule from silver to blue, then place, name, role, contact line and the core stack. */
+.cv-head::before {
+  content: '';
+  display: block;
+  height: 5px;
+  margin-bottom: 22px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--cv-rim-light) 0%,
+    var(--cv-silver) 22%,
+    var(--cv-accent) 60%,
+    var(--cv-accent-deep) 100%
+  );
+  box-shadow:
+    0 1px 0 var(--cv-rim),
+    inset 0 1px 0 color-mix(in srgb, var(--silver-1) 70%, transparent);
+}
+.cv-head-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.cv-eyebrow {
+  color: var(--cv-muted);
+}
+.cv-name {
+  margin-top: 12px;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.cv-headline {
+  margin-top: 8px;
+  color: var(--cv-accent);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.cv-mark {
+  width: 46px;
+  height: 46px;
+  flex: none;
+}
+.cv-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 16px;
+  color: var(--cv-body);
+  font-size: 10.5px;
+}
+.cv-links li {
+  position: relative;
+}
+.cv-links li + li::before {
+  content: '';
+  position: absolute;
+  top: 0.55em;
+  left: -10px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--cv-rim-light);
+}
+.cv-core {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cv-line);
+}
+.cv-core .cv-label {
+  padding-right: 6px;
+  color: var(--cv-muted);
+}
+.cv-core ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* The five career figures: a plate with a blue top edge. */
+.cv-figures {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0 14px;
+  margin-top: 16px;
+  padding: 14px 16px 12px;
+  border-top: 3px solid var(--cv-accent);
+  border-radius: 8px;
+}
+.cv-figures b {
+  display: block;
+  color: var(--cv-accent);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.cv-figures span {
+  display: block;
+  margin-top: 7px;
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Section mark: a short silver-to-blue bar, the title, and a hairline that runs to the margin. */
+.cv-sec {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 10px;
+  color: var(--cv-accent);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  break-after: avoid;
+}
+.cv-sec::before {
+  content: '';
+  width: 22px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cv-rim-light), var(--cv-steel) 40%, var(--cv-accent));
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--cv-ink) 25%, transparent);
+}
+.cv-sec::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--cv-line);
+}
+.cv-summary {
+  color: var(--cv-body);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.cv-summary + .cv-summary {
+  margin-top: 6px;
+}
+
+/* Experience: dates, a rail with a node per role, then the role. */
+.cv-role {
+  display: grid;
+  grid-template-columns: 104px 14px minmax(0, 1fr);
+  gap: 0 12px;
+  padding-bottom: 14px;
+  break-inside: avoid;
+}
+.cv-role.is-long {
+  break-inside: auto;
+}
+.cv-when {
+  padding-top: 3px;
+}
+.cv-when .cv-label {
+  color: var(--cv-ink);
+}
+.cv-badge {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--cv-badge-top), var(--cv-accent-deep));
+  box-shadow: 0 1.5px 0 var(--cv-ink);
+  color: var(--silver-1);
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cv-rail {
+  position: relative;
+}
+.cv-rail::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: -14px;
+  left: 50%;
+  width: 1.5px;
+  margin-left: -0.75px;
+  background: var(--cv-line);
+}
+.cv-rail i {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border: 2px solid var(--cv-accent);
+  border-radius: 50%;
+  background: var(--silver-1);
+  box-shadow: 0 1.5px 0 var(--cv-rim);
+}
+.cv-role.is-current .cv-rail i {
+  background: var(--cv-accent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--cv-accent) 20%, transparent),
+    0 1.5px 0 var(--cv-accent-deep);
+}
+.cv-role:last-child {
+  padding-bottom: 0;
+}
+.cv-role:last-child .cv-rail::before {
+  display: none;
+}
+.cv-role h3 {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.cv-role h3 small {
+  display: block;
+  margin-top: 2px;
+  color: var(--cv-accent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.cv-role-summary {
+  margin-top: 8px;
+  color: var(--cv-muted);
+}
+.cv-eng {
+  margin-top: 8px;
+  break-inside: avoid;
+}
+.cv-eng h4 {
+  font-size: 11.5px;
+  font-weight: 800;
+}
+.cv-eng-context {
+  color: var(--cv-muted);
+  font-size: 10px;
+}
+.cv-bullets {
+  margin-top: 4px;
+}
+.cv-bullets li {
+  position: relative;
+  margin-top: 2px;
+  padding-left: 12px;
+  color: var(--cv-muted);
+}
+.cv-bullets li::before {
+  content: '';
+  position: absolute;
+  top: 0.62em;
+  left: 1px;
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--cv-accent);
+}
+
+/* Skills: five icon cards. */
+.cv-skill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.cv-skill {
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+.cv-skill:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+.cv-skill-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.cv-skill-head h3 {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.cv-skill-icon {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  padding: 6px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, var(--silver-1), var(--cv-chip-bot));
+  box-shadow:
+    0 1px 0 var(--cv-rim),
+    inset 0 1px 0 var(--silver-1);
+  fill: none;
+  stroke: var(--cv-accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cv-skill > ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 9px;
+}
+.cv-skill .cv-chip {
+  font-size: 9.5px;
+}
+
+/* Public work: a plate per repository, led by one figure. */
+.cv-public,
+.cv-approach {
+  break-before: page;
+}
+.cv-work-list {
+  display: grid;
+  gap: 10px;
+}
+.cv-work {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 0 16px;
+  padding: 14px 16px;
+  border-radius: 10px;
+}
+.cv-work-figure b {
+  display: block;
+  color: var(--cv-accent);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+.cv-work-figure span {
+  display: block;
+  margin-top: 5px;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.cv-work h3 {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+.cv-work p {
+  margin-top: 3px;
+  color: var(--cv-muted);
+  font-size: 10.5px;
+}
+.cv-work p.cv-work-figure {
+  margin-top: 0;
+  color: var(--cv-ink);
+}
+.cv-work .cv-work-proof {
+  color: var(--cv-ink);
+  font-weight: 600;
+}
+.cv-work-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 7px;
+}
+.cv-work-stack .cv-chip {
+  padding: 1px 8px;
+  font-size: 8.5px;
+}
+.cv-work p.cv-work-repo {
+  margin-top: 6px;
+  font-size: 7.5px;
+}
+
+/* How I work: the scope plate, four principle plates, then education and languages. */
+.cv-scope {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  border-radius: 10px;
+}
+.cv-scope-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px 16px;
+  border-right: 1px solid var(--cv-line);
+}
+.cv-scope-figures b {
+  display: block;
+  color: var(--cv-accent);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.cv-scope-figures span {
+  display: block;
+  margin-top: 5px;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.cv-scope-owns {
+  padding: 12px 16px;
+}
+.cv-scope-owns .cv-label {
+  color: var(--cv-accent);
+}
+.cv-scope-owns .cv-bullets li {
+  color: var(--cv-body);
+  font-size: 10px;
+}
+.cv-principles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.cv-principle {
+  padding: 11px 13px;
+  border-radius: 10px;
+}
+.cv-principle h3 {
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.cv-principle > p {
+  margin-top: 2px;
+  color: var(--cv-muted);
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+.cv-principle > .cv-principle-label {
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid var(--cv-line);
+  color: var(--cv-accent);
+  font-size: 7.5px;
+}
+.cv-principle li {
+  position: relative;
+  margin-top: 3px;
+  padding-left: 10px;
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.cv-principle li::before {
+  content: '';
+  position: absolute;
+  top: 0.5em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--cv-accent);
+}
+.cv-principle li small {
+  display: block;
+  color: var(--cv-muted);
+  font-size: 8px;
+  font-weight: 500;
+}
+.cv-facts {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.4fr;
+  gap: 0 20px;
+}
+.cv-facts > div {
+  break-inside: avoid;
+}
+.cv-facts > div + div {
+  padding-left: 20px;
+  border-left: 1px solid var(--cv-line);
+}
+.cv-facts dt {
+  margin-bottom: 3px;
+  color: var(--cv-accent);
+}
+.cv-fact-main {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.cv-fact-sub {
+  color: var(--cv-muted);
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+/* Closing box: the contact details, after the content rather than pinned to the foot of the page. */
+.cv-close {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 22px;
+  align-items: center;
+  margin-top: 28px;
+  padding: 20px 24px;
+  border-top: 4px solid var(--cv-accent);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 var(--silver-1),
+    0 3px 0 var(--cv-rim);
+}
+.cv-close h2 {
+  color: var(--cv-accent);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.cv-close p {
+  margin-top: 8px;
+  color: var(--cv-muted);
+  font-size: 10.5px;
+}
+.cv-sheet a.cv-mail {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--cv-ink);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.cv-mail .cv-label {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--cv-muted);
+  font-size: 7.5px;
+}
+.cv-close ul {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.cv-close li {
+  flex: 1;
+  border-radius: 8px;
+}
+.cv-close li a {
+  display: block;
+  padding: 7px 10px;
+  color: var(--cv-ink);
+}
+.cv-close li b {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.cv-close li span {
+  display: block;
+  margin-top: 1px;
+  color: var(--cv-muted);
+  font-size: 8.5px;
+}
+
+/* A phone shows the same sheet, one column wide. (`screen` only: a printed page is about 680 px wide too.) */
+@media screen and (max-width: 46rem) {
+  .cv-sheet {
+    padding: var(--space-3) var(--space-2);
+  }
+  .cv-figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .cv-role {
+    grid-template-columns: 14px minmax(0, 1fr);
+  }
+  .cv-when {
+    grid-column: 1 / -1;
+    padding: 0 0 6px;
+  }
+  .cv-skill-grid,
+  .cv-principles,
+  .cv-scope,
+  .cv-work,
+  .cv-facts,
+  .cv-close {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cv-scope-figures {
+    border-right: 0;
+    border-bottom: 1px solid var(--cv-line);
+  }
+  .cv-work-figure {
+    margin-bottom: 8px;
+  }
+  .cv-facts > div + div {
+    padding: 10px 0 0;
+    border-left: 0;
+  }
+  .cv-close ul {
+    flex-direction: column;
+  }
+}
+
+@media print {
+  /* The named page `cv` keeps its footer off the home page, which prints with the default page. Nothing is within
+     11 mm of the paper edge: office printers cannot print there. The words of the left footer come from the page. */
+  @page cv {
+    size: A4;
+    margin: 14mm 15mm;
+    @bottom-left {
+      width: 72%;
+      padding-top: 2.5mm;
+      border-top: 1px solid var(--cv-line);
+      color: var(--cv-muted);
+      font-family: var(--font);
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+      text-align: left;
+      vertical-align: top;
+    }
+    @bottom-right {
+      width: 28%;
+      padding-top: 2.5mm;
+      border-top: 1px solid var(--cv-line);
+      color: var(--cv-muted);
+      content: counter(page) ' / ' counter(pages);
+      font-family: var(--font);
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+      text-align: right;
+      vertical-align: top;
+    }
+  }
+  .cv {
+    min-height: 0;
+    padding: 0;
+  }
+  .cv-bar {
+    display: none;
+  }
+  .cv-sheet {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  /* A section that starts a page sits flush with the top margin. */
+  .cv-public .cv-sec,
+  .cv-approach > .cv-sec:first-child {
+    margin-top: 0;
   }
 }

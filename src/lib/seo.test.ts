@@ -5,6 +5,7 @@ import { resume } from '../content/resume';
 import { routes } from '../routes';
 import { findPhoneNumber } from './privacy';
 import {
+  cvMeta,
   headTags,
   homeMeta,
   jsonLdScript,
@@ -86,7 +87,7 @@ describe('sitemap and robots', () => {
     expect(robotsTxt(resume)).toContain(`Sitemap: ${origin}/sitemap.xml`);
   });
 
-  it('lists the home page, then a page for each project that has a case study, in project order; the 404 page stays out', () => {
+  it('lists the home page, then a page for each project that has a case study, in project order; the CV and the 404 pages stay out', () => {
     // Independent of the real content: the first and the third project get a case study, the others none.
     const withStudies = {
       ...resume,
@@ -100,6 +101,7 @@ describe('sitemap and robots', () => {
       '/',
       '/work/study-0/',
       '/work/study-2/',
+      '/cv/',
       '/404.html',
     ]);
     expect(locs(sitemapXml(withStudies, '2026-10-23'))).toEqual([
@@ -186,7 +188,18 @@ describe('page head', () => {
     expect(tags).toContain('<title>A &quot;B&quot; &lt;C&gt; &amp; D</title>');
   });
 
-  it('has a page for the home path and the 404 page, for now', () => {
+  it('gives the CV page a title for the PDF, a noindex tag, and no canonical or og:url', () => {
+    const meta = pageMeta(resume, '/cv/');
+    expect(meta).toEqual(cvMeta(resume));
+    expect(meta.title).toBe(`${resume.name}, ${resume.headline}, CV`);
+    const tags = headTags(resume, meta);
+    expect(tags).toContain('<meta name="robots" content="noindex" />');
+    expect(tags).not.toContain('rel="canonical"');
+    expect(tags).not.toContain('og:url');
+    expect(count(tags, /<title>/g)).toBe(1);
+  });
+
+  it('has a page for the home path, the CV and the 404 page', () => {
     expect(pageMeta(resume, '/').path).toBe('/');
     expect(pageMeta(resume, '/404.html')).toEqual(notFoundMeta(resume));
     expect(() => pageMeta(resume, '/nowhere/')).toThrow(/No page/);

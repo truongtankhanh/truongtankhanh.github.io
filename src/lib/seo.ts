@@ -1,5 +1,5 @@
 import type { Project, Resume } from '../content/types';
-import { NOT_FOUND_PATH, routes, type Route } from '../routes';
+import { CV_PATH, NOT_FOUND_PATH, routes, type Route } from '../routes';
 
 /** Skill items without the parenthetical detail: "AWS (ECS, CDK)" becomes "AWS". */
 function skillNames(resume: Resume): string[] {
@@ -93,9 +93,25 @@ export function caseStudyMeta(resume: Resume, project: Project): PageMeta {
   };
 }
 
-/** The page served at `path`. The CV page arrives with Phase 4. */
+/**
+ * The CV page: noindex, because the PDF is the indexed artefact. Chrome writes the title into the PDF it prints, so
+ * it names the person and the role the way a recruiter's file list should show them.
+ */
+export function cvMeta(resume: Resume): PageMeta {
+  return {
+    title: `${resume.name}, ${resume.headline}, CV`,
+    description: `The CV of ${resume.name}, ${resume.headline}, laid out for A4.`,
+    path: CV_PATH,
+    type: 'website',
+    noindex: true,
+    image: { path: 'images/og.png', alt: `${resume.name}, ${resume.headline}.` },
+  };
+}
+
+/** The page served at `path`. */
 export function pageMeta(resume: Resume, path: string): PageMeta {
   if (path === '/') return homeMeta(resume);
+  if (path === CV_PATH) return cvMeta(resume);
   if (path === NOT_FOUND_PATH) return notFoundMeta(resume);
   const project = resume.projects.find((p) => p.caseStudy && `/work/${p.caseStudy.slug}/` === path);
   if (project) return caseStudyMeta(resume, project);

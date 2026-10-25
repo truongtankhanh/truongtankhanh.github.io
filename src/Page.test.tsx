@@ -8,6 +8,13 @@ describe('Page', () => {
     expect(renderToString(<Page path="/" />)).toBe(renderToString(<App />));
   });
 
+  it('renders the CV at /cv/', () => {
+    const markup = renderToString(<Page path="/cv/" />);
+    expect(markup.match(/<h1[ >]/g)).toHaveLength(1);
+    expect(markup).toContain('Trương Tấn Khánh');
+    expect(markup).toContain('Public work');
+  });
+
   it('renders the 404 page at /404.html', () => {
     expect(renderToString(<Page path="/404.html" />)).toContain('This page isn’t here.');
   });
