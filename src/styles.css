@@ -1149,23 +1149,21 @@ p {
     animation: sun-turn 180s linear infinite;
   }
   .wave-back {
-    animation: wave-drift 22s linear infinite;
+    animation: wave-drift 30s linear infinite;
   }
   .wave-mid {
-    animation: wave-drift 34s linear infinite reverse;
+    animation: wave-drift 46s linear infinite reverse;
   }
   .hero-stack::after {
     animation: stack-pulse 4.8s linear infinite;
   }
-  .hero-layer,
-  .hero-layer::before {
-    animation: 4.8s ease-out infinite;
-  }
+  /* Each shorthand names its keyframes: a minifier reads a shorthand without a name as `animation: none` and drops
+     the duration and the loop, so the layers would flash once instead of pulsing. */
   .hero-layer {
-    animation-name: layer-glow;
+    animation: layer-glow 4.8s ease-out infinite;
   }
   .hero-layer::before {
-    animation-name: layer-node;
+    animation: layer-node 4.8s ease-out infinite;
   }
   .hero-layer:nth-child(1),
   .hero-layer:nth-child(1)::before {
@@ -2609,6 +2607,152 @@ p {
   }
 }
 
+/* ── Motion (V1-08.3) ───────────────────────────────────────── */
+/* Calm and short: opacity, the individual `translate` and `scale` properties, and `transform` for lines. None of
+   them moves layout, so nothing shifts. A single animation lasts at most a second (the loops of the hero and the
+   diagram aside), each element moves once, and all of it is off for visitors who ask for reduced motion. `translate`
+   and `scale` are separate properties on purpose: the hover lifts use `transform` and never fight an entrance. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 14px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes draw-line {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @keyframes draw-down {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      translate: 0 16px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+  @keyframes node-pop {
+    from {
+      opacity: 0;
+      scale: 0.4;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  /* On load: the hero text rises in six steps of 0.07 to 0.08 s, the stack fades in, the figures follow. */
+  .hero-text > * {
+    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .hero-text > .hero-meta {
+    animation-delay: 0.05s;
+  }
+  .hero-text > h1 {
+    animation-delay: 0.12s;
+  }
+  .hero-text > .headline {
+    animation-delay: 0.2s;
+  }
+  .hero-text > .intro {
+    animation-delay: 0.28s;
+  }
+  .hero-text > .where {
+    animation-delay: 0.36s;
+  }
+  .hero-text > .hero-actions {
+    animation-delay: 0.44s;
+  }
+  .hero-text > .hero-facts {
+    animation-delay: 0.52s;
+  }
+  .hero-stack {
+    animation: fade-in 0.9s ease-out 0.4s both;
+  }
+  .metrics li::before {
+    transform-origin: left;
+    animation: draw-line 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .metrics li > * {
+    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .metrics li:nth-child(1)::before,
+  .metrics li:nth-child(1) > * {
+    animation-delay: 0.55s;
+  }
+  .metrics li:nth-child(2)::before,
+  .metrics li:nth-child(2) > * {
+    animation-delay: 0.62s;
+  }
+  .metrics li:nth-child(3)::before,
+  .metrics li:nth-child(3) > * {
+    animation-delay: 0.69s;
+  }
+  .metrics li:nth-child(4)::before,
+  .metrics li:nth-child(4) > * {
+    animation-delay: 0.76s;
+  }
+  .metrics li:nth-child(5)::before,
+  .metrics li:nth-child(5) > * {
+    animation-delay: 0.83s;
+  }
+
+  /* While scrolling, where the browser can tie an animation to scroll position: blocks arrive as they enter the
+     screen, and each timeline rail draws itself down with its node. Elsewhere every block is simply there. */
+  @supports (animation-timeline: view()) {
+    .sec-head,
+    .featured,
+    .core,
+    .project-card,
+    .skill-card,
+    .principle,
+    .lead-scope,
+    .arch {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 45%;
+    }
+    .role-rail::before {
+      transform-origin: top;
+      animation: draw-down linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+    .role-rail i {
+      animation: node-pop linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
 /* ── Forced colours (V1-08.2) ───────────────────────────────── */
 /* Windows High Contrast and other forced-colour modes draw their own palette: gradients clipped to text, background
    colours and shadows are not painted, so each shape that carried meaning gets a system colour of its own. The
@@ -2705,6 +2849,13 @@ p {
     font-size: 9.6pt;
     line-height: 1.42;
     background: var(--paper);
+  }
+  /* Nothing animates on paper: a CV printed while the hero is still rising would come out half drawn. */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
   /* The header is hidden in print, so the wrapper needs no containment that could affect page breaks. */
   .site {

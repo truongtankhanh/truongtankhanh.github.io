@@ -127,3 +127,103 @@ describe('motion and forced colours', () => {
     });
   });
 });
+
+/** Every declaration of the stylesheet with the at-rules that surround it, such as `@media (…no-preference)`. */
+function declarations(source: string) {
+  const text = source.replace(/\/\*[\s\S]*?\*\//g, '');
+  const found: { property: string; value: string; context: string[] }[] = [];
+  const stack: string[] = [];
+  let buffer = '';
+  const record = () => {
+    const i = buffer.indexOf(':');
+    if (i > 0) {
+      found.push({
+        property: buffer.slice(0, i).trim(),
+        value: buffer.slice(i + 1).trim(),
+        context: stack.filter((s) => s.startsWith('@')),
+      });
+    }
+    buffer = '';
+  };
+  for (const ch of text) {
+    if (ch === '{') {
+      stack.push(buffer.trim());
+      buffer = '';
+    } else if (ch === '}') {
+      record();
+      stack.pop();
+    } else if (ch === ';') {
+      record();
+    } else {
+      buffer += ch;
+    }
+  }
+  return found;
+}
+
+describe('motion budget', () => {
+  const all = declarations(css);
+  const animations = all.filter(
+    (d) => (d.property === 'animation' || d.property === 'animation-name') && !/\bnone\b/.test(d.value),
+  );
+  const NO_PREFERENCE = '@media (prefers-reduced-motion: no-preference)';
+
+  it('finds the animations of the page', () => {
+    expect(animations.length).toBeGreaterThan(15);
+  });
+
+  it('names the keyframes in every animation shorthand, which a minifier would otherwise read as "none"', () => {
+    const keyframes = [...css.matchAll(/@keyframes\s+([\w-]+)/g)].map((m) => m[1]!);
+    for (const a of animations.filter((d) => d.property === 'animation')) {
+      expect(
+        a.value.split(/\s+/).some((word) => keyframes.includes(word)),
+        a.value,
+      ).toBe(true);
+    }
+  });
+
+  it('keeps every animation inside the block for visitors who have not asked for reduced motion', () => {
+    for (const a of animations) expect(a.context, `${a.property}: ${a.value}`).toContain(NO_PREFERENCE);
+  });
+
+  it('lets no animation run longer than a second, apart from the loops', () => {
+    for (const a of animations.filter((d) => d.property === 'animation' && !/infinite/.test(d.value))) {
+      const time = /(\d*\.?\d+)(ms|s)\b/.exec(a.value);
+      if (!time) continue; // tied to scroll position, so it has no time of its own
+      const seconds = time[2] === 'ms' ? Number(time[1]) / 1000 : Number(time[1]);
+      expect(seconds, a.value).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('ties scroll-driven animations to the browsers that support them, so elsewhere every block is just there', () => {
+    const timelines = all.filter((d) => d.property === 'animation-timeline');
+    expect(timelines.length).toBeGreaterThan(0);
+    for (const t of timelines) {
+      const needed = t.value.startsWith('view')
+        ? '@supports (animation-timeline: view())'
+        : '@supports (animation-timeline: scroll())';
+      expect(t.context, t.value).toContain(needed);
+    }
+  });
+
+  it('moves entrances with opacity, translate, scale and transform only, so nothing shifts the layout', () => {
+    const allowed = new Set(['opacity', 'translate', 'scale', 'transform']);
+    for (const name of ['rise', 'fade-in', 'draw-line', 'draw-down', 'reveal', 'node-pop']) {
+      const own = all.filter((d) => d.context.includes(`@keyframes ${name}`));
+      expect(own.length, name).toBeGreaterThan(0);
+      for (const d of own) expect(allowed.has(d.property), `${name}: ${d.property}`).toBe(true);
+    }
+  });
+
+  it('slows the waves to 30 s and 46 s and leaves the sun at 180 s', () => {
+    const values = animations.map((a) => a.value);
+    expect(values).toContain('wave-drift 30s linear infinite');
+    expect(values).toContain('wave-drift 46s linear infinite reverse');
+    expect(values).toContain('sun-turn 180s linear infinite');
+  });
+
+  it('stops every animation on paper, so a CV printed mid-entrance is never half drawn', () => {
+    const inPrint = all.filter((d) => d.property === 'animation' && d.context.includes('@media print'));
+    expect(inPrint.some((d) => /^none\b/.test(d.value))).toBe(true);
+  });
+});
