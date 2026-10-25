@@ -149,6 +149,21 @@ describe('CaseStudy', () => {
     }
   });
 
+  it('lists each claim with links to its files in the project repository, when the case study has them', () => {
+    expect(html()).not.toContain('cs-sources');
+    const withSources = {
+      ...project,
+      caseStudy: {
+        ...study,
+        sources: [{ claim: 'Claim one.', files: ['lib/a.ts', 'docs/b.md'] }],
+      },
+    };
+    const list = block(html(one, withSources), '<ul class="cs-sources">', 'ul');
+    expect(list).toContain('<span>Claim one.</span>');
+    expect(list).toContain(`<a href="${project.repo}/blob/main/lib/a.ts"><code>lib/a.ts</code></a>`);
+    expect(list).toContain(`<a href="${project.repo}/blob/main/docs/b.md"><code>docs/b.md</code></a>`);
+  });
+
   it('puts the commands in a focusable block that scrolls inside its box', () => {
     const markup = html();
     expect(markup).toMatch(

@@ -291,6 +291,61 @@ describe('resume content', () => {
       });
     });
 
+    describe('Platform on AWS case study', () => {
+      const aws = project('aws');
+      const study = aws.caseStudy!;
+
+      it('lives at the slug of its repository, with the role approved in Q9', () => {
+        expect(aws.repo.endsWith(`/${study.slug}`)).toBe(true);
+        expect(study.role).toBe('Author and maintainer');
+      });
+
+      it('says that it is not deployed, in the status and in the overview', () => {
+        expect(study.status).toContain('not deployed');
+        expect(study.overview[0]).toContain('not deployed');
+        expect(study.overview[0]).toContain('designed rather than observed');
+      });
+
+      it('gives every claim of the project card a row with the files that show it', () => {
+        const text = study.sources!.map((s) => s.claim).join('\n');
+        for (const word of ['cdk-nag', 'Least privilege', 'GitHub OIDC']) expect(text).toContain(word);
+        expect(aws.proof).toContain('cdk-nag');
+        expect(aws.proof).toContain('least privilege');
+        expect(aws.proof).toContain('GitHub OIDC');
+        for (const source of study.sources!) {
+          expect(source.files.length, source.claim).toBeGreaterThan(0);
+          // A path inside the project's own repository, so the link can only point there.
+          for (const file of source.files) expect(file, file).toMatch(/^(?!\/)[\w.-]+(\/[\w.-]+)*$/);
+        }
+      });
+
+      it('lists the seven decision records of the repository, with a key phrase in each card', () => {
+        expect(study.decisions.map((d) => d.id)).toEqual([
+          'ADR-0001',
+          'ADR-0002',
+          'ADR-0003',
+          'ADR-0004',
+          'ADR-0005',
+          'ADR-0006',
+          'ADR-0007',
+        ]);
+        for (const d of study.decisions) expect(d.title, d.id).not.toMatch(/[.`—]/);
+        expect(study.does.more).toHaveLength(3);
+        for (const c of [study.does.lead, ...study.does.more]) {
+          expect(
+            emphasis(c.text).some((part) => part.strong),
+            c.title,
+          ).toBe(true);
+        }
+      });
+
+      it('holds no account id, ARN or resource name', () => {
+        const text = JSON.stringify(study);
+        expect(text).not.toMatch(/\b\d{12}\b/);
+        expect(text).not.toMatch(/arn:|amazonaws\.com|\.cloudfront\.net/i);
+      });
+    });
+
     function project(id: string) {
       return resume.projects.find((p) => p.id === id)!;
     }

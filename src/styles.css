@@ -3031,6 +3031,37 @@ p {
   color: var(--ink);
 }
 
+/* A claim of the project card, with the files of the repository that show it. */
+.cs-sources {
+  display: grid;
+  gap: 0.75rem;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-sources li {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1rem 1.25rem;
+}
+.cs-sources li > span:first-child {
+  color: var(--ink);
+  font-size: 0.97rem;
+  line-height: 1.55;
+}
+.cs-sources-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+}
+.cs-sources-files a {
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.cs-sources-files code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
 /* A long command scrolls inside its box, so the page never scrolls sideways on a phone. */
 .cs-code {
   margin: var(--space-2) 0 0;

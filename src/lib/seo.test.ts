@@ -80,6 +80,7 @@ describe('sitemap and robots', () => {
       `${origin}/`,
       `${origin}/work/ops-command-center/`,
       `${origin}/work/iot-telemetry-pipeline/`,
+      `${origin}/work/platform-aws/`,
     ]);
     expect(xml).toContain('<lastmod>2026-10-23</lastmod>');
     expect(robotsTxt(resume)).toContain(`Sitemap: ${origin}/sitemap.xml`);
@@ -204,7 +205,8 @@ describe('page head', () => {
     expect(tags).not.toContain('name="robots"');
     expect(pageMeta(resume, '/work/ops-command-center/').path).toBe('/work/ops-command-center/');
     expect(pageMeta(resume, '/work/iot-telemetry-pipeline/').path).toBe('/work/iot-telemetry-pipeline/');
-    expect(() => pageMeta(resume, '/work/platform-aws/')).toThrow(/No page/);
+    expect(pageMeta(resume, '/work/platform-aws/').path).toBe('/work/platform-aws/');
+    expect(() => pageMeta(resume, '/work/nowhere/')).toThrow(/No page/);
   });
 
   it('gives the 404 page its own title, a noindex tag, and no canonical or og:url', () => {

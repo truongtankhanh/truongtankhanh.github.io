@@ -276,6 +276,25 @@ export function CaseStudy({ resume, project }: { resume: Resume; project: Projec
               {study.check.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
+              {study.sources && study.sources.length > 0 && (
+                <>
+                  <p>Each claim of the project card, and the files in the repository that show it:</p>
+                  <ul className="cs-sources">
+                    {study.sources.map((source) => (
+                      <li key={source.claim} className="plate">
+                        <span>{source.claim}</span>
+                        <span className="cs-sources-files">
+                          {source.files.map((file) => (
+                            <a key={file} href={`${project.repo}/blob/main/${file}`}>
+                              <code>{file}</code>
+                            </a>
+                          ))}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </Section>
 
             <Section id="run">

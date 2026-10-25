@@ -279,6 +279,107 @@ export const resume: Resume = {
       stat: { value: 'cdk-nag', label: 'security rules pass on every synth' },
       statSource: 'cdk-nag security rules pass on every synth',
       stack: ['AWS CDK', 'TypeScript', 'ECS Fargate', 'RDS', 'IoT Core', 'CloudFront'],
+      // Every sentence is quoted or paraphrased from README.md, docs/ or the workflows of the repository at commit
+      // f94ebda (its `main` on GitHub); the source line of each is recorded in the pull request that added it.
+      caseStudy: {
+        slug: 'platform-aws',
+        lead: 'AWS infrastructure, as TypeScript CDK, for the campus operations platform: both systems on ECS Fargate, RDS PostgreSQL, CloudFront and AWS IoT Core.',
+        role: 'Author and maintainer',
+        status:
+          'Synthesised, security-checked and tested in CI; not deployed, because no AWS account is attached',
+        overview: [
+          'The infrastructure is synthesised, security-checked and tested in CI for both stages, but it is not deployed from this repository: no AWS account is attached, so the deploy workflow has never run. Anything that only a live account can prove is marked in the ADRs as designed rather than observed.',
+          'It is the cloud counterpart of the single-host Compose deployment of ops-command-center and iot-telemetry-pipeline: operators reach the console, the API and Keycloak through one CloudFront origin, and sensors reach the pipeline through AWS IoT Core.',
+        ],
+        does: {
+          lead: {
+            title: 'Five stacks per stage',
+            text: 'Registry, network, data, command center and telemetry are **five stacks per stage**, split by blast radius from one typed stage configuration. Site-only values live outside the repository, and a production synth refuses to run without them.',
+            figure: { value: '5', label: 'stacks per stage, split by blast radius' },
+          },
+          more: [
+            {
+              icon: 'circleCheck',
+              title: 'Security checked on every synth',
+              text: 'The AWS Solutions rules of cdk-nag run in CI, and **each accepted finding is acknowledged on the exact resource** that raised it, with its reason. A new finding fails the build, and a test proves it does.',
+            },
+            {
+              icon: 'layers',
+              title: 'Least privilege you can read in the tests',
+              text: 'Only this CloudFront distribution reaches the load balancer, the database accepts only named security groups, and the ingest service may subscribe to **exactly one shared MQTT filter**. A device may publish only to its own topic, as itself, and every secret comes from Secrets Manager.',
+            },
+            {
+              icon: 'cloud',
+              title: 'Deploys through GitHub OIDC',
+              text: 'The deploy workflow assumes a role through **GitHub OIDC**, so no access keys are stored anywhere, and an ECS release whose tasks never become healthy rolls back on its own.',
+            },
+          ],
+        },
+        decisions: [
+          {
+            id: 'ADR-0001',
+            title: 'Infrastructure as code with AWS CDK in TypeScript',
+            why: 'Stages are typed objects and templates are synthesised offline and asserted on in ordinary tests, with cdk-nag checking them on every synth, all without an AWS account.',
+          },
+          {
+            id: 'ADR-0002',
+            title: 'One PostgreSQL instance per stage, one database and login per system',
+            why: 'Each system’s login owns its database and CONNECT is revoked from PUBLIC, so PostgreSQL itself keeps one system out of another’s database; an integration test checks the refusal.',
+          },
+          {
+            id: 'ADR-0003',
+            title: 'AWS IoT Core as the MQTT broker',
+            why: 'It is managed and multi-AZ, with shared subscriptions and per-device certificates and policies; the ingest policy grants exactly one shared filter, and a stolen device certificate cannot speak for another device or zone.',
+          },
+          {
+            id: 'ADR-0004',
+            title: 'One public origin through CloudFront',
+            why: 'The console comes from S3 and /api, /socket.io and /auth go to a load balancer that accepts only CloudFront and forwards an allowlist of paths, so the services run unchanged and without CORS.',
+          },
+          {
+            id: 'ADR-0005',
+            title: 'Prometheus metrics into CloudWatch through an in-task collector',
+            why: 'An OpenTelemetry collector in each task turns the services’ Prometheus endpoints into CloudWatch metrics, so there is no metrics server and the metrics port has no security-group rule.',
+          },
+          {
+            id: 'ADR-0006',
+            title: 'Keycloak on Fargate as the platform’s identity provider',
+            why: 'The command center’s realm is baked into the image with its demo users removed, which CI checks, and the admin console is not public.',
+          },
+          {
+            id: 'ADR-0007',
+            title: 'Production keeps its logs when a stack is deleted',
+            why: 'A stage setting decides: production retains its log groups and access logs, the demo stage removes them with its stack, and a test asserts the policy of every log group.',
+          },
+        ],
+        check: [
+          'Nothing here needs an AWS account to check. The tests synthesise both stages and assert on the templates, and the synth runs cdk-nag; set TEST_DATABASE_URL to include the database bootstrap test against a real PostgreSQL.',
+          'CI runs the format check, lint, typecheck, the tests and both synths on every push and pull request. A second job builds the Keycloak image from the command center’s current realm and checks that the realm has no demo users and no demo secrets.',
+          'What only a live account can prove is marked as designed, not observed, in the ADRs: the evaluation of the IoT policies, Keycloak behind CloudFront, and the collector’s conversion of metrics. The deploy workflow has never run.',
+          'One integration is deliberately not connected yet: the command center’s own MQTT telemetry, which authenticates with a password and so cannot reach AWS IoT Core. ADR-0003 gives the reason and the way forward.',
+        ],
+        sources: [
+          {
+            claim:
+              'cdk-nag’s AWS Solutions rules pass on every synth. Every accepted finding is listed with its reason, and a test proves that a new finding fails the build.',
+            files: ['lib/nag.ts', 'test/platform.test.ts', '.github/workflows/ci.yml'],
+          },
+          {
+            claim:
+              'Least privilege is asserted in tests: only CloudFront reaches the load balancer, the database accepts only named security groups, the ingest service may join exactly one shared subscription, and a device may publish only to its own topic.',
+            files: ['test/platform.test.ts'],
+          },
+          {
+            claim: 'Deploys assume a role through GitHub OIDC, with no access keys stored.',
+            files: ['.github/workflows/deploy.yml', 'docs/runbook.md'],
+          },
+        ],
+        run: {
+          intro: 'The checks need no AWS account, only Node and npm.',
+          commands:
+            'npm ci\nnpm test                    # template assertions + handler tests (set TEST_DATABASE_URL for the PostgreSQL one)\nnpm run synth               # staging, with cdk-nag\nnpm run synth:production    # production, with the example site values',
+        },
+      },
     },
     {
       id: 'adr',

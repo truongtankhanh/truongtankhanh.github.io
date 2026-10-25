@@ -49,6 +49,13 @@ export interface Decision {
   why: string;
 }
 
+/** A claim of the project and the files of its repository that show it. */
+export interface ClaimSource {
+  claim: string;
+  /** Paths inside the project's own repository, such as `lib/nag.ts`; the page links each one on its `main` branch. */
+  files: string[];
+}
+
 /**
  * The page behind a project card, in the order of the page. Every sentence is quoted or paraphrased from the README
  * or an ADR of the repository (V1-11 and V1-12 record the source line of each); the template adds only the headings.
@@ -71,6 +78,8 @@ export interface CaseStudy {
   decisions: Decision[];
   /** "How to check it", one paragraph each. */
   check: string[];
+  /** Under "How to check it": each claim of the project card and the files that show it. */
+  sources?: ClaimSource[];
   /** "Run it": the sentence above the commands and the commands as the README prints them. */
   run: { intro: string; commands: string };
 }
