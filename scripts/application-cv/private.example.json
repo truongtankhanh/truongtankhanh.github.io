@@ -1,6 +1,28 @@
 {
-  "$comment": "Copy this file to cv/private.json (a local folder that is never committed) and replace the placeholder. phone: your Vietnamese number, in the national form (a leading zero and nine more digits) or with the country code of Vietnam, spaces or dashes allowed. linkedin (optional): an https address to use instead of the one in resume.ts. extraProjects and overrides: the details that only the application edition has (see V1-21.3). A key that starts with a dollar sign is ignored.",
+  "$comment": "Copy this file to cv/private.json (a local folder that is never committed) and replace the placeholder. phone: your Vietnamese number, in the national form (a leading zero and nine more digits) or with the country code of Vietnam, spaces or dashes allowed. linkedin (optional): an https address to use instead of the one in resume.ts. extraProjects: the projects of the portfolio that only the application edition has; each has name, company, duration, tableRole, role and source (where in your master it was taken from), and optionally title, overview, team, stack (one line of text) and responsibilities (a list). A project is listed under its company; a company that is on the site is headed with the title and dates of that role. The two projects below are made up: a dry run builds them, so the layout is checked without private data. overrides: not used yet. A key that starts with a dollar sign is ignored.",
   "phone": "REPLACE_WITH_YOUR_PHONE_NUMBER",
-  "extraProjects": [],
+  "extraProjects": [
+    {
+      "name": "Example project",
+      "title": "Example project (a made-up client)",
+      "company": "NewIT Vietnam",
+      "duration": "6 months",
+      "tableRole": "Developer",
+      "role": "Developer of the example service",
+      "overview": "A made-up project that shows how a block of the portfolio looks.",
+      "team": "3 developers",
+      "stack": "Node.js, TypeScript, PostgreSQL",
+      "responsibilities": ["Built the **first made-up feature**.", "Reviewed the code of the team."],
+      "source": "private.example.json, made up"
+    },
+    {
+      "name": "Example personal project",
+      "company": "Personal project",
+      "duration": "2 months",
+      "tableRole": "Sole developer",
+      "role": "Sole developer",
+      "source": "private.example.json, made up"
+    }
+  ],
   "overrides": {}
 }

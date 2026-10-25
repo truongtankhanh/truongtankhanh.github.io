@@ -1,6 +1,8 @@
-// Builds the application edition of the CV (V1-21.2): the CV of the site with the phone number, as a Word file.
-//   node scripts/build-application-cv.mjs             writes cv/application/Truong_Tan_Khanh_CV.docx
-//   node scripts/build-application-cv.mjs --dry-run   writes the file with "(phone on request)" to a temporary folder
+// Builds the application edition of the CV (V1-21.2, V1-21.3): the CV of the site with the phone number, and the
+// project portfolio that goes with it, as Word files.
+//   node scripts/build-application-cv.mjs             writes cv/application/Truong_Tan_Khanh_CV.docx, and
+//                                                     Truong_Tan_Khanh_Project_Portfolio.docx when the private file has projects
+//   node scripts/build-application-cv.mjs --dry-run   the same with "(phone on request)" and made-up projects, in a temporary folder
 // It reads `src/content/resume.ts` and `cv/private.json` (copy `scripts/application-cv/private.example.json` there and
 // put your number in it). It is not part of `pnpm build`, `pnpm test` or the deploy workflow; only the dry run may run
 // in CI. The number is in the file under `cv/` and nowhere else: this script prints no value of the private file.
@@ -37,10 +39,16 @@ async function loadResume() {
 }
 
 try {
-  const { file, bytes, dryRun } = await generate({ loadResume, dryRun: args.includes('--dry-run') });
+  const { file, bytes, dryRun, portfolio } = await generate({
+    loadResume,
+    dryRun: args.includes('--dry-run'),
+  });
   const seconds = ((performance.now() - started) / 1000).toFixed(1);
-  const shown = dryRun ? file : relative(root, file);
-  console.log(`${dryRun ? 'dry run: ' : ''}wrote ${shown} (${Math.round(bytes / 1024)} KB) in ${seconds} s`);
+  const line = (path, size) =>
+    `${dryRun ? 'dry run: ' : ''}wrote ${dryRun ? path : relative(root, path)} (${Math.round(size / 1024)} KB)`;
+  console.log(`${line(file, bytes)} in ${seconds} s`);
+  if (portfolio) console.log(line(portfolio.file, portfolio.bytes));
+  else console.log('no portfolio: extraProjects of cv/private.json is empty');
 } catch (error) {
   if (!(error instanceof PrivateDataError || error instanceof OutputError)) throw error;
   console.error(error.message);

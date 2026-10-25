@@ -7,8 +7,10 @@
 // which is ignored, so a typo like "phon" does not pass unseen:
 //   phone          required, a Vietnamese number in a form `src/lib/privacy.ts` can find (see `isPhoneNumber`)
 //   linkedin       optional, an https address on linkedin.com to use instead of the one in `resume.ts` (Q12)
-//   extraProjects  optional array, the projects that exist only in the private masters (Q11, shaped in V1-21.3)
-//   overrides      optional object, facts of the masters that replace the public wording (Q11, shaped in V1-21.3)
+//   extraProjects  optional array, the projects of the portfolio that exist only in the private masters (Q11); each is
+//                  checked by `checkProjects`
+//   overrides      optional object, facts of the masters that replace the public wording (Q11); no fact needs it yet,
+//                  so it is only checked to be an object
 //
 // A message never repeats a value from the file, because the terminal and CI logs are not private.
 import { readFileSync, realpathSync } from 'node:fs';
@@ -46,6 +48,40 @@ export function isPhoneNumber(text) {
 }
 
 const isPlainObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * The fields of a project of the portfolio (V1-21.3). `name` and `tableRole` are what the overview table shows, `title`
+ * (else `name`) heads the block, `stack` is the text of the master's "Tech stack" line, and `source` says where in the
+ * master the project was taken from, so nothing is typed from memory.
+ */
+export const PROJECT_REQUIRED = ['name', 'company', 'duration', 'tableRole', 'role', 'source'];
+export const PROJECT_OPTIONAL = ['title', 'overview', 'team', 'stack', 'responsibilities'];
+
+/**
+ * What is wrong with `projects`, or `undefined`. The message names the position and the field, never the value.
+ */
+export function checkProjects(projects) {
+  for (const [i, project] of projects.entries()) {
+    const at = `extraProjects[${i}]`;
+    if (!isPlainObject(project)) return `${at} must be an object.`;
+    const unknown = Object.keys(project).filter(
+      (key) => !PROJECT_REQUIRED.includes(key) && !PROJECT_OPTIONAL.includes(key),
+    );
+    if (unknown.length > 0) return `${at} has an unknown key: ${unknown.join(', ')}.`;
+    const text = (value) => typeof value === 'string' && value.trim() !== '';
+    for (const key of PROJECT_REQUIRED)
+      if (!text(project[key])) return `${at}: "${key}" must be a non-empty string.`;
+    for (const key of PROJECT_OPTIONAL.filter((key) => key !== 'responsibilities')) {
+      if (project[key] !== undefined && !text(project[key]))
+        return `${at}: "${key}" must be a non-empty string.`;
+    }
+    const list = project.responsibilities;
+    if (list !== undefined && !(Array.isArray(list) && list.length > 0 && list.every(text))) {
+      return `${at}: "responsibilities" must be a list of non-empty strings.`;
+    }
+  }
+  return undefined;
+}
 
 /**
  * Reads and checks the private file. Throws `PrivateDataError` when the file is missing, is not inside `cvDir`, is not
@@ -109,6 +145,8 @@ export function loadPrivate({ file = PRIVATE_FILE, cvDir = CV_DIR } = {}) {
   }
   if (data.extraProjects !== undefined && !Array.isArray(data.extraProjects))
     fail('"extraProjects" must be an array.');
+  const problem = data.extraProjects && checkProjects(data.extraProjects);
+  if (problem) fail(problem);
   if (data.overrides !== undefined && !isPlainObject(data.overrides)) fail('"overrides" must be an object.');
 
   return {

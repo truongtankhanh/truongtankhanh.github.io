@@ -15,15 +15,26 @@ interface Private {
   PRIVATE_FILE: string;
   KEYS: string[];
   PrivateDataError: new (message: string) => Error;
+  PROJECT_REQUIRED: string[];
+  PROJECT_OPTIONAL: string[];
   isPhoneNumber(text: string): boolean;
+  checkProjects(projects: unknown[]): string | undefined;
   loadPrivate(where?: { file?: string; cvDir?: string }): Loaded;
 }
 
 // The module is plain JavaScript; a computed specifier keeps the type checker out of it.
 const path = './private.mjs';
-const { CV_DIR, PRIVATE_FILE, KEYS, PrivateDataError, isPhoneNumber, loadPrivate } = (await import(
-  path
-)) as Private;
+const {
+  CV_DIR,
+  PRIVATE_FILE,
+  KEYS,
+  PROJECT_REQUIRED,
+  PROJECT_OPTIONAL,
+  PrivateDataError,
+  isPhoneNumber,
+  checkProjects,
+  loadPrivate,
+} = (await import(path)) as Private;
 
 // Numbers are put together here and not written out, so no number appears in this file: the repository holds none
 // outside what the privacy test needs.
@@ -34,6 +45,24 @@ const national = (sep = '') => ['0', NINE.slice(0, 2), NINE.slice(2, 5), NINE.sl
 /** The country code after `prefix`, then nine digits, grouped with `sep`. */
 const international = (prefix: string, sep = ' ') =>
   [prefix + COUNTRY, NINE.slice(0, 2), NINE.slice(2, 5), NINE.slice(5)].join(sep);
+
+/** The least a project may be, and one with every field. */
+const least = {
+  name: 'A project',
+  company: 'A company',
+  duration: '3 months',
+  tableRole: 'Developer',
+  role: 'Developer of a service',
+  source: 'made up',
+};
+const most = {
+  ...least,
+  title: 'A project (a title)',
+  overview: 'What it is.',
+  team: '3 developers',
+  stack: 'Node.js, TypeScript',
+  responsibilities: ['Built a thing.', 'Reviewed a thing.'],
+};
 
 const accepted: [string, string][] = [
   ['national, no separator', national()],
@@ -120,7 +149,7 @@ describe('loadPrivate', () => {
 
   it('keeps the optional keys when they are given', () => {
     const linkedin = 'https://www.linkedin.com/in/example/';
-    const extraProjects = [{ name: 'A project' }];
+    const extraProjects = [least, most];
     const overrides = { title: 'A title' };
     put({ phone: national(), linkedin, extraProjects, overrides });
     expect(load()).toEqual({ phone: national(), linkedin, extraProjects, overrides });
@@ -202,6 +231,82 @@ describe('loadPrivate', () => {
   });
 });
 
+describe('checkProjects', () => {
+  it('accepts a project with the required fields only, and one with every field', () => {
+    expect(checkProjects([least, most])).toBeUndefined();
+    expect(checkProjects([])).toBeUndefined();
+  });
+
+  it('knows the fields it asks for', () => {
+    expect([...PROJECT_REQUIRED].sort()).toEqual(Object.keys(least).sort());
+    expect([...PROJECT_OPTIONAL].sort()).toEqual(['overview', 'responsibilities', 'stack', 'team', 'title']);
+  });
+
+  it.each(PROJECT_REQUIRED)('refuses a project without "%s", naming the position and the field', (key) => {
+    const project: Record<string, unknown> = { ...least };
+    delete project[key];
+    expect(checkProjects([least, project])).toBe(`extraProjects[1]: "${key}" must be a non-empty string.`);
+  });
+
+  it.each([
+    ['an empty string', { role: '  ' }],
+    ['a number', { duration: 3 }],
+    ['an empty optional string', { overview: '' }],
+    ['an optional field that is not text', { team: ['3'] }],
+  ])('refuses %s', (_name, change) => {
+    expect(checkProjects([{ ...least, ...change }])).toMatch(
+      /^extraProjects\[0\]: ".+" must be a non-empty string\.$/,
+    );
+  });
+
+  it.each([[[]], ['a bullet'], [['a bullet', '']], [[1]]])(
+    'refuses responsibilities that are %j',
+    (responsibilities) => {
+      expect(checkProjects([{ ...least, responsibilities }])).toBe(
+        'extraProjects[0]: "responsibilities" must be a list of non-empty strings.',
+      );
+    },
+  );
+
+  it('refuses a key it does not know, and anything but an object', () => {
+    expect(checkProjects([{ ...least, rol: 'x' }])).toBe('extraProjects[0] has an unknown key: rol.');
+    expect(checkProjects(['text'])).toBe('extraProjects[0] must be an object.');
+    expect(checkProjects([null])).toBe('extraProjects[0] must be an object.');
+  });
+
+  it('never repeats a value in what it says', () => {
+    const secret = [1, 2, 3, 4].join('');
+    expect(checkProjects([{ ...least, role: 7, name: secret }])).not.toContain(secret);
+    expect(checkProjects([{ ...least, [secret]: 'x' }])).toContain(secret); // a key is named, a value never
+  });
+});
+
+describe('the projects of the private file', () => {
+  let root: string;
+  let file: string;
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), 'private-projects-'));
+    mkdirSync(join(root, 'cv'));
+    file = join(root, 'cv', 'private.json');
+  });
+  afterEach(() => rmSync(root, { recursive: true, force: true }));
+
+  const load = () => loadPrivate({ file, cvDir: join(root, 'cv') });
+
+  it('are checked when the file is loaded, and the message names the file, the position and the field', () => {
+    writeFileSync(
+      file,
+      JSON.stringify({ phone: national(), extraProjects: [least, { ...least, role: '' }] }),
+    );
+    expect(() => load()).toThrow(/private\.json: extraProjects\[1\]: "role" must be a non-empty string\./);
+  });
+
+  it('come back as they are written', () => {
+    writeFileSync(file, JSON.stringify({ phone: national(), extraProjects: [most] }));
+    expect(load().extraProjects).toEqual([most]);
+  });
+});
+
 describe('the default file', () => {
   it('is cv/private.json of the repository', () => {
     expect(CV_DIR.endsWith('/cv/')).toBe(true);
@@ -216,6 +321,13 @@ describe('private.example.json', () => {
 
   it('holds no number, so the repository holds none', () => {
     expect(findPhoneNumber(raw)).toBeUndefined();
+  });
+
+  it('has made-up projects that pass the check, one of a company of the site and one personal', () => {
+    const projects = example['extraProjects'] as { company: string; source: string }[];
+    expect(checkProjects(projects)).toBeUndefined();
+    expect(projects.map((p) => p.company)).toEqual(['NewIT Vietnam', 'Personal project']);
+    for (const project of projects) expect(project.source).toMatch(/made up/);
   });
 
   it('uses only the keys of the loader, and a $comment that explains them', () => {

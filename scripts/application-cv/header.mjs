@@ -46,9 +46,10 @@ function contactRuns(resume, phone) {
  * The four paragraphs that open the CV: a muted location line with the gold mark, the name with the monogram at the
  * right through a tab stop, the role, and the contact line over the accent rule.
  *
- * @param {{ resume: object, phone: string, logo: Buffer }} input `logo` is the content of `LOGO_FILE`.
+ * @param {{ resume: object, phone: string, logo: Buffer, subtitle?: string }} input `logo` is the content of
+ *   `LOGO_FILE`; `subtitle` is the line under the name, the role of `resume` unless given (the portfolio gives its title).
  */
-export function buildFirstBlock({ resume, phone, logo }) {
+export function buildFirstBlock({ resume, phone, logo, subtitle = resume.headline }) {
   if (typeof phone !== 'string' || phone.trim() === '')
     throw new Error('The contact line needs a phone number');
   const monogram = `${resume.nameAscii} monogram`;
@@ -75,7 +76,7 @@ export function buildFirstBlock({ resume, phone, logo }) {
         }),
       ],
     }),
-    new Paragraph({ style: STYLE.subtitle, children: [new TextRun(resume.headline)] }),
+    new Paragraph({ style: STYLE.subtitle, children: [new TextRun(subtitle)] }),
     new Paragraph({ style: STYLE.contact, children: contactRuns(resume, phone) }),
   ];
 }

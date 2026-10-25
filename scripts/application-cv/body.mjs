@@ -11,13 +11,13 @@ import { displayUrl, emphasis, formatRange } from './text.mjs';
 
 const SEPARATOR = ' · ';
 
-const strong = (text) => new TextRun({ text, style: STYLE.strong });
+export const strong = (text) => new TextRun({ text, style: STYLE.strong });
 const figure = (text) => new TextRun({ text, style: STYLE.figure });
 const link = (text, href) =>
   new ExternalHyperlink({ link: href, children: [new TextRun({ text, style: STYLE.hyperlink })] });
 
 /** The runs of a text whose `**key phrases**` are bold. */
-const rich = (text) =>
+export const rich = (text) =>
   emphasis(text).map((part) => (part.strong ? strong(part.text) : new TextRun(part.text)));
 
 /** Groups of runs written one after the other, separated by a middle dot. */
@@ -25,15 +25,15 @@ const joined = (groups) =>
   groups.flatMap((group, i) => (i === 0 ? group : [new TextRun(SEPARATOR), ...group]));
 
 /** A section title, in the Heading 1 style, which carries the capitals and the steel rule. */
-const heading = (text) => new Paragraph({ style: STYLE.heading1, children: [new TextRun(text)] });
+export const heading = (text) => new Paragraph({ style: STYLE.heading1, children: [new TextRun(text)] });
 
-const bullet = (text) => ({ style: STYLE.bullet, children: rich(text) });
+export const bullet = (text) => ({ style: STYLE.bullet, children: rich(text) });
 
 /**
  * Paragraphs that stay on one page when they fit on one: none is split, and each is kept with the next, except the last.
  * `blocks` are the options of `Paragraph`, not yet built.
  */
-const keepTogether = (blocks) =>
+export const keepTogether = (blocks) =>
   blocks.map(
     (options, i) =>
       new Paragraph({ ...options, keepLines: true, ...(i < blocks.length - 1 && { keepNext: true }) }),

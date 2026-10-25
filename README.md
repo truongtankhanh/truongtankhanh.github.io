@@ -43,7 +43,8 @@ pnpm preview    # serve dist/
 
 The site and its PDF never carry a phone number. The version I send to an employer who asks for it is a Word file
 built from the same `resume.ts` by [`scripts/build-application-cv.mjs`](scripts/build-application-cv.mjs), with the
-number added. It is not part of `pnpm build`, `pnpm test` or the deploy, and the number is never committed.
+number added, and a second file next to it, the project portfolio (an appendix with a table of projects and a block
+for each). It is not part of `pnpm build`, `pnpm test` or the deploy, and the number is never committed.
 
 First time on a machine:
 
@@ -54,17 +55,24 @@ cp scripts/application-cv/private.example.json cv/private.json
 Then open `cv/private.json` (the `cv/` folder is local and kept out of Git through `.git/info/exclude`, so add that
 rule again on a fresh clone) and replace the placeholder in `phone` with the number, in the national form (a leading
 zero and nine digits) or with the country code of Vietnam; spaces, dots and dashes are fine. The script refuses any
-other form, and never prints what it read. `linkedin`, `extraProjects` and `overrides` are optional.
+other form, and never prints what it read.
+
+`extraProjects` holds the projects of the portfolio, the ones that only this edition has: each has a name, a company,
+a duration, a role for the table, a role, and where in my own notes it was taken from, and optionally an overview, a
+team, a tech stack line and a list of responsibilities (the example file shows the fields, and the script names the
+position and the field of any that is wrong). A project is listed under its company; a company that is on the site is
+headed with the title and the dates of that role from `resume.ts`. Without `extraProjects` only the CV is written.
+`linkedin` and `overrides` are optional.
 
 Every time:
 
 ```bash
 git check-ignore -v cv/private.json   # prints the rule that keeps it out of Git
-pnpm build:application-cv             # writes cv/application/Truong_Tan_Khanh_CV.docx
-pnpm build:application-cv --dry-run   # same file with "(phone on request)", in a temporary folder, no private file
+pnpm build:application-cv             # writes the CV and the portfolio in cv/application/
+pnpm build:application-cv --dry-run   # same with "(phone on request)" and made-up projects, in a temporary folder
 ```
 
-The file is built from `resume.ts`, so after a change to the content, run the command again. It writes only in
+The files are built from `resume.ts`, so after a change to the content, run the command again. It writes only in
 `cv/application/` and does not touch the older Word files in `cv/`. Fonts are Calibri, so it looks the same on any
 machine with Word. The styles are in [`scripts/application-cv/`](scripts/application-cv/); check the result in Word
 before sending it.

@@ -20,6 +20,7 @@ interface Result {
   file: string;
   bytes: number;
   dryRun: boolean;
+  portfolio: { file: string; bytes: number } | null;
 }
 interface Generate {
   OUTPUT_FOLDER: string;
@@ -45,6 +46,16 @@ const { PrivateDataError } = (await import(privatePath)) as Private;
 const NINE = [1, 2, 3, 4, 5, 6, 7, 8, 9].join('');
 const PHONE = ['0', NINE.slice(0, 2), NINE.slice(2, 5), NINE.slice(5)].join(' ');
 const NAME = 'Truong_Tan_Khanh_CV.docx';
+const PORTFOLIO = 'Truong_Tan_Khanh_Project_Portfolio.docx';
+/** A project of the private file, with the least a project may have. */
+const project = {
+  name: 'Project of the private test file',
+  company: 'NewIT Vietnam',
+  duration: '3 months',
+  tableRole: 'Developer',
+  role: 'Developer of the made-up service',
+  source: 'made up',
+};
 const loadResume = async () => resume;
 
 describe('generate', () => {
@@ -140,6 +151,49 @@ describe('generate', () => {
     await expect(run()).rejects.toThrow(/not a plain file/);
   });
 
+  describe('with projects in the private file', () => {
+    it('writes the portfolio next to the CV, with the phone number once and the project in it', async () => {
+      putPrivate({ extraProjects: [project] });
+      const result = await run();
+      expect(result.portfolio?.file).toBe(join(realpathSync(cv), OUTPUT_FOLDER, PORTFOLIO));
+      expect(result.portfolio?.bytes).toBe(readFileSync(result.portfolio!.file).length);
+      expect(readdirSync(join(cv, OUTPUT_FOLDER)).sort()).toEqual([NAME, PORTFOLIO].sort());
+      const doc = parts(result.portfolio!.file);
+      expect(doc.body.split(PHONE)).toHaveLength(2);
+      expect(doc.body).toContain(project.name);
+      expect(doc.body).toContain('Project Portfolio · Appendix to CV');
+    });
+
+    it('writes no portfolio when there is no project, and says so', async () => {
+      putPrivate();
+      const result = await run();
+      expect(result.portfolio).toBeNull();
+      expect(readdirSync(join(cv, OUTPUT_FOLDER))).toEqual([NAME]);
+    });
+
+    it('stops before the portfolio is written when a project is wrong, naming the position and the field', async () => {
+      putPrivate({ extraProjects: [project, { ...project, role: '' }] });
+      await expect(run()).rejects.toThrow(/extraProjects\[1\]: "role"/);
+      expect(existsSync(join(cv, OUTPUT_FOLDER))).toBe(false);
+    });
+
+    it('writes neither file when the place of the portfolio is taken by something that is not a file', async () => {
+      putPrivate({ extraProjects: [project] });
+      mkdirSync(join(cv, OUTPUT_FOLDER, PORTFOLIO), { recursive: true });
+      await expect(run()).rejects.toThrow(/not a plain file/);
+      expect(existsSync(join(cv, OUTPUT_FOLDER, NAME))).toBe(false);
+    });
+
+    it('changes the portfolio when a project changes', async () => {
+      putPrivate({ extraProjects: [project] });
+      const first = parts((await run()).portfolio!.file).body;
+      putPrivate({ extraProjects: [{ ...project, role: 'Developer of another service' }] });
+      const second = parts((await run()).portfolio!.file).body;
+      expect(second).not.toBe(first);
+      expect(second).toContain('Developer of another service');
+    });
+  });
+
   describe('as a dry run', () => {
     it('needs no private file, writes to a new temporary folder and uses the placeholder', async () => {
       const result = await generate({ loadResume, dryRun: true, cvDir: cv, privateFile });
@@ -151,6 +205,17 @@ describe('generate', () => {
       expect(doc.body).toContain('(phone on request)');
       expect(doc.body).not.toContain(NINE);
       expect(existsSync(join(cv, OUTPUT_FOLDER))).toBe(false);
+    });
+
+    it('also writes the portfolio, from the made-up projects of the example file', async () => {
+      putPrivate({ extraProjects: [project] });
+      const result = await generate({ loadResume, dryRun: true, cvDir: cv, privateFile });
+      created.push(dirname(result.file));
+      expect(dirname(result.portfolio!.file)).toBe(dirname(result.file));
+      const doc = parts(result.portfolio!.file);
+      expect(doc.body).toContain('Example project');
+      expect(doc.body).not.toContain(project.name);
+      expect(doc.body).toContain('(phone on request)');
     });
 
     it('ignores a private file that is there', async () => {
