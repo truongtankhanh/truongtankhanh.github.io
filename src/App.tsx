@@ -7,8 +7,8 @@ import { resume } from './content/resume';
 import { formatMonth } from './lib/dates';
 import { stripEmphasis } from './lib/emphasis';
 import { Hero } from './components/Hero';
-import { Platform } from './components/Platform';
 import { SiteHeader } from './components/SiteHeader';
+import { Work } from './components/Work';
 
 // Fixed at build time (see vite.config.ts) so server and client render the same date.
 const BUILT = __BUILD_DATE__;
@@ -27,26 +27,7 @@ export function App() {
         <Hero resume={r} />
 
         <div className="page">
-          <section id="work" className="section" aria-labelledby="work-title">
-            <div className="section-head">
-              <h2 id="work-title">Public work</h2>
-              <p>
-                Five repositories that fit together as one campus operations platform. The campus is
-                fictional; the engineering is the kind a real deployment needs, and every claim below can be
-                checked in the code.
-              </p>
-            </div>
-            <Platform projects={r.projects} />
-
-            {/* Printed CVs can't use the diagram, so print gets a plain list instead. */}
-            <ul className="print-only print-projects">
-              {r.projects.map((p) => (
-                <li key={p.id}>
-                  <strong>{p.name}</strong> ({p.repo.replace('https://', '')}): {p.what}
-                </li>
-              ))}
-            </ul>
-          </section>
+          <Work projects={r.projects} />
 
           <section id="experience" className="section" aria-labelledby="experience-title">
             <div className="section-head">

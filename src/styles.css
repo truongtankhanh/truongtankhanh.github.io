@@ -410,6 +410,15 @@ p {
 .skip:focus {
   top: 1rem;
 }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 /* ── Header ─────────────────────────────────────────────────── */
 /* The page wrapper is the container the header answers to, so the same markup works at any width. */
@@ -1327,6 +1336,256 @@ p {
   fill: var(--signal);
 }
 
+/* ── Public work ────────────────────────────────────────────── */
+/* The lead project on a dark plate, with what a reviewer can check beside it; then a card for each other project:
+   the key figure leads, the checks follow, the repository link is the footer. */
+.featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+}
+.featured-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 48px;
+}
+.featured-tag {
+  align-self: flex-start;
+  padding: 5px 14px;
+  border: 1px solid color-mix(in srgb, var(--on-band) 30%, transparent);
+  border-radius: 999px;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.featured h3 {
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+.featured-what {
+  max-width: 52ch;
+  color: color-mix(in srgb, var(--on-band) 82%, transparent);
+  font-size: 1.1rem;
+  line-height: 1.65;
+}
+.featured .chip {
+  border-color: color-mix(in srgb, var(--on-band) 28%, transparent);
+  background: transparent;
+  color: color-mix(in srgb, var(--on-band) 85%, transparent);
+}
+.featured-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+.featured-actions .btn {
+  min-height: 3rem;
+  padding-inline: var(--space-3);
+}
+.featured-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 48px 48px 44px;
+  border-left: 1px solid color-mix(in srgb, var(--on-band) 14%, transparent);
+  background: color-mix(in srgb, black 20%, var(--band));
+}
+.featured-side h4 {
+  margin-bottom: 12px;
+  color: color-mix(in srgb, var(--on-band) 72%, transparent);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.check-list,
+.tick-list,
+.chip-list,
+.project-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 0;
+  border-top: 1px solid color-mix(in srgb, var(--on-band) 16%, transparent);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+.check-mark {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  padding: 4px;
+  border-radius: 50%;
+  background: var(--on-band);
+  color: var(--band);
+  stroke-width: 2.4;
+}
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.project-grid > li {
+  display: flex;
+}
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 28px;
+}
+/* The rim is the border-box layer, so a hover colour has to replace that layer. */
+.project-card:hover {
+  background:
+    linear-gradient(180deg, var(--plate-top), var(--plate-bot)) padding-box,
+    linear-gradient(var(--accent), var(--accent)) border-box;
+}
+.project-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.project-head h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.project-arrow {
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--accent);
+}
+.project-what {
+  color: var(--muted);
+  font-size: 0.97rem;
+}
+.project-stat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px var(--space-2);
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: var(--wash);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.stat-value {
+  color: var(--accent);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.tick-list {
+  display: grid;
+  gap: var(--space-1);
+}
+.tick-list li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+.tick-list li::before {
+  content: '';
+  position: absolute;
+  top: 0.45em;
+  left: 2px;
+  width: 10px;
+  height: 6px;
+  border-bottom: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+  transform: rotate(-45deg);
+}
+.project-foot {
+  margin-top: auto;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+.project-foot a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 600;
+  text-decoration: none;
+}
+.project-foot a::after {
+  content: '→';
+  /* The arrow is decoration: an empty alternative keeps it out of the link's name where `content` allows one. */
+  content: '→' / '';
+}
+@media (prefers-reduced-motion: no-preference) {
+  .project-card {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .project-card:hover {
+    transform: translateY(-2px);
+  }
+  .project-foot a::after {
+    transition: transform 0.15s ease;
+  }
+  .project-card:hover .project-foot a::after {
+    transform: translateX(4px);
+  }
+}
+
+@container (width < 960px) {
+  .featured {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .featured-side {
+    padding: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--on-band) 14%, transparent);
+    border-left: 0;
+  }
+  .project-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@container (width < 600px) {
+  .featured-body,
+  .featured-side {
+    padding: var(--space-3);
+  }
+  .featured h3 {
+    font-size: 2rem;
+  }
+  .project-card {
+    padding: 22px;
+  }
+}
+
 /* ── Platform diagram ───────────────────────────────────────── */
 .diagram {
   display: block;
@@ -1736,8 +1995,11 @@ p {
   .hero-facts,
   .hero-stack,
   .metrics,
+  .featured,
+  .project-grid,
   .platform,
   .section-head p,
+  .sec-head p,
   .engagement-link,
   .contact-links,
   .site-footer {
@@ -1810,6 +2072,24 @@ p {
   .section-head h2,
   .contact h2 {
     font-size: 12.5pt;
+  }
+  /* The section head of the screen design, flattened to the plain head the CV has always had. */
+  .sec-head {
+    display: block;
+    margin-bottom: 6pt;
+    padding: 0;
+    border: 0;
+    border-image: none;
+  }
+  .sec-head h2 {
+    padding-top: 0;
+    font-size: 12.5pt;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .sec-head h2::before {
+    display: none;
   }
   .print-projects {
     margin: 0;
