@@ -4,7 +4,8 @@ import { resume } from '../content/resume';
 import { Hero } from './Hero';
 
 /** React separates adjacent text nodes with `<!-- -->`; drop them so the text reads as written. */
-const html = () => renderToString(<Hero resume={resume} />).replaceAll('<!-- -->', '');
+const html = (r = resume) => renderToString(<Hero resume={r} />).replaceAll('<!-- -->', '');
+const published = { ...resume, cv: { ...resume.cv, published: true, bytes: 184_320 } };
 
 /** Each link inside the actions block: its `href` and its text. */
 function actions(markup: string) {
@@ -23,13 +24,28 @@ describe('Hero', () => {
     expect(markup).toMatch(new RegExp(`<h1 [^>]*lang="vi"[^>]*>${resume.name}</h1>`));
   });
 
-  it('offers four actions, in order: email, CV, GitHub, LinkedIn', () => {
+  it('offers three actions without the PDF, so it never links a file the build did not ship', () => {
+    expect(resume.cv.published).toBe(false);
     expect(actions(html())).toEqual([
+      [`mailto:${resume.email}`, 'Email me'],
+      [resume.links.github, 'GitHub'],
+      [resume.links.linkedin, 'LinkedIn'],
+    ]);
+  });
+
+  it('offers four actions once the PDF is shipped, in order: email, CV, GitHub, LinkedIn', () => {
+    expect(actions(html(published))).toEqual([
       [`mailto:${resume.email}`, 'Email me'],
       [resume.cv.pdf, 'Download CV (PDF)'],
       [resume.links.github, 'GitHub'],
       [resume.links.linkedin, 'LinkedIn'],
     ]);
+  });
+
+  it('names the size of the PDF in the accessible name of its link', () => {
+    const markup = html(published);
+    expect(markup).toContain(`download="${resume.cv.fileName}"`);
+    expect(markup).toContain('aria-label="Download CV, PDF, 180 KB"');
   });
 
   it('announces "Email copied" through a polite live region that exists from the first render', () => {

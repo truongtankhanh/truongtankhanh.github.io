@@ -427,6 +427,11 @@ describe('resume content', () => {
     });
   });
 
+  it('publishes the CV exactly when the build found a PDF, and tests never find one', () => {
+    expect(resume.cv.published).toBe(resume.cv.bytes !== null);
+    expect(resume.cv.bytes).toBeNull();
+  });
+
   it('points the CV link at an ASCII file name that matches the PDF build', () => {
     expect(resume.cv.fileName).toMatch(/^[\w.-]+\.pdf$/);
     expect(resume.cv.pdf).toBe(`/${resume.cv.fileName}`);

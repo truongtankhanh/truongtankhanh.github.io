@@ -1,4 +1,5 @@
 import type { Resume } from '../content/types';
+import { downloadLabel } from '../lib/cv';
 import { formatMonthLong } from '../lib/dates';
 import { EmailLink } from './EmailLink';
 import { Icon } from './Icon';
@@ -82,10 +83,17 @@ export function Hero({ resume: r }: { resume: Resume }) {
                 className="btn btn-primary btn-on-band"
                 icon="mail"
               />
-              <a className="btn btn-on-band" href={r.cv.pdf} download={r.cv.fileName}>
-                <Icon name="download" />
-                Download CV (PDF)
-              </a>
+              {r.cv.published && (
+                <a
+                  className="btn btn-on-band"
+                  href={r.cv.pdf}
+                  download={r.cv.fileName}
+                  aria-label={downloadLabel(r.cv, 'Download CV')}
+                >
+                  <Icon name="download" />
+                  Download CV (PDF)
+                </a>
+              )}
               <a className="btn btn-on-band" href={r.links.github}>
                 GitHub
                 <Icon name="arrowUpRight" />

@@ -1,4 +1,5 @@
 import type { Engagement, Project, Resume, Role } from '../content/types';
+import { downloadLabel } from '../lib/cv';
 import { formatRange } from '../lib/dates';
 import { emphasis } from '../lib/emphasis';
 import { displayUrl } from '../lib/urls';
@@ -163,6 +164,13 @@ export function PrintCv({ resume: r }: { resume: Resume }) {
           <Icon name="home" />
           Back to the site
         </a>
+        {/* On screen only: the bar does not print, and the PDF is printed from a build that has no PDF yet. */}
+        {r.cv.published && (
+          <a href={r.cv.pdf} download={r.cv.fileName} aria-label={downloadLabel(r.cv, 'Download CV')}>
+            <Icon name="download" />
+            Download CV (PDF)
+          </a>
+        )}
       </nav>
 
       <main id="main" className="cv-sheet">

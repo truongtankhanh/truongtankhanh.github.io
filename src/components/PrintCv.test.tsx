@@ -53,6 +53,15 @@ describe('PrintCv', () => {
     expect(html()).toMatch(/<nav [^>]*class="cv-bar"[^>]*><a href="\/">/);
   });
 
+  it('offers the PDF in the bar only when the build shipped it, since the PDF is printed from a build without it', () => {
+    expect(html()).not.toContain('Download CV');
+    const bar = html({ ...resume, cv: { ...resume.cv, published: true, bytes: 184_320 } }).match(
+      /<nav [^>]*class="cv-bar"[^>]*>(.*?)<\/nav>/,
+    )?.[1];
+    expect(bar).toContain(`href="${resume.cv.pdf}" download="${resume.cv.fileName}"`);
+    expect(bar).toContain('aria-label="Download CV, PDF, 180 KB"');
+  });
+
   it('has the contact line of the header: email, site, GitHub and LinkedIn, and no phone number', () => {
     const markup = html();
     const links = markup.match(/<ul class="cv-links"[^>]*>(.*?)<\/ul>/)?.[1] ?? '';

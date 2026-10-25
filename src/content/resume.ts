@@ -40,7 +40,13 @@ export const resume: Resume = {
   email: 'ttkhanh100896@gmail.com',
   siteUrl: 'https://truongtankhanh.github.io/',
   cvPdf: 'Truong_Tan_Khanh_CV.pdf',
-  cv: { pdf: '/Truong_Tan_Khanh_CV.pdf', fileName: 'Truong_Tan_Khanh_CV.pdf', published: false },
+  // Set by the build from the PDF it finds (`vite.config.ts`), never by hand.
+  cv: {
+    pdf: '/Truong_Tan_Khanh_CV.pdf',
+    fileName: 'Truong_Tan_Khanh_CV.pdf',
+    published: __CV_PDF_BYTES__ !== null,
+    bytes: __CV_PDF_BYTES__,
+  },
   links: {
     github: GH,
     linkedin: 'https://www.linkedin.com/in/truongtankhanh/',

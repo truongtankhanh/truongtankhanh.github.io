@@ -1,11 +1,12 @@
 // Builds the public CV PDF from the finished site, so it cannot drift from src/content/resume.ts.
 // It serves dist/ on localhost, prints the /cv/ page with headless Chrome (the page is laid out for
-// A4 and paginated by its own @page rules) and writes dist/<cvPdf>. Run it after `pnpm build`.
+// A4 and paginated by its own @page rules) and writes dist-pdf/<cvPdf>. Run it after `pnpm build`, then build
+// again: that build finds the file, links it from the pages with its size, and copies it into dist/.
 // CI runs it on the runner's Chrome (the deploy workflow); locally set CHROME_PATH if Chrome is not found.
 // It is not part of `pnpm build` or `pnpm test`, and it is not run from the editor terminal: rendering a PDF
 // is heavy, and the job logs the size and the page count.
 import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
+import { mkdir, readFile, stat } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -21,8 +22,10 @@ const CV_PDF = 'Truong_Tan_Khanh_CV.pdf';
 const MAX_BYTES = 600 * 1024;
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
-if (!existsSync(join(dist, 'index.html')))
-  throw new Error('dist/index.html is missing: run `pnpm build` first');
+// Outside dist/, so the next build (which empties dist/) still finds it.
+const pdfDir = fileURLToPath(new URL('../dist-pdf/', import.meta.url));
+if (!existsSync(join(dist, 'cv', 'index.html')))
+  throw new Error('dist/cv/index.html is missing: run `pnpm build` first');
 
 const MAC_CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const chrome = process.env.CHROME_PATH ?? (existsSync(MAC_CHROME) ? MAC_CHROME : 'google-chrome');
@@ -58,7 +61,10 @@ await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 const profile = await mkdtemp(join(tmpdir(), 'cv-pdf-'));
 try {
   const { port } = server.address();
-  const out = join(dist, CV_PDF);
+  const out = join(pdfDir, CV_PDF);
+  // A file left by an earlier run must not pass for this one.
+  await mkdir(pdfDir, { recursive: true });
+  await rm(out, { force: true });
   const exit = await new Promise((resolve, reject) => {
     const child = spawn(
       chrome,
@@ -87,13 +93,17 @@ try {
   if (exit !== 0 || !existsSync(out)) throw new Error(`Chrome did not write the PDF (exit ${exit})`);
   const { size } = await stat(out);
   const bytes = await readFile(out);
-  if (bytes.subarray(0, 5).toString('latin1') !== '%PDF-') throw new Error(`dist/${CV_PDF} is not a PDF`);
+  if (bytes.subarray(0, 5).toString('latin1') !== '%PDF-') throw new Error(`dist-pdf/${CV_PDF} is not a PDF`);
   if (size > MAX_BYTES) {
-    throw new Error(`dist/${CV_PDF} is ${Math.round(size / 1024)} KB, over the ${MAX_BYTES / 1024} KB limit`);
+    throw new Error(
+      `dist-pdf/${CV_PDF} is ${Math.round(size / 1024)} KB, over the ${MAX_BYTES / 1024} KB limit`,
+    );
   }
   // Informational: the CV is meant to be four A4 pages. The page tree of a Chrome PDF reads `/Type /Pages ... /Count n`.
   const pages = /\/Type\s*\/Pages\b[^>]*?\/Count\s+(\d+)/.exec(bytes.toString('latin1'))?.[1];
-  console.log(`wrote dist/${CV_PDF} (${Math.round(size / 1024)} KB, ${pages ?? 'unknown number of'} pages)`);
+  console.log(
+    `wrote dist-pdf/${CV_PDF} (${Math.round(size / 1024)} KB, ${pages ?? 'unknown number of'} pages)`,
+  );
 } finally {
   server.close();
   await rm(profile, { recursive: true, force: true });

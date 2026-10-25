@@ -126,11 +126,31 @@ describe('sitemap and robots', () => {
 });
 
 describe('public CV PDF', () => {
-  it('has one file name across the content, the build script and the head', () => {
-    expect(readFileSync(new URL('../../scripts/build-pdf.js', import.meta.url), 'utf8')).toContain(
-      `'${resume.cvPdf}'`,
+  const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
+  const shipped = { ...resume, cv: { ...resume.cv, published: true, bytes: 184_320 } };
+  const alternate = `<link rel="alternate" type="application/pdf" href="${resume.cv.pdf}" title="CV (PDF)" />`;
+
+  it('has one file name across the content, the build script and the build configuration', () => {
+    expect(read('../../scripts/build-pdf.js')).toContain(`'${resume.cvPdf}'`);
+    expect(read('../../vite.config.ts')).toContain(`'${resume.cvPdf}'`);
+  });
+
+  it('leaves a link to the file out of the template, so a build without the PDF has none', () => {
+    expect(read('../../index.html')).not.toContain(resume.cvPdf);
+  });
+
+  it('links the PDF from the head of the home page and the CV page when the build shipped it', () => {
+    expect(headTags(shipped, homeMeta(shipped))).toContain(alternate);
+    expect(headTags(shipped, pageMeta(shipped, '/cv/'))).toContain(alternate);
+  });
+
+  it('links it from no other page, and from none when the build has no PDF', () => {
+    expect(headTags(shipped, pageMeta(shipped, '/404.html'))).not.toContain('application/pdf');
+    expect(headTags(shipped, pageMeta(shipped, '/work/ops-command-center/'))).not.toContain(
+      'application/pdf',
     );
-    expect(readFileSync(new URL('../../index.html', import.meta.url), 'utf8')).toContain(`/${resume.cvPdf}`);
+    expect(headTags(resume, homeMeta(resume))).not.toContain('application/pdf');
+    expect(headTags(resume, pageMeta(resume, '/cv/'))).not.toContain('application/pdf');
   });
 });
 

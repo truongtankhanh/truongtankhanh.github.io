@@ -3,9 +3,11 @@ import { renderToString } from 'react-dom/server';
 import { resume } from '../content/resume';
 import { Contact } from './Contact';
 
-const render = () =>
+const published = { ...resume, cv: { ...resume.cv, published: true, bytes: 184_320 } };
+
+const render = (r = resume) =>
   // React separates adjacent text nodes with `<!-- -->`; drop them so the text reads as written.
-  renderToString(<Contact resume={resume} />)
+  renderToString(<Contact resume={r} />)
     .replaceAll('<!-- -->', '')
     .replaceAll('<wbr/>', '');
 
@@ -30,14 +32,20 @@ describe('Contact', () => {
     expect(markup).toContain(`<b>${resume.email}</b>`);
   });
 
-  it('adds three quieter tiles: GitHub, LinkedIn and the CV, each with a note read from the content', () => {
-    const tiles = render().split('<a class="tile"').slice(1);
+  it('adds two quieter tiles without the PDF: GitHub and LinkedIn', () => {
+    expect(render().split('<a class="tile"').slice(1)).toHaveLength(2);
+    expect(render()).not.toContain('Download CV');
+  });
+
+  it('adds three quieter tiles once the PDF is shipped: GitHub, LinkedIn and the CV, each with a note read from the content', () => {
+    const tiles = render(published).split('<a class="tile"').slice(1);
     expect(tiles).toHaveLength(3);
     expect(tiles[0]).toContain(`href="${resume.links.github}"`);
     expect(tiles[0]).toContain('<span class="tile-note">github.com/truongtankhanh</span>');
     expect(tiles[1]).toContain(`href="${resume.links.linkedin}"`);
     expect(tiles[1]).toContain('<span class="tile-note">linkedin.com/in/truongtankhanh</span>');
     expect(tiles[2]).toContain(`href="${resume.cv.pdf}" download="${resume.cv.fileName}"`);
+    expect(tiles[2]).toContain('aria-label="Download CV, PDF, 180 KB"');
     expect(tiles[2]).toContain('<span class="tile-name">Download CV</span>');
   });
 
@@ -45,6 +53,8 @@ describe('Contact', () => {
     const markup = render();
     expect(markup).toContain('<a class="btn-text btn-on-band" href="/cv/">Print the CV</a>');
     expect(markup.indexOf('Print the CV')).toBeGreaterThan(markup.lastIndexOf('<a class="tile"'));
+    const withPdf = render(published);
+    expect(withPdf.indexOf('Print the CV')).toBeGreaterThan(withPdf.lastIndexOf('<a class="tile"'));
     expect(markup.match(/href="\/cv\/"/g)).toHaveLength(1);
   });
 });

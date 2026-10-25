@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import type { Resume } from '../content/types';
+import { downloadLabel } from '../lib/cv';
 import { HeroSun, HeroWaves } from './Hero';
 import { Icon } from './Icon';
 import { SiteHeader } from './SiteHeader';
@@ -94,9 +95,14 @@ export function NotFound({ resume: r }: { resume: Resume }) {
                 <Icon name="home" />
                 Back to home
               </a>
-              {/* Absent while the PDF is not shipped (V1-14.2), so the page never offers a dead download. */}
+              {/* Absent in a build that has no PDF, so the page never offers a dead download. */}
               {r.cv.published && (
-                <a className="btn btn-on-band" href={r.cv.pdf} download={r.cv.fileName}>
+                <a
+                  className="btn btn-on-band"
+                  href={r.cv.pdf}
+                  download={r.cv.fileName}
+                  aria-label={downloadLabel(r.cv, 'Download CV')}
+                >
                   <Icon name="download" />
                   Download CV (PDF)
                 </a>

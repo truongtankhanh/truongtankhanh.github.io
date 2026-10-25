@@ -180,10 +180,11 @@ export interface Resume {
   /** File name of the public CV PDF, built into `dist/` by `scripts/build-pdf.js`. */
   cvPdf: string;
   /**
-   * The public CV: `pdf` is the root-relative URL, `fileName` the ASCII name the download is saved under.
-   * `published` stays false until V1-14 ships the new file; the header hides its link until then.
+   * The public CV: `pdf` is the root-relative URL, `fileName` the ASCII name the download is saved under. `bytes` is the
+   * size of the PDF that `pnpm build:pdf` printed before this build, or null when there is none; `published` is true
+   * exactly then, so no page links a file the build did not ship (see `vite.config.ts`).
    */
-  cv: { pdf: string; fileName: string; published: boolean };
+  cv: { pdf: string; fileName: string; published: boolean; bytes: number | null };
   links: { github: string; linkedin: string };
   /** In career order, early to recent. */
   metrics: Metric[];

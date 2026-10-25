@@ -3,13 +3,14 @@
 // readable by crawlers and ATS tools). React then hydrates the same markup for the interactive parts.
 // The page head (title, description, canonical, Open Graph, JSON-LD), sitemap.xml and robots.txt are
 // generated from the same content file and the same route list.
-import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const template = await readFile(`${root}dist/index.html`, 'utf8');
-const { pages, render, seoFiles } = await import(`${root}dist-ssr/entry-server.js`);
+const { cvFile, pages, render, seoFiles } = await import(`${root}dist-ssr/entry-server.js`);
+const cv = cvFile();
 
 // The template's <title> is the fallback for `pnpm dev`; each page head brings its own.
 const bare = template.replace(/\s*<title>[\s\S]*?<\/title>/, '');
@@ -39,9 +40,21 @@ for (const route of pages()) {
   const relative = html.match(/\s(?:href|src)="(?![/#]|[a-z][a-z0-9+.-]*:)[^"]*"/gi);
   if (relative) throw new Error(`dist${file} has a relative URL: ${relative.join(' ')}`);
 
+  // The CV link follows the file: a build with the PDF links it from the home page, and a build without it links
+  // it from nowhere, so the site never offers a download that returns 404.
+  const linksCv = html.includes(`href="${cv.pdf}"`);
+  if (!cv.published && linksCv) throw new Error(`dist${file} links ${cv.pdf}, but this build has no PDF`);
+  if (cv.published && route.path === '/' && !linksCv) throw new Error(`dist${file} does not link ${cv.pdf}`);
+
   await mkdir(dirname(`${root}dist${file}`), { recursive: true });
   await writeFile(`${root}dist${file}`, html);
   written.push(`dist${file}`);
+}
+
+// The PDF was printed by `pnpm build:pdf` from an earlier build of the same pages; it ships next to index.html.
+if (cv.published) {
+  await copyFile(`${root}dist-pdf/${cv.fileName}`, `${root}dist/${cv.fileName}`);
+  written.push(`dist/${cv.fileName}`);
 }
 
 const lastmod = new Date().toISOString().slice(0, 10);

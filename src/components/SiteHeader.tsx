@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { resume } from '../content/resume';
+import { downloadLabel } from '../lib/cv';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
 
@@ -117,7 +118,7 @@ export function SiteHeader({ home = true, current }: { home?: boolean; current?:
               className="btn btn-primary btn-small btn-on-band"
               href={resume.cv.pdf}
               download={resume.cv.fileName}
-              aria-label="Download CV"
+              aria-label={downloadLabel(resume.cv, 'Download CV')}
             >
               <Icon name="download" />
               <span>Download CV</span>

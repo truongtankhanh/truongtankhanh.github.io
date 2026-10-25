@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import type { Resume } from '../content/types';
+import { downloadLabel } from '../lib/cv';
 import { CV_PATH } from '../routes';
 import { displayUrl } from '../lib/urls';
 import { EmailLink } from './EmailLink';
@@ -11,15 +12,18 @@ function Tile({
   note,
   icon,
   download,
+  label,
 }: {
   href: string;
   name: string;
   note: string;
   icon: IconName;
   download?: string;
+  /** The accessible name, when the visible name and note do not say all of it. */
+  label?: string;
 }) {
   return (
-    <a className="tile" href={href} download={download}>
+    <a className="tile" href={href} download={download} aria-label={label}>
       <span className="tile-name">{name}</span>
       <span className="tile-note">
         {/* A browser does not break a line after "/", so say where it may: the note then wraps between words, not inside one. */}
@@ -79,7 +83,16 @@ export function Contact({ resume: r }: { resume: Resume }) {
               note={displayUrl(r.links.linkedin)}
               icon="arrowUpRight"
             />
-            <Tile href={r.cv.pdf} name="Download CV" note="PDF" icon="download" download={r.cv.fileName} />
+            {r.cv.published && (
+              <Tile
+                href={r.cv.pdf}
+                name="Download CV"
+                note="PDF"
+                icon="download"
+                download={r.cv.fileName}
+                label={downloadLabel(r.cv, 'Download CV')}
+              />
+            )}
           </div>
           {/* The one place that offers the CV page to print: the header keeps a single, primary CV action. */}
           <p className="contact-print">

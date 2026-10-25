@@ -142,6 +142,10 @@ export function headTags(resume: Resume, page: PageMeta): string {
     `<meta property="og:image:height" content="${SHARE_IMAGE_SIZE.height}" />`,
     `<meta property="og:image:alt" content="${attr(page.image.alt)}" />`,
     '<meta name="twitter:card" content="summary_large_image" />',
+    // Only where the CV is the subject, and only when this build shipped the file.
+    ...(resume.cv.published && (page.path === '/' || page.path === CV_PATH)
+      ? [`<link rel="alternate" type="application/pdf" href="${attr(resume.cv.pdf)}" title="CV (PDF)" />`]
+      : []),
     ...(page.jsonLd ?? []).map(jsonLdScript),
   ];
   return tags.join('\n    ');

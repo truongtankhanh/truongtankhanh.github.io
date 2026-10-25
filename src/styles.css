@@ -3450,6 +3450,10 @@ p {
   print-color-adjust: exact;
 }
 .cv-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 var(--space-3);
   max-width: 210mm;
   margin: 0 auto;
 }

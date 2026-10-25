@@ -29,9 +29,11 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
-      # The runner's Chrome prints the /cv/ page of the finished site to the public CV PDF in dist/; the step fails
-      # when the file is not a PDF or is over 600 KB. It runs here only, never on the owner's machine.
+      # The runner's Chrome prints the /cv/ page of the finished site to dist-pdf/; the step fails when the file is
+      # not a PDF or is over 600 KB. It runs here only, never on the owner's machine.
       - run: pnpm build:pdf
+      # Build again, now that the file exists: the pages link it with its size and the build copies it into dist/.
+      - run: pnpm build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

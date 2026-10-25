@@ -5,7 +5,7 @@ import { NotFound } from './NotFound';
 
 /** React separates adjacent text nodes with `<!-- -->`; drop them so the text reads as written. */
 const html = (r = resume) => renderToString(<NotFound resume={r} />).replaceAll('<!-- -->', '');
-const published = { ...resume, cv: { ...resume.cv, published: true } };
+const published = { ...resume, cv: { ...resume.cv, published: true, bytes: 184_320 } };
 const unpublished = { ...resume, cv: { ...resume.cv, published: false } };
 
 describe('NotFound', () => {
@@ -58,6 +58,7 @@ describe('NotFound', () => {
     const markup = html(published);
     expect(markup).toContain(`href="${resume.cv.pdf}"`);
     expect(markup).toContain('Download CV (PDF)');
+    expect(markup).toContain('aria-label="Download CV, PDF, 180 KB"');
     expect(markup).toContain('and the CV is one click away.');
   });
 

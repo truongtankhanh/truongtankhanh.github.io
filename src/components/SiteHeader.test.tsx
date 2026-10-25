@@ -79,13 +79,16 @@ describe('SiteHeader', () => {
 
     it('is a link to the PDF once the CV is published', () => {
       resume.cv.published = true;
+      resume.cv.bytes = 184_320;
       try {
         const markup = html();
         expect(markup).toContain(`href="${resume.cv.pdf}"`);
         expect(markup).toContain(`download="${resume.cv.fileName}"`);
-        expect(markup).toContain('aria-label="Download CV"');
+        expect(markup).toContain('aria-label="Download CV, PDF, 180 KB"');
+        expect(markup).toContain('<span>Download CV</span>');
       } finally {
         resume.cv.published = false;
+        resume.cv.bytes = null;
       }
     });
   });
