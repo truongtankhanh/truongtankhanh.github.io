@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Icon, type IconName } from './Icon';
 
 interface EmailLinkProps {
@@ -7,14 +7,26 @@ interface EmailLinkProps {
   /** Shown for about two seconds after the address is copied. */
   copiedLabel: string;
   className?: string;
+  /** Class of the span that holds the label, for a layout that places it apart from the rest of the link. */
+  labelClassName?: string;
   icon?: IconName;
+  /** More content inside the link, after the label. */
+  children?: ReactNode;
 }
 
 /**
  * A `mailto:` link that also copies the address. A visitor with only web mail has no mail app to open, so the
  * address lands on the clipboard; the default action is left alone so a visitor with a mail app still gets a draft.
  */
-export function EmailLink({ email, label, copiedLabel, className, icon }: EmailLinkProps) {
+export function EmailLink({
+  email,
+  label,
+  copiedLabel,
+  className,
+  labelClassName,
+  icon,
+  children,
+}: EmailLinkProps) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -35,7 +47,10 @@ export function EmailLink({ email, label, copiedLabel, className, icon }: EmailL
   return (
     <a className={className} href={`mailto:${email}`} onClick={copy}>
       {icon && <Icon name={icon} />}
-      <span aria-live="polite">{copied ? copiedLabel : label}</span>
+      <span className={labelClassName} aria-live="polite">
+        {copied ? copiedLabel : label}
+      </span>
+      {children}
     </a>
   );
 }

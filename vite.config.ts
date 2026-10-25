@@ -7,5 +7,4 @@ export default defineConfig({
   // strictPort fails loudly instead of silently hopping to another port when 5390 is taken.
   server: { port: 5390, strictPort: true },
   build: { assetsInlineLimit: 0 },
-  define: { __BUILD_DATE__: JSON.stringify(new Date().toISOString().slice(0, 10)) },
 });

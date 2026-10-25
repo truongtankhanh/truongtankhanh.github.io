@@ -762,20 +762,6 @@ p {
   padding-block: clamp(3.5rem, 8vw, 6rem);
   border-top: 1px solid var(--line);
 }
-.section-head {
-  max-width: var(--measure);
-  margin-bottom: 2.25rem;
-}
-.section-head h2,
-.contact h2 {
-  font-size: clamp(1.6rem, 3.2vw, 2.1rem);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.section-head p {
-  margin-top: 0.75rem;
-  color: var(--muted);
-}
 
 /* ── Hero ───────────────────────────────────────────────────── */
 /* A full-width band in the colour of the header; it starts under the header, so the two are one piece even where
@@ -2190,22 +2176,6 @@ p {
   }
 }
 
-.principles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: 2rem 2.5rem;
-  max-width: 60rem;
-}
-.principle h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding-left: 0.85rem;
-  border-left: 3px solid var(--accent);
-}
-.principle p {
-  margin-top: 0.5rem;
-  color: var(--muted);
-}
 .facts {
   display: grid;
   gap: 0.5rem;
@@ -2225,34 +2195,353 @@ p {
   margin: 0;
 }
 
-/* ── Contact & footer ───────────────────────────────────────── */
-.contact p {
-  margin-top: 0.75rem;
-  max-width: var(--measure);
+/* ── Leadership ─────────────────────────────────────────────── */
+/* Scope first, then each principle with the work that backs it, then education and languages. */
+.lead-scope {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+}
+.lead-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 36px;
+  border-right: 1px solid var(--line);
+  list-style: none;
+}
+.lead-value {
+  display: block;
+  color: var(--accent);
+  font-size: 3.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.lead-label {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.lead-owns {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 36px;
+}
+.lead-owns-label,
+.in-practice,
+.fact-row dt {
+  color: var(--accent);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.principle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.principle-grid > li {
+  display: flex;
+}
+.principle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: var(--space-4);
+}
+.principle h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.principle-body {
   color: var(--muted);
 }
-.contact-email {
-  display: inline-block;
-  margin-top: 1.5rem;
-  font-size: clamp(1.35rem, 5vw, 2.6rem);
+.in-practice {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.evidence {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.evidence li {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding-left: 18px;
+}
+.evidence li::before {
+  content: '';
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.evidence q {
+  quotes: none;
+  font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  line-height: 1.55;
+}
+.evidence cite {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+.fact-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3) 40px;
+  margin: 3rem 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+.fact-row dt {
+  margin-bottom: var(--space-1);
+}
+.fact-row dd {
+  margin: 0;
+}
+.fact-row .fact-main {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.fact-row .fact-sub {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+@container (width < 960px) {
+  .lead-scope,
+  .principle-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lead-figures {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+@container (width < 600px) {
+  .lead-figures,
+  .lead-owns,
+  .principle {
+    padding: var(--space-3);
+  }
+  .lead-value {
+    font-size: 2.5rem;
+  }
+  .fact-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Contact ────────────────────────────────────────────────── */
+/* The closing band: the email is the one primary action, the three tiles are quieter. */
+.contact {
+  position: relative;
+  padding-block: 7rem;
+  background: var(--band);
+  color: var(--on-band);
+}
+.contact :focus-visible {
+  outline-color: var(--gold);
+}
+.wave-top {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  fill: var(--paper);
+}
+.contact-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  align-items: center;
+  gap: 56px;
+  max-width: var(--page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.contact h2 {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.contact-copy p {
+  max-width: 34ch;
+  margin-top: 20px;
+  color: color-mix(in srgb, var(--on-band) 82%, transparent);
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+.contact-actions {
+  display: grid;
+  gap: var(--space-2);
+}
+.mail-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 20px;
+  padding: 28px 32px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--on-band), color-mix(in srgb, var(--on-band) 85%, var(--steel)));
+  box-shadow: 0 1px 2px rgba(11, 27, 51, 0.22);
+  color: var(--band);
+  text-decoration: none;
+}
+.mail-card:hover {
+  color: var(--band);
+}
+.mail-label {
+  grid-column: 1;
+  color: color-mix(in srgb, var(--band) 70%, transparent);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.mail-card > b {
+  grid-column: 1;
+  /* Scales with the width of the page so the address stays on one line where the card is narrow. */
+  font-size: clamp(1.15rem, 1.9cqi, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   overflow-wrap: anywhere;
 }
-.contact-links {
+.mail-icon {
+  box-sizing: content-box;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 24px;
+  height: 24px;
+  padding: 14px;
+  border-radius: 50%;
+  background: var(--band);
+  color: var(--on-band);
+}
+.link-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.tile {
+  position: relative;
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 108px;
+  padding: 20px 22px;
+  border: 1px solid color-mix(in srgb, var(--on-band) 26%, transparent);
+  border-radius: 12px;
+  color: var(--on-band);
+  text-decoration: none;
 }
-.site-footer {
-  max-width: var(--page);
-  margin: 0 auto;
-  padding: 2rem var(--gutter) 3rem;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.875rem;
+.tile:hover {
+  border-color: var(--on-band);
+  background: color-mix(in srgb, var(--on-band) 9%, transparent);
+  color: var(--on-band);
 }
-.site-footer p + p {
-  margin-top: 0.35rem;
+.tile-name {
+  /* Leaves room for the arrow in the corner; the note below runs the full width. */
+  padding-right: 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.tile-note {
+  margin-top: auto;
+  color: color-mix(in srgb, var(--on-band) 72%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.tile-icon {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 22px;
+  height: 22px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mail-card {
+    transition: transform 0.15s ease;
+  }
+  .mail-card:hover {
+    transform: translateY(-2px);
+  }
+  .tile {
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+}
+
+@container (width < 960px) {
+  .contact {
+    padding-block: 5rem;
+  }
+  .contact-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contact h2 {
+    font-size: 3rem;
+  }
+  .contact-copy p {
+    max-width: 48ch;
+  }
+}
+@container (width < 600px) {
+  .contact {
+    padding-block: 4rem;
+  }
+  .contact h2 {
+    font-size: 2.5rem;
+  }
+  .mail-card {
+    padding: 22px 20px;
+  }
+  .mail-card > b {
+    font-size: 1.15rem;
+  }
+  .mail-icon {
+    width: 20px;
+    height: 20px;
+    padding: 10px;
+  }
+  .link-tiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tile {
+    min-height: 0;
+  }
 }
 
 /* ── Print: the page becomes a two-page CV ─────────────────── */
@@ -2297,11 +2586,11 @@ p {
   .featured,
   .project-grid,
   .arch,
-  .section-head p,
   .sec-head p,
-  .engagement-link,
-  .contact-links,
-  .site-footer {
+  .lead-scope,
+  .principle-grid,
+  .fact-row,
+  .engagement-link {
     display: none !important;
   }
   .print-only {
@@ -2363,14 +2652,6 @@ p {
   }
   .section {
     padding: 10pt 0 0;
-  }
-  .section-head {
-    margin-bottom: 6pt;
-    max-width: none;
-  }
-  .section-head h2,
-  .contact h2 {
-    font-size: 12.5pt;
   }
   /* The section head of the screen design, flattened to the plain head the CV has always had. */
   .sec-head {
@@ -2507,19 +2788,22 @@ p {
     padding-block: 2pt;
     border: 0 !important;
   }
-  .principles {
-    display: none;
-  }
   .facts {
     margin-top: 0;
     max-width: none;
     font-size: 9.6pt;
   }
-  #approach .section-head h2 {
+  /* The CV's head for this section says what it prints: education and languages. */
+  #approach .sec-head h2 {
     font-size: 0;
   }
-  #approach .section-head h2::before {
+  #approach .sec-head h2::before {
     content: 'Education and languages';
+    position: static;
+    display: inline;
+    width: auto;
+    height: auto;
+    background: none;
     font-size: 12.5pt;
   }
   .contact {
