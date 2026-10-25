@@ -8,7 +8,14 @@ import { Work } from './Work';
 const render = (projects: Project[] = resume.projects) =>
   // React separates adjacent text nodes with `<!-- -->`; drop them so the text reads as written.
   renderToString(<Work projects={projects} architecture={resume.architecture} />).replaceAll('<!-- -->', '');
-const [featured, ...others] = resume.projects as [Project, ...Project[]];
+/** The project as it was before it had a case study, so a test can add one and see the link appear. */
+const without = (p: Project): Project => {
+  const copy = { ...p };
+  delete copy.caseStudy;
+  return copy;
+};
+const bare = resume.projects.map(without);
+const [featured, ...others] = bare as [Project, ...Project[]];
 
 /** The markup of the first element that starts with `open`, up to and including its closing `tag`. */
 function block(markup: string, open: string, tag: string) {
@@ -38,7 +45,8 @@ describe('Work', () => {
   });
 
   it('links to the case study only for a project that has one', () => {
-    expect(render()).not.toContain('Read the case study');
+    expect(render(bare)).not.toContain('Read the case study');
+    expect(render()).toMatch(/<a [^>]*href="\/work\/ops-command-center\/"[^>]*>Read the case study<\/a>/);
     const withStudy = {
       ...featured,
       caseStudy: sampleCaseStudy('ops-command-center'),
@@ -57,7 +65,7 @@ describe('Work', () => {
       '<a href="/work/iot-telemetry-pipeline/">Read the case study<span class="sr-only"> for ' + second.name,
     );
     for (const card of cards.slice(1)) expect(card).not.toContain('Read the case study');
-    expect(render([featured, ...others])).not.toContain('/work/');
+    expect(render(bare)).not.toContain('/work/');
   });
 
   it('gives each of the other projects a card with its key figure, checks, stack and repository link', () => {

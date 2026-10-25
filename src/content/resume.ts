@@ -78,6 +78,86 @@ export const resume: Resume = {
         alt: 'Operator console with an incident list, a campus map with incident markers, and camera tiles',
         caption: 'The operator console on the demo campus.',
       },
+      // Every sentence is quoted or paraphrased from README.md or docs/adr/ of the repository at commit 816b86a;
+      // the source line of each is recorded in the pull request that added it.
+      caseStudy: {
+        slug: 'ops-command-center',
+        lead: 'A real-time operations console for a campus security and facilities team: one screen that answers what is happening, where, and who is handling it.',
+        role: 'Author and maintainer',
+        status: 'Runs on a fictional campus with one command',
+        overview: [
+          'The demo runs on Langbiang Tech Campus, a fictional site with synthetic incidents and simulated cameras. One command brings up the whole stack.',
+          'Live incidents are drawn on a site map with camera tiles next to every incident, and the response workflow is auditable: every timeline entry shows who made it.',
+        ],
+        does: {
+          lead: {
+            title: 'Live incident feed',
+            text: 'New reports appear on every open console **within a second**, ordered by what needs attention first: unresolved, then severity, then age.',
+            figure: { value: '1 s', label: 'goal for a new report to appear on every open console' },
+          },
+          more: [
+            {
+              icon: 'video',
+              title: 'Cameras in context',
+              text: 'The cameras covering an incident’s zone come first, rendered through a **source-agnostic stream descriptor**: mock feeds now, RTSP via MediaMTX next.',
+            },
+            {
+              icon: 'circleCheck',
+              title: 'Respond and record',
+              text: 'Acknowledge or resolve with an optional note. Every change is written to the incident’s timeline, and **invalid transitions are rejected by the server**.',
+            },
+            {
+              icon: 'map',
+              title: 'Map, 3D twin and video wall',
+              text: 'A **site plan that works fully offline**, a three.js twin of the campus where the browser can create a WebGL 2 context, and a read-only control-room screen: a window opened as /?wall=N.',
+            },
+          ],
+        },
+        decisions: [
+          {
+            id: 'ADR-0003',
+            title: 'Domain events in-process, broadcast with Socket.IO',
+            why: 'A Socket.IO gateway that only listens broadcasts the domain events to connected consoles; ADR-0007 later amended how they are delivered.',
+          },
+          {
+            id: 'ADR-0007',
+            title: 'Transactional outbox for incident events',
+            why: 'The event is written in the same transaction as the change, so a committed change is always announced; delivery is at-least-once.',
+          },
+          {
+            id: 'ADR-0008',
+            title: 'Several API replicas, events fanned out through Postgres',
+            why: 'Postgres NOTIFY hands every event to every API replica, so a change made on one reaches consoles connected to another, with no broker to run.',
+          },
+          {
+            id: 'ADR-0009',
+            title: 'Idempotent incident creation with an Idempotency-Key',
+            why: 'A retried report replays the first response instead of creating a duplicate.',
+          },
+          {
+            id: 'ADR-0010',
+            title: 'OIDC authentication for REST and WebSocket',
+            why: 'Keycloak in Compose sits behind nginx on the console’s origin, and the API is an OAuth 2.0 resource server that verifies access tokens with jose.',
+          },
+          {
+            id: 'ADR-0011',
+            title: 'Role-based authorization and the timeline actor',
+            why: 'Permissions are granted per role and checked by the API, and every timeline entry records its actor.',
+          },
+        ],
+        check: [
+          'Start the stack with two API replicas (pnpm docker:stack:replicas), open the console in two browser windows and acknowledge an incident in one: it updates in the other within a second.',
+          'With round-robin, the two windows are usually on different replicas; pnpm docker:compose logs api shows which replica each console connected to.',
+          'The one-second goal is measured: incident_event_delivery_seconds times each event from its outbox row to its broadcast on every replica, and an opt-in Grafana dashboard plots it against the goal.',
+          'The lifecycle rules live in the entity, where IncidentEntity.acknowledge() and resolve() enforce the transitions, and pnpm test:e2e runs the API against a real PostgreSQL.',
+        ],
+        run: {
+          intro:
+            'One command brings up the whole stack. The demo accounts are listed in the repository README.',
+          commands:
+            'pnpm docker:stack        # docker compose up --build\n# Console      http://localhost:18080\n# API + docs   http://localhost:18080/api/docs   (read-only; off by default in production — ADR-0005)',
+        },
+      },
     },
     {
       id: 'telemetry',

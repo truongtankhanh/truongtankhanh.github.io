@@ -12,6 +12,13 @@ describe('Page', () => {
     expect(renderToString(<Page path="/404.html" />)).toContain('This page isn’t here.');
   });
 
+  it('renders the Ops Command Center case study at its route', () => {
+    const markup = renderToString(<Page path="/work/ops-command-center/" />);
+    expect(markup.match(/<h1[ >]/g)).toHaveLength(1);
+    expect(markup).toContain('Case study');
+    expect(markup).toContain('Ops Command Center');
+  });
+
   it('throws for a path that is not a route', () => {
     expect(() => renderToString(<Page path="/nope/" />)).toThrow('No page at /nope/');
   });

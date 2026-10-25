@@ -125,6 +125,16 @@ describe('CaseStudy', () => {
     expect(markup).not.toContain('**');
   });
 
+  it('lets the lead card take one column when it has no screenshot', () => {
+    const solo = {
+      ...project,
+      caseStudy: { ...study, does: { ...study.does, lead: { ...study.does.lead } } },
+    };
+    delete solo.caseStudy.does.lead.image;
+    expect(html(one, solo)).toContain('<article class="cs-lead-card cs-lead-card-solo plate-dark">');
+    expect(html()).toContain('<article class="cs-lead-card plate-dark">');
+  });
+
   it('lists each decision with its id, real title and one line', () => {
     const list = block(html(), '<ul class="cs-decisions">', 'ul');
     for (const d of study.decisions) {
@@ -165,6 +175,6 @@ describe('CaseStudy', () => {
   });
 
   it('refuses a project without a case study', () => {
-    expect(() => html(one, first)).toThrow(/no case study/);
+    expect(() => html(one, second)).toThrow(/no case study/);
   });
 });

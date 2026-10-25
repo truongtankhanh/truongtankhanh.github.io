@@ -223,7 +223,11 @@ export function CaseStudy({ resume, project }: { resume: Resume; project: Projec
             </Section>
 
             <Section id="does">
-              <article className="cs-lead-card plate-dark">
+              <article
+                className={
+                  lead.image ? 'cs-lead-card plate-dark' : 'cs-lead-card cs-lead-card-solo plate-dark'
+                }
+              >
                 <div className="cs-lead-copy">
                   <p className="cs-stat">
                     <b>{lead.figure.value}</b>

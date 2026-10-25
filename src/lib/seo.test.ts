@@ -76,7 +76,7 @@ describe('sitemap and robots', () => {
   it('uses absolute URLs on the site origin', () => {
     expect(resume.siteUrl).toBe(`${origin}/`);
     const xml = sitemapXml(resume, '2026-10-23');
-    expect(locs(xml)).toEqual([`${origin}/`]);
+    expect(locs(xml)).toEqual([`${origin}/`, `${origin}/work/ops-command-center/`]);
     expect(xml).toContain('<lastmod>2026-10-23</lastmod>');
     expect(robotsTxt(resume)).toContain(`Sitemap: ${origin}/sitemap.xml`);
   });
@@ -189,7 +189,8 @@ describe('page head', () => {
     expect(count(tags, /rel="canonical"/g)).toBe(1);
     expect(tags).toContain(`<link rel="canonical" href="${resume.siteUrl}work/ops-command-center/" />`);
     expect(tags).not.toContain('name="robots"');
-    expect(() => pageMeta(resume, '/work/ops-command-center/')).toThrow(/No page/);
+    expect(pageMeta(resume, '/work/ops-command-center/').path).toBe('/work/ops-command-center/');
+    expect(() => pageMeta(resume, '/work/iot-telemetry-pipeline/')).toThrow(/No page/);
   });
 
   it('gives the 404 page its own title, a noindex tag, and no canonical or og:url', () => {

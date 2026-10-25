@@ -178,6 +178,64 @@ describe('resume content', () => {
       }
     });
 
+    describe('Ops Command Center case study', () => {
+      const study = project('occ').caseStudy!;
+
+      it('lives at the slug of its repository', () => {
+        expect(project('occ').repo.endsWith(`/${study.slug}`)).toBe(true);
+      });
+
+      it('keeps the role wording approved in Q9', () => {
+        expect(study.role).toBe('Author and maintainer');
+      });
+
+      it('has a key phrase in the lead capability and in each of the three cards, all with balanced markers', () => {
+        expect(study.does.more).toHaveLength(3);
+        for (const c of [study.does.lead, ...study.does.more]) {
+          expect(
+            emphasis(c.text).some((part) => part.strong),
+            c.title,
+          ).toBe(true);
+        }
+        expect(study.does.lead.figure).toEqual({
+          value: '1 s',
+          label: expect.stringContaining('every open console'),
+        });
+      });
+
+      it('lists the six decisions named in the task, each with its record id, title and one line', () => {
+        expect(study.decisions.map((d) => d.id)).toEqual([
+          'ADR-0003',
+          'ADR-0007',
+          'ADR-0008',
+          'ADR-0009',
+          'ADR-0010',
+          'ADR-0011',
+        ]);
+        for (const d of study.decisions) {
+          expect(d.title.trim(), d.id).not.toBe('');
+          expect(d.title, d.id).not.toMatch(/[.`]$/);
+          expect(d.why.trim(), d.id).not.toBe('');
+        }
+      });
+
+      it('gives the run command and the two URLs of the README, and no password', () => {
+        expect(study.run.commands).toContain('pnpm docker:stack');
+        expect(study.run.commands).toContain('http://localhost:18080\n');
+        expect(study.run.commands).toContain('http://localhost:18080/api/docs');
+        expect(JSON.stringify(study)).not.toMatch(/password|secret/i);
+      });
+
+      it('has no empty paragraph and links nowhere but to the public repositories', () => {
+        for (const text of [...study.overview, ...study.check]) expect(text.trim()).not.toBe('');
+        expect(
+          JSON.stringify(study)
+            .match(/https?:\/\/[^"\s\\]+/g)
+            ?.every((u) => u.startsWith('http://localhost')),
+        ).toBe(true);
+      });
+    });
+
     function project(id: string) {
       return resume.projects.find((p) => p.id === id)!;
     }

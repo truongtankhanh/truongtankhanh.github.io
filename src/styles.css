@@ -2913,6 +2913,13 @@ p {
   margin-top: var(--space-3);
   padding: 2.5rem;
 }
+/* Without a screenshot the copy is the whole card, so it takes one column. */
+.cs-lead-card-solo {
+  grid-template-columns: minmax(0, 1fr);
+}
+.cs-lead-card-solo .cs-lead-copy {
+  max-width: 48rem;
+}
 .cs-lead-card :focus-visible {
   outline-color: var(--gold);
 }
