@@ -15,6 +15,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:pdf": "CV_PDF_REQUIRED=1 vitest run src/lib/cvPdf.test.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
