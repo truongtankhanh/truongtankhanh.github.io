@@ -1,3 +1,5 @@
+import type { IconName } from '../components/Icon';
+
 export interface Link {
   label: string;
   href: string;
@@ -25,13 +27,52 @@ export interface Engagement {
   link?: Link;
 }
 
-/** The page behind a project card. Filled in V1-11 and V1-12; V1-10.1 adds the section fields the template needs. */
+/** A screenshot of the running project. Every one is 1600 × 900. */
+export interface Screenshot {
+  /** Relative to the site root, without a leading slash: `images/console-overview.webp`. */
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+/** One thing the project does. A key phrase may be wrapped in `**double asterisks**`; see `src/lib/emphasis.ts`. */
+export interface Capability {
+  title: string;
+  text: string;
+}
+
+/** One written decision of the repository: its id, its real title, and one line on why. */
+export interface Decision {
+  /** As the repository writes it, such as `ADR-0007`. */
+  id: string;
+  title: string;
+  why: string;
+}
+
+/**
+ * The page behind a project card, in the order of the page. Every sentence is quoted or paraphrased from the README
+ * or an ADR of the repository (V1-11 and V1-12 record the source line of each); the template adds only the headings.
+ */
 export interface CaseStudy {
   /** Last segment of the route, `/work/<slug>/`. */
   slug: string;
   lead: string;
   role: string;
   status: string;
+  /** Paragraphs under the screenshot of `Project.image`. */
+  overview: string[];
+  /** "What it does": one lead capability with the key figure of the README, then the cards beside it. */
+  does: {
+    lead: Capability & { figure: { value: string; label: string }; image?: Screenshot };
+    /** Three cards. The icon is picked by the content, because only the content knows what each one is about. */
+    more: (Capability & { icon: IconName })[];
+  };
+  /** "Decisions that shaped it". */
+  decisions: Decision[];
+  /** "How to check it", one paragraph each. */
+  check: string[];
+  /** "Run it": the sentence above the commands and the commands as the README prints them. */
+  run: { intro: string; commands: string };
 }
 
 export type ProjectId = 'occ' | 'telemetry' | 'aws' | 'adr' | 'pipelines';

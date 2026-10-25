@@ -1,4 +1,4 @@
-import type { Resume } from '../content/types';
+import type { Project, Resume } from '../content/types';
 import { NOT_FOUND_PATH, routes, type Route } from '../routes';
 
 /** Skill items without the parenthetical detail: "AWS (ECS, CDK)" becomes "AWS". */
@@ -79,10 +79,26 @@ export function notFoundMeta(resume: Resume): PageMeta {
   };
 }
 
-/** The page served at `path`. Case-study and CV pages arrive with Phase 3 and 4. */
+/** A case-study page: its own title and canonical, and the lead of the case study as the description. */
+export function caseStudyMeta(resume: Resume, project: Project): PageMeta {
+  const study = project.caseStudy;
+  if (!study) throw new Error(`${project.name} has no case study`);
+  const title = `${project.name} case study, ${resume.name}`;
+  return {
+    title,
+    description: study.lead,
+    path: `/work/${study.slug}/`,
+    type: 'article',
+    image: { path: 'images/og.png', alt: `${resume.name}, ${resume.headline}.` },
+  };
+}
+
+/** The page served at `path`. The CV page arrives with Phase 4. */
 export function pageMeta(resume: Resume, path: string): PageMeta {
   if (path === '/') return homeMeta(resume);
   if (path === NOT_FOUND_PATH) return notFoundMeta(resume);
+  const project = resume.projects.find((p) => p.caseStudy && `/work/${p.caseStudy.slug}/` === path);
+  if (project) return caseStudyMeta(resume, project);
   throw new Error(`No page at ${path}`);
 }
 

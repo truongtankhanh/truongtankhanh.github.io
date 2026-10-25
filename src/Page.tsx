@@ -1,4 +1,5 @@
 import { App } from './App';
+import { CaseStudy } from './components/CaseStudy';
 import { NotFound } from './components/NotFound';
 import { resume } from './content/resume';
 import { NOT_FOUND_PATH, routes } from './routes';
@@ -8,6 +9,7 @@ export function Page({ path }: { path: string }) {
   if (!routes(resume).some((route) => route.path === path)) throw new Error(`No page at ${path}`);
   if (path === '/') return <App />;
   if (path === NOT_FOUND_PATH) return <NotFound resume={resume} />;
-  // Case-study pages (`/work/<slug>/`) get their component with V1-10.1.
+  const project = resume.projects.find((p) => p.caseStudy && `/work/${p.caseStudy.slug}/` === path);
+  if (project) return <CaseStudy resume={resume} project={project} />;
   throw new Error(`No component for ${path}`);
 }

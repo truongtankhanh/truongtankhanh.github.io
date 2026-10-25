@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { renderToString } from 'react-dom/server';
+import { sampleCaseStudy } from '../content/caseStudyFixture';
 import { resume } from '../content/resume';
 import type { Project } from '../content/types';
 import { Work } from './Work';
@@ -40,7 +41,7 @@ describe('Work', () => {
     expect(render()).not.toContain('Read the case study');
     const withStudy = {
       ...featured,
-      caseStudy: { slug: 'ops-command-center', lead: 'x', role: 'x', status: 'x' },
+      caseStudy: sampleCaseStudy('ops-command-center'),
     };
     const markup = render([withStudy, ...others]);
     expect(markup).toMatch(/<a [^>]*href="\/work\/ops-command-center\/"[^>]*>Read the case study<\/a>/);

@@ -21,13 +21,14 @@ function currentTheme(): Theme {
 
 /**
  * `home` is false on a page that is not the home page (the 404 page, which can be served at any depth): the section
- * links and the lockup then point at `/#work` and `/` instead of an anchor of the page itself.
+ * links and the lockup then point at `/#work` and `/` instead of an anchor of the page itself. `current` marks the
+ * tab of the section a page belongs to, such as `work` for a case study, where no section scrolls past to set it.
  */
-export function SiteHeader({ home = true }: { home?: boolean }) {
+export function SiteHeader({ home = true, current }: { home?: boolean; current?: string }) {
   const sectionHref = (id: string) => (home ? `#${id}` : `/#${id}`);
   // Unknown until hydration: the server can't know the visitor's theme.
   const [theme, setTheme] = useState<Theme | null>(null);
-  const [active, setActive] = useState<string | null>(null);
+  const [active, setActive] = useState<string | null>(current ?? null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
 

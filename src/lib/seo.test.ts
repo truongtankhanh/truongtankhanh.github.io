@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { sampleCaseStudy } from '../content/caseStudyFixture';
 import { resume } from '../content/resume';
 import { routes } from '../routes';
 import { findPhoneNumber } from './privacy';
@@ -84,7 +85,7 @@ describe('sitemap and robots', () => {
     const withStudy = {
       ...resume,
       projects: resume.projects.map((p, i) =>
-        i === 0 ? { ...p, caseStudy: { slug: 'ops-command-center', lead: 'L', role: 'R', status: 'S' } } : p,
+        i === 0 ? { ...p, caseStudy: sampleCaseStudy('ops-command-center') } : p,
       ),
     };
     expect(routes(withStudy).map((r) => r.path)).toEqual(['/', '/work/ops-command-center/', '/404.html']);
@@ -175,6 +176,20 @@ describe('page head', () => {
     expect(pageMeta(resume, '/').path).toBe('/');
     expect(pageMeta(resume, '/404.html')).toEqual(notFoundMeta(resume));
     expect(() => pageMeta(resume, '/nowhere/')).toThrow(/No page/);
+  });
+
+  it('gives a case study its own title, description and canonical, from the project and the lead of the case study', () => {
+    const project = { ...resume.projects[0]!, caseStudy: sampleCaseStudy('ops-command-center') };
+    const withStudy = { ...resume, projects: [project, ...resume.projects.slice(1)] };
+    const meta = pageMeta(withStudy, '/work/ops-command-center/');
+    expect(meta.title).toBe(`${project.name} case study, ${resume.name}`);
+    expect(meta.description).toBe(project.caseStudy.lead);
+    expect(meta.type).toBe('article');
+    const tags = headTags(withStudy, meta);
+    expect(count(tags, /rel="canonical"/g)).toBe(1);
+    expect(tags).toContain(`<link rel="canonical" href="${resume.siteUrl}work/ops-command-center/" />`);
+    expect(tags).not.toContain('name="robots"');
+    expect(() => pageMeta(resume, '/work/ops-command-center/')).toThrow(/No page/);
   });
 
   it('gives the 404 page its own title, a noindex tag, and no canonical or og:url', () => {

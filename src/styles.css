@@ -2707,6 +2707,430 @@ p {
   }
 }
 
+/* ── Case study (V1-10.1) ───────────────────────────────────── */
+/* The head is the home hero band (sun, gold rule, silver title) under the same header. The four facts sit in a band
+   of their own whose colour stops at half its height, so the cards straddle the edge whatever their height. */
+.cs-label {
+  color: var(--muted);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hero.cs-hero {
+  padding-block: calc(var(--header-h) + 2.5rem) 4rem;
+}
+.cs-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.6rem;
+  margin: 0 0 3.5rem;
+  padding: 0;
+  color: color-mix(in srgb, var(--on-band) 72%, transparent);
+  font-size: 0.9rem;
+  list-style: none;
+}
+.cs-crumbs li + li::before {
+  content: '/';
+  margin-right: 0.6rem;
+}
+.cs-crumbs a {
+  color: var(--on-band);
+  text-underline-offset: 0.25em;
+}
+.hero.cs-hero h1 {
+  font-size: 5rem;
+  line-height: 1;
+}
+.cs-lead {
+  max-width: 54ch;
+  font-size: 1.3rem;
+  line-height: 1.6;
+}
+.cs-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: var(--space-5);
+}
+.cs-facts-band {
+  background: linear-gradient(to bottom, var(--band) 50%, transparent 50%);
+}
+.cs-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+.cs-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.4rem 1.5rem;
+}
+.cs-fact dt {
+  color: var(--accent);
+}
+.cs-fact dd {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.cs-fact small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.cs-body {
+  display: grid;
+  grid-template-columns: 13.75rem minmax(0, 1fr);
+  gap: 3.5rem;
+  padding-block: 3.5rem 6rem;
+}
+/* Contents: a rail with a node per section; the current one is a tinted row with a filled, haloed node. */
+.cs-toc-wrap {
+  position: sticky;
+  top: calc(var(--header-h) + 1.5rem);
+}
+.cs-toc-title {
+  margin-bottom: var(--space-2);
+  padding-left: 1.25rem;
+  color: var(--accent);
+}
+.cs-toc {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding-left: 1.25rem;
+}
+.cs-toc::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 5px;
+  width: 2px;
+  background: var(--line);
+}
+.cs-toc a {
+  position: relative;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+.cs-toc a::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -1.25rem;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+}
+.cs-toc a:hover {
+  background: var(--wash);
+  color: var(--ink);
+}
+.cs-toc a[aria-current] {
+  background: var(--wash);
+  color: var(--ink);
+  font-weight: 700;
+}
+.cs-toc a[aria-current]::before {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.cs-article > section {
+  margin-bottom: 3.5rem;
+}
+.cs-article h2 {
+  margin-bottom: var(--space-2);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.cs-article section > p {
+  max-width: var(--measure);
+  color: var(--muted);
+}
+.cs-article section > p + p {
+  margin-top: 0.75rem;
+}
+.cs-figure {
+  margin: 0 0 var(--space-4);
+}
+.cs-caption {
+  margin-top: 0.75rem;
+  text-transform: none;
+}
+.cs-shot {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.cs-shot-bar {
+  display: flex;
+  gap: 6px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.cs-shot-bar i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--line);
+}
+.cs-shot img,
+.cs-lead-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* "What it does": one dark lead card with the key figure and a screenshot, then three cards. */
+.cs-lead-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  align-items: center;
+  gap: 2.5rem;
+  margin-top: var(--space-3);
+  padding: 2.5rem;
+}
+.cs-lead-card :focus-visible {
+  outline-color: var(--gold);
+}
+.cs-stat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+}
+.cs-stat b {
+  color: var(--gold);
+  font-size: 4.5rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+.cs-stat span {
+  max-width: 18ch;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.cs-lead-copy h3 {
+  margin-top: 1.75rem;
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+.cs-lead-copy h3 + p {
+  margin-top: 0.9rem;
+  color: color-mix(in srgb, var(--on-band) 82%, transparent);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+.cs-lead-copy strong {
+  color: var(--on-band);
+  font-weight: 700;
+}
+.cs-lead-shot {
+  margin: 0;
+}
+.cs-lead-shot img {
+  border: 1px solid color-mix(in srgb, var(--on-band) 22%, transparent);
+  border-radius: 14px;
+  box-shadow: 0 30px 60px -28px color-mix(in srgb, var(--shade) 75%, transparent);
+}
+.cs-lead-shot .cs-caption {
+  color: color-mix(in srgb, var(--on-band) 70%, transparent);
+}
+.cs-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+.cs-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.75rem;
+}
+.cs-card-icon {
+  box-sizing: content-box;
+  width: 24px;
+  height: 24px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--wash);
+  color: var(--accent);
+}
+.cs-card h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+.cs-card p {
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.6;
+}
+.cs-card strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.cs-decisions {
+  display: grid;
+  gap: 0.75rem;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-decisions li {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+}
+.cs-decisions b {
+  font-size: 0.95rem;
+}
+.cs-decisions li > span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.cs-decisions strong {
+  color: var(--ink);
+}
+
+/* A long command scrolls inside its box, so the page never scrolls sideways on a phone. */
+.cs-code {
+  margin: var(--space-2) 0 0;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.cs-run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: var(--space-3);
+}
+
+.cs-pager {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.cs-pager a {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+.cs-pager a:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+.cs-pager small {
+  display: block;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cs-toc a,
+  .cs-toc a::before {
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      color 0.15s ease;
+  }
+  .cs-card {
+    transition: transform 0.15s ease;
+  }
+  .cs-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@container (width < 960px) {
+  .cs-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cs-body aside {
+    display: none;
+  }
+  .cs-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cs-lead-card,
+  .cs-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cs-lead-card {
+    gap: 1.75rem;
+    padding: 1.75rem;
+  }
+  .hero.cs-hero h1 {
+    font-size: 3.75rem;
+  }
+}
+@container (width < 600px) {
+  .cs-facts,
+  .cs-pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cs-decisions li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .hero.cs-hero h1 {
+    font-size: 2.75rem;
+  }
+  .cs-lead {
+    font-size: 1.1rem;
+  }
+  .cs-lead-card {
+    padding: 1.4rem;
+  }
+  .cs-stat b {
+    font-size: 3.5rem;
+  }
+  .cs-crumbs {
+    margin-bottom: 2.5rem;
+  }
+}
+
 /* ── Motion (V1-08.3) ───────────────────────────────────────── */
 /* Calm and short: opacity, the individual `translate` and `scale` properties, and `transform` for lines. None of
    them moves layout, so nothing shifts. A single animation lasts at most a second (the loops of the hero and the
@@ -2933,9 +3357,27 @@ p {
 
   /* The current tab and the current row of the menu are marked by their fill, which is not painted. */
   .site-header nav a[aria-current],
-  .site-menu a[aria-current] {
+  .site-menu a[aria-current],
+  .cs-toc a[aria-current] {
     outline: 2px solid Highlight;
     outline-offset: -2px;
+  }
+  /* The rail and its nodes of a case study are a background and a border colour in the design. */
+  .cs-toc::before {
+    background: CanvasText;
+  }
+  .cs-toc a::before {
+    border-color: CanvasText;
+  }
+  .cs-toc a[aria-current]::before {
+    background: Highlight;
+    border-color: Highlight;
+  }
+  .cs-card-icon,
+  .cs-pager a,
+  .cs-code,
+  .cs-shot {
+    border: 1px solid CanvasText;
   }
 }
 
