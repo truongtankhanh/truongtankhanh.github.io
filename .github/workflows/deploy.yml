@@ -34,6 +34,8 @@ jobs:
       - run: pnpm build:pdf
       # Build again, now that the file exists: the pages link it with its size and the build copies it into dist/.
       - run: pnpm build
+      # Every internal link and #fragment of the built pages must resolve; external links are listed, not fetched.
+      - run: pnpm check:links
       # Read the text of the PDF that will be deployed and compare it with resume.ts (names, roles and dates, the
       # email, no phone number). pdftotext comes with poppler-utils, which is installed here if the image lacks it.
       - run: command -v pdftotext >/dev/null || (sudo apt-get update && sudo apt-get install -y poppler-utils)
