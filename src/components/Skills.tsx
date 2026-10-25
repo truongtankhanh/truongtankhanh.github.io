@@ -59,16 +59,6 @@ export function Skills({ groups, coreStack, coreStackNote }: SkillsProps) {
           </li>
         ))}
       </ul>
-
-      {/* The printed CV keeps its plain list of groups. */}
-      <dl className="print-only skills">
-        {groups.map((g) => (
-          <div key={g.name} className="skill-group">
-            <dt>{g.name}</dt>
-            <dd>{g.items.join(', ')}</dd>
-          </div>
-        ))}
-      </dl>
     </section>
   );
 }

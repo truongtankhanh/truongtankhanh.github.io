@@ -9,12 +9,9 @@ const render = (groups = resume.skills) =>
     <Skills groups={groups} coreStack={resume.coreStack} coreStackNote={resume.coreStackNote} />,
   ).replaceAll('<!-- -->', '');
 
-/** The cards, without the core band before them or the plain list for print after them. */
+/** The cards, without the core band before them. */
 const cards = (markup: string) =>
-  markup
-    .slice(markup.indexOf('<ul class="skill-grid">'), markup.indexOf('<dl class="print-only'))
-    .split('<article ')
-    .slice(1);
+  markup.slice(markup.indexOf('<ul class="skill-grid">')).split('<article ').slice(1);
 
 describe('Skills', () => {
   it('is the skills section, labelled by its heading', () => {
@@ -51,13 +48,5 @@ describe('Skills', () => {
       const used = list[i]!.slice(list[i]!.indexOf('<p class="skill-used">'));
       expect(used, g.name).not.toContain('<a ');
     });
-  });
-
-  it('keeps the plain list of groups that the printed CV uses', () => {
-    const markup = render();
-    expect(markup).toContain('<dl class="print-only skills">');
-    for (const g of resume.skills) {
-      expect(markup).toContain(`<dt>${g.name}</dt><dd>${g.items.join(', ')}</dd>`);
-    }
   });
 });

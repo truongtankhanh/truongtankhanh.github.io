@@ -36,16 +36,15 @@ describe('Hero', () => {
     expect(html()).toContain('<span aria-live="polite">Email me</span>');
   });
 
-  it('leads with the first intro paragraph and keeps the others for print only', () => {
+  it('leads with the first intro paragraph only: the rest of the intro is the summary of the CV page', () => {
     const markup = html();
     const [lead, ...more] = resume.intro;
     expect(markup).toContain(`<p class="intro">${lead}</p>`);
-    for (const p of more) expect(markup).toContain(`<p class="intro print-only">${p}</p>`);
+    for (const p of more) expect(markup).not.toContain(p);
   });
 
-  it('says where and how under the lead, with the place kept for the printed CV', () => {
-    expect(html()).toContain(`${resume.availability}.</p>`);
-    expect(html()).toContain(`${resume.location}, ${resume.timezone}.`);
+  it('says how under the lead', () => {
+    expect(html()).toContain(`<p class="where">${resume.availability}.</p>`);
   });
 
   it('states the current company and the number of public repositories, with a link to the work', () => {

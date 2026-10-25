@@ -139,8 +139,10 @@
   color-scheme: dark;
 }
 
-/* The CV prints dark ink on white, whichever theme the visitor uses. It is the last token block, so it wins; the
-   `:not([data-theme='light'])` selector gives it the same weight as the dark rule for visitors whose system is dark. */
+/* A printed page is dark ink on white, whichever theme the visitor uses, and the deep-blue bands (hero, featured
+   cards, contact) turn light with dark ink, so no light text lands on unprinted paper. It is the last token block, so
+   it wins; the `:not([data-theme='light'])` selector gives it the same weight as the dark rule for visitors whose
+   system is dark. (The `/cv/` page has its own `--cv-*` colours and does not read these.) */
 @media print {
   :root,
   :root[data-theme='dark'],
@@ -150,8 +152,18 @@
     --ink: #111;
     --muted: #444;
     --accent: #1b4f9c;
+    --accent-strong: #123a78;
     --line: #bbb;
     --wash: #fff;
+    --band: #fff;
+    --on-band: #111;
+    --gold: #8a6310;
+    --glow: #1b4f9c;
+    --silver-hi: #fff;
+    --silver-lo: #a9b8cd;
+    --steel: #6f84a1;
+    --plate-top: #fff;
+    --plate-bot: #eef2f8;
     color-scheme: light;
   }
 }
@@ -955,9 +967,6 @@ p {
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.5;
-}
-.where-place {
-  display: none;
 }
 /* Four equal plates, symmetrical: two columns, one on a phone. */
 .hero-actions {
@@ -2266,53 +2275,6 @@ p {
   }
 }
 
-/* ── Skills, principles, facts ──────────────────────────────── */
-.skills {
-  margin: 0;
-  max-width: 56rem;
-}
-.skill-group {
-  display: grid;
-  grid-template-columns: 12rem minmax(0, 1fr);
-  gap: 1.5rem;
-  padding-block: 0.9rem;
-  border-bottom: 1px solid var(--line);
-}
-.skill-group:first-child {
-  border-top: 1px solid var(--line);
-}
-.skills dt {
-  font-weight: 600;
-}
-.skills dd {
-  margin: 0;
-}
-@media (max-width: 36rem) {
-  .skill-group {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.2rem;
-  }
-}
-
-.facts {
-  display: grid;
-  gap: 0.5rem;
-  margin: 3rem 0 0;
-  max-width: var(--measure);
-  font-size: 0.95rem;
-}
-.facts div {
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  gap: 1rem;
-}
-.facts dt {
-  color: var(--muted);
-}
-.facts dd {
-  margin: 0;
-}
-
 /* ── Leadership ─────────────────────────────────────────────── */
 /* Scope first, then each principle with the work that backs it, then education and languages. */
 .lead-scope {
@@ -3437,21 +3399,15 @@ p {
   }
 }
 
-/* ── Print: the page becomes a two-page CV ─────────────────── */
-.print-only {
-  display: none;
-}
+/* ── Print: the home page without its chrome ───────────────── */
+/* The CV is the `/cv/` page now (see below), so the home page prints as itself: no header, no buttons, no moving
+   parts. The dark bands turn light through the print tokens at the top of this file. */
 @media print {
   @page {
     size: A4;
     margin: 14mm 15mm;
   }
-  body {
-    font-size: 9.6pt;
-    line-height: 1.42;
-    background: var(--paper);
-  }
-  /* Nothing animates on paper: a CV printed while the hero is still rising would come out half drawn. */
+  /* Nothing animates on paper: a page printed while the hero is still rising would come out half drawn. */
   *,
   *::before,
   *::after {
@@ -3466,238 +3422,13 @@ p {
   .skip,
   .hero-sun,
   .hero-waves,
-  .hero-meta,
   .hero-actions,
-  .hero-facts,
-  .hero-stack,
-  .metrics,
-  .core,
-  .skill-grid,
-  .featured,
-  .project-grid,
-  .arch,
-  .sec-head p,
-  .lead-scope,
-  .principle-grid,
-  .fact-row,
-  .engagement-link {
+  .btn {
     display: none !important;
   }
-  .print-only {
-    display: block;
-  }
-  .page {
-    max-width: none;
-    padding: 0;
-  }
-  /* The hero band is plain text on paper in print: the name, the role, the intro and one line of where and how. */
+  /* The hero slides up under the header on screen; with the header gone it starts at the top of the page. */
   .hero {
     margin-top: 0;
-    padding: 0 0 8pt;
-    background: none;
-    color: var(--ink);
-    overflow: visible;
-  }
-  .hero-inner {
-    max-width: none;
-    padding: 0;
-  }
-  .hero-grid {
-    display: block;
-  }
-  .hero h1 {
-    padding-block: 0.12em 0;
-    font-size: 24pt;
-    letter-spacing: -0.035em;
-    line-height: 1.02;
-  }
-  .headline,
-  .headline.text-gold {
-    margin-top: 2pt;
-    color: var(--accent);
-    font-size: 12pt;
-    font-weight: 500;
-    letter-spacing: normal;
-    line-height: inherit;
-  }
-  .intro,
-  .where {
-    margin-top: 4pt;
-    max-width: none;
-    font-size: 9.6pt;
-    font-weight: 400;
-    line-height: inherit;
-  }
-  .intro {
-    color: var(--ink);
-  }
-  .where {
-    color: var(--muted);
-  }
-  .where-place {
-    display: inline;
-  }
-  .where::after {
-    content: ' Email: ttkhanh100896@gmail.com. Web: truongtankhanh.github.io';
-  }
-  .section {
-    padding: 10pt 0 0;
-  }
-  /* The section head of the screen design, flattened to the plain head the CV has always had. */
-  .sec-head {
-    display: block;
-    margin-bottom: 6pt;
-    padding: 0;
-    border: 0;
-    border-image: none;
-  }
-  .sec-head h2 {
-    padding-top: 0;
-    font-size: 12.5pt;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-  }
-  .sec-head h2::before {
-    display: none;
-  }
-  .print-projects {
-    margin: 0;
-    padding-left: 12pt;
-  }
-  .print-projects li + li {
-    margin-top: 2pt;
-  }
-  /* The timeline is a screen design. The CV keeps its two columns, its line with a dot per role, and plain text. */
-  .role {
-    grid-template-columns: 5.2rem minmax(0, 1fr);
-    gap: 10pt;
-    break-inside: auto;
-  }
-  .role-rail,
-  .role-badge,
-  .engagement li::before {
-    display: none;
-  }
-  .role-when {
-    position: static;
-    padding-top: 0;
-  }
-  .role-body {
-    position: relative;
-    padding-left: 10pt;
-    padding-bottom: 8pt;
-    border-left: 1px solid var(--line);
-  }
-  .role:last-child .role-body {
-    padding-bottom: 0;
-  }
-  .role-body::before {
-    content: '';
-    position: absolute;
-    top: 0.45rem;
-    left: -6px;
-    width: 11px;
-    height: 11px;
-    border: 2px solid var(--accent);
-    border-radius: 50%;
-    background: var(--paper);
-  }
-  .role:first-child .role-body::before {
-    background: var(--accent);
-  }
-  .role h3 {
-    font-size: 11pt;
-    font-weight: 600;
-    letter-spacing: normal;
-    line-height: 1.2;
-  }
-  .role-title {
-    display: inline;
-    margin-top: 0;
-    margin-left: 6pt;
-    font-size: 9.6pt;
-    font-weight: 500;
-  }
-  .role-summary,
-  .engagement,
-  .engagement-context {
-    margin-top: 3pt;
-  }
-  .role-summary {
-    max-width: none;
-    color: inherit;
-  }
-  .engagement:not(.is-flat) {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: none;
-  }
-  .engagement h4 {
-    font-size: 10pt;
-    font-weight: 600;
-  }
-  .engagement-context {
-    font-size: inherit;
-  }
-  .engagement ul {
-    display: block;
-    margin-top: 2pt;
-    padding-left: 1.1rem;
-    list-style: disc;
-  }
-  .engagement li {
-    margin-top: 1pt;
-    padding-left: 0.2rem;
-    color: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    break-inside: avoid;
-  }
-  .engagement li::marker {
-    color: var(--accent);
-  }
-  .engagement strong {
-    color: inherit;
-    font-weight: inherit;
-  }
-  .role-dates {
-    padding-top: 0.15rem;
-    color: var(--muted);
-    font-family: inherit;
-    font-size: 8.6pt;
-    font-variant-numeric: tabular-nums;
-    font-weight: 400;
-    letter-spacing: normal;
-    text-align: right;
-    text-transform: none;
-  }
-  .skill-group {
-    grid-template-columns: 9rem minmax(0, 1fr);
-    padding-block: 2pt;
-    border: 0 !important;
-  }
-  .facts {
-    margin-top: 0;
-    max-width: none;
-    font-size: 9.6pt;
-  }
-  /* The CV's head for this section says what it prints: education and languages. */
-  #approach .sec-head h2 {
-    font-size: 0;
-  }
-  #approach .sec-head h2::before {
-    content: 'Education and languages';
-    position: static;
-    display: inline;
-    width: auto;
-    height: auto;
-    background: none;
-    font-size: 12.5pt;
-  }
-  .contact {
-    display: none;
   }
   a {
     color: inherit;

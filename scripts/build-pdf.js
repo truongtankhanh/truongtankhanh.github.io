@@ -1,6 +1,6 @@
 // Builds the public CV PDF from the finished site, so it cannot drift from src/content/resume.ts.
-// It serves dist/ on localhost, prints the home page with headless Chrome (the site's own print
-// stylesheet turns it into an A4 CV) and writes dist/<cvPdf>. Run it after `pnpm build`.
+// It serves dist/ on localhost, prints the /cv/ page with headless Chrome (the page is laid out for
+// A4 and paginated by its own @page rules) and writes dist/<cvPdf>. Run it after `pnpm build`.
 // CI runs it on the runner's Chrome; locally set CHROME_PATH if Chrome is not found.
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -64,7 +64,7 @@ try {
         '--no-pdf-header-footer',
         '--virtual-time-budget=8000',
         `--print-to-pdf=${out}`,
-        `http://127.0.0.1:${port}/`,
+        `http://127.0.0.1:${port}/cv/`,
       ],
       { stdio: 'inherit' },
     );

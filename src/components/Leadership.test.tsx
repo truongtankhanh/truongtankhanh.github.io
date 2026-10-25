@@ -14,9 +14,6 @@ const render = () =>
     />,
   ).replaceAll('<!-- -->', '');
 
-/** The part of the markup before the plain list that the printed CV uses. */
-const screen = () => render().split('<dl class="print-only')[0]!;
-
 describe('Leadership', () => {
   it('is the "How I work" section, labelled by its heading', () => {
     const markup = render();
@@ -25,7 +22,7 @@ describe('Leadership', () => {
   });
 
   it('shows the scope: the two figures and what I own, all from the content', () => {
-    const markup = screen();
+    const markup = render();
     expect(markup).toContain('aria-label="Scope of leadership"');
     for (const f of resume.leadership.figures) {
       expect(markup).toContain(
@@ -37,7 +34,7 @@ describe('Leadership', () => {
   });
 
   it('draws each principle as an article with its statement and its quoted evidence with the source', () => {
-    const cards = screen().split('<article ').slice(1);
+    const cards = render().split('<article ').slice(1);
     expect(cards).toHaveLength(resume.principles.length);
     resume.principles.forEach((p, i) => {
       const card = cards[i]!;
@@ -49,7 +46,7 @@ describe('Leadership', () => {
   });
 
   it('gives education and each language a label, a main line and, where there is one, a muted detail', () => {
-    const markup = screen();
+    const markup = render();
     const { education, languages } = resume;
     expect(markup).toContain(`<dt>Education</dt><dd class="fact-main">${education.school}</dd>`);
     expect(markup).toContain(
@@ -59,14 +56,5 @@ describe('Leadership', () => {
       expect(markup).toContain(`<dt>${l.name}</dt><dd class="fact-main">${l.level}</dd>`);
       if (l.detail) expect(markup).toContain(`<dd class="fact-sub">${l.detail}</dd>`);
     }
-  });
-
-  it('keeps the plain list of education and languages that the printed CV uses', () => {
-    const markup = render();
-    expect(markup).toContain('<dl class="print-only facts">');
-    const { education } = resume;
-    expect(markup).toContain(
-      `${education.school}, ${education.detail} (${education.start}–${education.end})`,
-    );
   });
 });

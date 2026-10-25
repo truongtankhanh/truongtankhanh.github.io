@@ -96,8 +96,4 @@ describe('Work', () => {
     expect(repoLinks).toEqual(resume.projects.map((p) => p.repo));
     for (const href of repoLinks) expect(href).toMatch(/^https:\/\/github\.com\/truongtankhanh\/[\w.-]+$/);
   });
-
-  it('keeps the plain project list that the printed CV uses', () => {
-    expect(render(resume.projects)).toContain('class="print-only print-projects"');
-  });
 });

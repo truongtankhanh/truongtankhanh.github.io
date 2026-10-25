@@ -122,15 +122,6 @@ export function Work({ projects, architecture }: { projects: Project[]; architec
         ))}
       </ul>
       <ArchDiagram architecture={architecture} projects={projects} />
-
-      {/* Printed CVs can't use the diagram, so print gets a plain list instead. */}
-      <ul className="print-only print-projects">
-        {projects.map((p) => (
-          <li key={p.id}>
-            <strong>{p.name}</strong> ({p.repo.replace('https://', '')}): {p.what}
-          </li>
-        ))}
-      </ul>
     </section>
   );
 }

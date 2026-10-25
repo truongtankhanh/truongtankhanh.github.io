@@ -55,7 +55,7 @@ export function HeroWaves() {
 
 export function Hero({ resume: r }: { resume: Resume }) {
   const current = r.experience.find((role) => !role.end);
-  const [lead, ...more] = r.intro;
+  const [lead] = r.intro;
 
   return (
     <section className="hero" aria-labelledby="name">
@@ -72,18 +72,8 @@ export function Hero({ resume: r }: { resume: Resume }) {
             </h1>
             <p className="headline text-gold">{r.headline}</p>
             <p className="intro">{lead}</p>
-            {/* The lead stays within four lines on screen; the printed CV keeps every paragraph. */}
-            {more.map((p) => (
-              <p key={p} className="intro print-only">
-                {p}
-              </p>
-            ))}
-            <p className="where">
-              <span className="where-place">
-                {r.location}, {r.timezone}.{' '}
-              </span>
-              {r.availability}.
-            </p>
+            {/* The lead stays within four lines; the rest of the intro is the summary of the CV page. */}
+            <p className="where">{r.availability}.</p>
             <div className="hero-actions">
               <EmailLink
                 email={r.email}

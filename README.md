@@ -14,8 +14,8 @@ and React then hydrates the parts that are interactive.
 - **A diagram of the public work.** The five repositories it links to form one platform, so they are
   shown as one: an SVG diagram with a separate narrow layout for phones, keyboard-navigable as tabs
   (arrow keys, Home, End).
-- **A downloadable CV.** The print stylesheet turns the page into a two-page A4 CV, and
-  [`scripts/build-pdf.js`](scripts/build-pdf.js) prints the built site with headless Chrome into
+- **A downloadable CV.** The `/cv/` page lays the CV out for A4, and
+  [`scripts/build-pdf.js`](scripts/build-pdf.js) prints it from the built site with headless Chrome into
   `dist/Truong_Tan_Khanh_CV.pdf`, so the PDF always matches `resume.ts`. It has no phone number.
 - **Search and sharing.** The prerender writes `Person` JSON-LD, `sitemap.xml` and `robots.txt` from
   the same content file ([`src/lib/seo.ts`](src/lib/seo.ts)); the share image is `public/images/og.png`.

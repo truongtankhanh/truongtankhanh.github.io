@@ -65,22 +65,6 @@ export function Leadership({ leadership, principles, education, languages }: Lea
           </div>
         ))}
       </dl>
-
-      {/* The printed CV keeps its plain list of education and languages. */}
-      <dl className="print-only facts">
-        <div>
-          <dt>Education</dt>
-          <dd>
-            {education.school}, {education.detail} ({education.start}–{education.end})
-          </dd>
-        </div>
-        {languages.map((l) => (
-          <div key={l.name}>
-            <dt>{l.name}</dt>
-            <dd>{l.detail ? `${l.level}. ${l.detail}` : l.level}</dd>
-          </div>
-        ))}
-      </dl>
     </section>
   );
 }
