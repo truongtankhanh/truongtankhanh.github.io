@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check:links": "node scripts/check-links.js",
+    "check:assets": "node scripts/check-assets.js",
     "test:pdf": "CV_PDF_REQUIRED=1 vitest run src/lib/cvPdf.test.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
