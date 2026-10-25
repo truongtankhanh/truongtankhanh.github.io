@@ -37,8 +37,8 @@ export const PAGE = {
 /** Width of the text column; the right tab stop of the Title and Heading 2 styles sits on its edge. */
 export const TEXT_WIDTH = PAGE.size.width - PAGE.margin.left - PAGE.margin.right;
 
-/** Font sizes in half-points: 26 pt, 12 pt, 11 pt, 10 pt, 9.5 pt and 8.5 pt. */
-export const SIZE = { name: 52, role: 24, title: 22, section: 20, body: 19, label: 17 };
+/** Font sizes in half-points: 26 pt, 12 pt, 11 pt, 10 pt, 9.5 pt, 8.5 pt and, in the footer, 8 pt. */
+export const SIZE = { name: 52, role: 24, title: 22, section: 20, body: 19, label: 17, footer: 16 };
 
 const SPACING = {
   /** 1.15 lines (240 is one line). */
@@ -67,6 +67,8 @@ export const STYLE = {
   bullet: 'ListBullet',
   date: 'Date',
   caption: 'Caption',
+  contact: 'Contact',
+  footer: 'Footer',
   strong: 'Strong',
   hyperlink: 'Hyperlink',
   figure: 'Figure',
@@ -192,6 +194,32 @@ export function createStyles({ font = FONT.fallback } = {}) {
         quickFormat: true,
         run: { ...base, size: SIZE.label, color: COLORS.muted },
         paragraph: { keepLines: true },
+      },
+      {
+        // The contact line under the name (V1-20.2). Its bottom border is the solid 1.5 pt accent rule that closes the
+        // first-page block, in place of the silver-to-blue one of frame 05.
+        id: STYLE.contact,
+        name: 'Contact',
+        basedOn: STYLE.normal,
+        next: STYLE.normal,
+        paragraph: {
+          keepLines: true,
+          spacing: { before: SPACING.after, after: 0 },
+          border: { bottom: { style: 'single', size: 12, space: 8, color: COLORS.accent } },
+        },
+      },
+      {
+        // The footer of every page: a steel rule, the name and role at the left, "page X of Y" at the right.
+        id: STYLE.footer,
+        name: 'footer',
+        basedOn: STYLE.normal,
+        quickFormat: true,
+        run: { ...base, size: SIZE.footer, color: COLORS.muted },
+        paragraph: {
+          spacing: { before: 0, after: 0 },
+          tabStops: rightTab,
+          border: { top: { style: 'single', size: 6, space: 4, color: COLORS.steel } },
+        },
       },
     ],
     // Run styles for what a paragraph style cannot say: bold key phrases, links, the figures line, the mark, and a

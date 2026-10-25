@@ -19,7 +19,7 @@ interface ParagraphStyle {
     outlineLevel?: number;
     spacing?: { line?: number; before?: number; after?: number };
     tabStops?: { type: string; position: number }[];
-    border?: { bottom?: { color: string } };
+    border?: Record<'top' | 'bottom', { color: string; size: number }>;
     numbering?: { reference: string; level: number };
   };
 }
@@ -43,6 +43,8 @@ interface Sheet {
     | 'bullet'
     | 'date'
     | 'caption'
+    | 'contact'
+    | 'footer'
     | 'strong'
     | 'hyperlink'
     | 'figure'
@@ -103,7 +105,18 @@ function contrast(a: string, b: string): number {
 describe('application CV style sheet', () => {
   it('defines the named styles of V1-20.1 and no others', () => {
     expect(styles.paragraphStyles.map((s) => s.name).sort()).toEqual(
-      ['Date', 'List Bullet', 'Normal', 'Subtitle', 'Title', 'caption', 'heading 1', 'heading 2'].sort(),
+      [
+        'Contact',
+        'Date',
+        'List Bullet',
+        'Normal',
+        'Subtitle',
+        'Title',
+        'caption',
+        'footer',
+        'heading 1',
+        'heading 2',
+      ].sort(),
     );
     const ids = [...styles.paragraphStyles, ...styles.characterStyles].map((s) => s.id).sort();
     expect(ids).toEqual(Object.values(STYLE).sort());
@@ -128,7 +141,7 @@ describe('application CV style sheet', () => {
     expect(styles.characterStyles.filter((s) => s.run.color === COLORS.gold).map((s) => s.id)).toEqual([
       STYLE.mark,
     ]);
-    expect(paragraph(STYLE.heading1).paragraph?.border?.bottom?.color).toBe(COLORS.steel);
+    expect(paragraph(STYLE.heading1).paragraph?.border?.bottom.color).toBe(COLORS.steel);
     for (const color of [COLORS.ink, COLORS.muted, COLORS.accent]) {
       expect(contrast(color, 'FFFFFF'), color).toBeGreaterThanOrEqual(4.5);
     }
@@ -183,8 +196,16 @@ describe('application CV style sheet', () => {
     expect(TEXT_WIDTH).toBe(PAGE.size.width - 2 * twips(15));
   });
 
-  it('puts a right tab stop on the edge of the text for the logo and the dates', () => {
-    for (const id of [STYLE.title, STYLE.heading2]) {
+  it('closes the first-page block with a 1.5 pt accent rule and the page with a steel rule over an 8 pt footer', () => {
+    const rule = paragraph(STYLE.contact).paragraph?.border?.bottom;
+    expect(rule).toMatchObject({ color: COLORS.accent, size: 12 }); // eighths of a point
+    const footer = paragraph(STYLE.footer);
+    expect(footer.paragraph?.border?.top).toMatchObject({ color: COLORS.steel });
+    expect(footer.run).toMatchObject({ size: 16, color: COLORS.muted }); // 8 pt
+  });
+
+  it('puts a right tab stop on the edge of the text for the logo, the dates and the page count', () => {
+    for (const id of [STYLE.title, STYLE.heading2, STYLE.footer]) {
       expect(paragraph(id).paragraph?.tabStops).toEqual([{ type: 'right', position: TEXT_WIDTH }]);
     }
   });
