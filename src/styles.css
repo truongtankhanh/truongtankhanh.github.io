@@ -2644,6 +2644,69 @@ p {
   }
 }
 
+/* ── Not found (V1-09.3) ────────────────────────────────────── */
+/* The home hero under the normal header, with a short message; the sun, the waves and their loops are the hero's.
+   The 0 of "404" is the sun of the logo. */
+.hero.not-found {
+  padding-bottom: 8.5rem;
+}
+.nf-code {
+  display: flex;
+  align-items: center;
+  gap: 0.02em;
+  font-size: clamp(6.5rem, 15cqw, 12rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+}
+.nf-zero {
+  flex: none;
+  width: 0.86em;
+  height: 0.86em;
+}
+.nf-zero-rays {
+  stroke: var(--gold);
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+.hero.not-found h1 {
+  margin-top: 1.75rem;
+  font-size: 2.75rem;
+  line-height: 1.05;
+}
+.not-found .intro {
+  max-width: 46ch;
+}
+.nf-links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  max-width: 55rem;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.nf-links li {
+  display: contents;
+}
+.nf-links .tile {
+  min-height: 6rem;
+}
+@container (width < 960px) {
+  .nf-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container (width < 600px) {
+  .hero.not-found {
+    padding-bottom: 7rem;
+  }
+  .hero.not-found h1 {
+    font-size: 2.1rem;
+  }
+}
+
 /* ── Motion (V1-08.3) ───────────────────────────────────────── */
 /* Calm and short: opacity, the individual `translate` and `scale` properties, and `transform` for lines. None of
    them moves layout, so nothing shifts. A single animation lasts at most a second (the loops of the hero and the

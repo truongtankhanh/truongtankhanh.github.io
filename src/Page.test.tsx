@@ -8,6 +8,10 @@ describe('Page', () => {
     expect(renderToString(<Page path="/" />)).toBe(renderToString(<App />));
   });
 
+  it('renders the 404 page at /404.html', () => {
+    expect(renderToString(<Page path="/404.html" />)).toContain('This page isn’t here.');
+  });
+
   it('throws for a path that is not a route', () => {
     expect(() => renderToString(<Page path="/nope/" />)).toThrow('No page at /nope/');
   });

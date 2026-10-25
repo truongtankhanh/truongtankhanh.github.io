@@ -23,7 +23,7 @@ const sunRays = Array.from({ length: SUN_RAYS }, (_, i) => {
 });
 
 /** Three thin rings and a crown of rays that turns once in three minutes (the turning is CSS). */
-function HeroSun() {
+export function HeroSun() {
   return (
     <svg className="hero-sun" viewBox={`0 0 ${SUN_SIZE} ${SUN_SIZE}`} aria-hidden="true" focusable="false">
       {[150, 210, 250].map((r) => (
@@ -37,7 +37,7 @@ function HeroSun() {
 }
 
 /** Two translucent waves drift along the foot of the band; the front one, in the page colour, closes it. */
-function HeroWaves() {
+export function HeroWaves() {
   return (
     <div className="hero-waves" aria-hidden="true">
       <svg className="wave-back" viewBox="0 0 2880 64" preserveAspectRatio="none">

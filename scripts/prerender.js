@@ -35,6 +35,9 @@ for (const route of pages()) {
     throw new Error(`dist${file} must have ${canonicals} canonical link(s)`);
   }
   if (/<!--app-/.test(html)) throw new Error(`dist${file} still has a marker`);
+  // The 404 page is served at any depth (/a/b/c), where a relative URL would break; every page keeps to the same rule.
+  const relative = html.match(/\s(?:href|src)="(?![/#]|[a-z][a-z0-9+.-]*:)[^"]*"/gi);
+  if (relative) throw new Error(`dist${file} has a relative URL: ${relative.join(' ')}`);
 
   await mkdir(dirname(`${root}dist${file}`), { recursive: true });
   await writeFile(`${root}dist${file}`, html);

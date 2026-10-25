@@ -19,7 +19,12 @@ function currentTheme(): Theme {
   return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export function SiteHeader() {
+/**
+ * `home` is false on a page that is not the home page (the 404 page, which can be served at any depth): the section
+ * links and the lockup then point at `/#work` and `/` instead of an anchor of the page itself.
+ */
+export function SiteHeader({ home = true }: { home?: boolean }) {
+  const sectionHref = (id: string) => (home ? `#${id}` : `/#${id}`);
   // Unknown until hydration: the server can't know the visitor's theme.
   const [theme, setTheme] = useState<Theme | null>(null);
   const [active, setActive] = useState<string | null>(null);
@@ -75,7 +80,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="header-row">
-        <a className="site-name" href="#top">
+        <a className="site-name" href={home ? '#top' : '/'}>
           {/* The plate carries its own colours, so the dark variant reads on both themes. */}
           <Logo variant="dark" className="brand-mark" />
           <span className="brand-text">
@@ -89,7 +94,7 @@ export function SiteHeader() {
           {SECTIONS.map((s) => (
             <a
               key={s.id}
-              href={`#${s.id}`}
+              href={sectionHref(s.id)}
               aria-current={active === s.id ? 'location' : undefined}
               onClick={() => pick(s.id)}
             >
@@ -140,7 +145,7 @@ export function SiteHeader() {
         {SECTIONS.map((s) => (
           <a
             key={s.id}
-            href={`#${s.id}`}
+            href={sectionHref(s.id)}
             aria-current={active === s.id ? 'location' : undefined}
             onClick={() => pick(s.id)}
           >

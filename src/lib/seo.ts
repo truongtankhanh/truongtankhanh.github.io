@@ -1,5 +1,5 @@
 import type { Resume } from '../content/types';
-import { routes, type Route } from '../routes';
+import { NOT_FOUND_PATH, routes, type Route } from '../routes';
 
 /** Skill items without the parenthetical detail: "AWS (ECS, CDK)" becomes "AWS". */
 function skillNames(resume: Resume): string[] {
@@ -66,9 +66,23 @@ export function homeMeta(resume: Resume): PageMeta {
   };
 }
 
-/** The page served at `path`. Case-study, CV and 404 pages arrive with Phase 3 and 4. */
+/** The 404 page: no canonical, because the server already answers 404, and no claim about the owner. */
+export function notFoundMeta(resume: Resume): PageMeta {
+  const title = `Page not found, ${resume.name}`;
+  return {
+    title,
+    description: 'The link may be old or mistyped. Everything on this site is on the home page.',
+    path: NOT_FOUND_PATH,
+    type: 'website',
+    noindex: true,
+    image: { path: 'images/og.png', alt: `${resume.name}, ${resume.headline}.` },
+  };
+}
+
+/** The page served at `path`. Case-study and CV pages arrive with Phase 3 and 4. */
 export function pageMeta(resume: Resume, path: string): PageMeta {
   if (path === '/') return homeMeta(resume);
+  if (path === NOT_FOUND_PATH) return notFoundMeta(resume);
   throw new Error(`No page at ${path}`);
 }
 

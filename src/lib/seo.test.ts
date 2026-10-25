@@ -3,7 +3,16 @@ import { readFileSync } from 'node:fs';
 import { resume } from '../content/resume';
 import { routes } from '../routes';
 import { findPhoneNumber } from './privacy';
-import { headTags, homeMeta, jsonLdScript, pageMeta, personJsonLd, robotsTxt, sitemapXml } from './seo';
+import {
+  headTags,
+  homeMeta,
+  jsonLdScript,
+  notFoundMeta,
+  pageMeta,
+  personJsonLd,
+  robotsTxt,
+  sitemapXml,
+} from './seo';
 
 describe('person JSON-LD', () => {
   const data = personJsonLd(resume);
@@ -71,14 +80,14 @@ describe('sitemap and robots', () => {
     expect(robotsTxt(resume)).toContain(`Sitemap: ${origin}/sitemap.xml`);
   });
 
-  it('lists the home page now and each case study once it exists, from the route list', () => {
+  it('lists the home page now and each case study once it exists, from the route list; the 404 page stays out', () => {
     const withStudy = {
       ...resume,
       projects: resume.projects.map((p, i) =>
         i === 0 ? { ...p, caseStudy: { slug: 'ops-command-center', lead: 'L', role: 'R', status: 'S' } } : p,
       ),
     };
-    expect(routes(withStudy).map((r) => r.path)).toEqual(['/', '/work/ops-command-center/']);
+    expect(routes(withStudy).map((r) => r.path)).toEqual(['/', '/work/ops-command-center/', '/404.html']);
     expect(locs(sitemapXml(withStudy, '2026-10-23'))).toEqual([
       `${origin}/`,
       `${origin}/work/ops-command-center/`,
@@ -162,9 +171,20 @@ describe('page head', () => {
     expect(tags).toContain('<title>A &quot;B&quot; &lt;C&gt; &amp; D</title>');
   });
 
-  it('has a page for the home path only, for now', () => {
+  it('has a page for the home path and the 404 page, for now', () => {
     expect(pageMeta(resume, '/').path).toBe('/');
+    expect(pageMeta(resume, '/404.html')).toEqual(notFoundMeta(resume));
     expect(() => pageMeta(resume, '/nowhere/')).toThrow(/No page/);
+  });
+
+  it('gives the 404 page its own title, a noindex tag, and no canonical or og:url', () => {
+    const tags = headTags(resume, pageMeta(resume, '/404.html'));
+    expect(tags).toContain(`<title>Page not found, ${resume.name}</title>`);
+    expect(tags).toContain('<meta name="robots" content="noindex" />');
+    expect(tags).not.toContain('rel="canonical"');
+    expect(tags).not.toContain('og:url');
+    expect(count(tags, /<title>/g)).toBe(1);
+    expect(findPhoneNumber(tags)).toBeUndefined();
   });
 
   it('leaves the per-page tags out of index.html and keeps both markers', () => {

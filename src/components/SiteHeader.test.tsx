@@ -13,6 +13,17 @@ function links(markup: string, open: string, close: string) {
   return [...body.matchAll(/<a [^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/g)].map((m) => [m[1], m[2]]);
 }
 
+describe('SiteHeader away from the home page', () => {
+  it('points the lockup and every section at the home page, from the root', () => {
+    const markup = renderToString(<SiteHeader home={false} />);
+    expect(markup).toMatch(/<a [^>]*class="site-name"[^>]*href="\/"/);
+    expect(markup).not.toContain('href="#');
+    for (const id of ['work', 'experience', 'skills', 'approach', 'contact']) {
+      expect(markup).toContain(`href="/#${id}"`);
+    }
+  });
+});
+
 describe('SiteHeader', () => {
   const sections = [
     ['#work', 'Work'],
