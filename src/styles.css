@@ -149,13 +149,12 @@
 
 html {
   overflow-x: clip;
-  scroll-behavior: smooth;
   scroll-padding-top: 5rem;
   -webkit-text-size-adjust: 100%;
 }
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: no-preference) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
   }
 }
 
@@ -433,13 +432,20 @@ p {
   left: 1rem;
   top: -4rem;
   z-index: 20;
-  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1rem;
   background: var(--accent);
   color: var(--on-accent);
   border-radius: 6px;
 }
 .skip:focus {
   top: 1rem;
+}
+/* It appears over the header band, so its ring is the light gold, like every control on a band. */
+.skip:focus-visible {
+  outline-color: var(--gold);
 }
 .sr-only {
   position: absolute;
@@ -471,6 +477,17 @@ p {
 }
 .site-header :focus-visible {
   outline-color: var(--gold);
+}
+/* Tabs and menu rows sit side by side with the current one filled in light, so their ring is drawn inside them: on
+   a light fill (the current one) it takes the band colour, so it reads on that fill too. */
+.site-header nav a:focus-visible,
+.site-menu a:focus-visible,
+.menu-theme:focus-visible {
+  outline-offset: -3px;
+}
+.site-header nav a[aria-current]:focus-visible,
+.site-menu a[aria-current]:focus-visible {
+  outline-color: var(--band);
 }
 .site-header::after {
   content: '';
@@ -513,6 +530,7 @@ p {
 .site-header .site-name:hover {
   display: inline-flex;
   align-items: center;
+  min-height: 2.75rem;
   gap: 14px;
   flex: none;
   justify-self: start;
@@ -970,6 +988,10 @@ p {
 }
 .hero .fact-link,
 .hero .fact-link:hover {
+  /* Set apart from the line above, so its focus ring does not run over that text; about 30 px tall. */
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding-block: 0.3rem;
   color: var(--gold);
   text-underline-offset: 0.25em;
 }
@@ -1524,6 +1546,9 @@ p {
 .project-foot a {
   display: inline-flex;
   align-items: center;
+  /* A 44 px target without taking more room: the padding is paid back by the negative margin. */
+  padding-block: 0.75rem;
+  margin-block: -0.75rem;
   gap: var(--space-1);
   font-weight: 600;
   text-decoration: none;
@@ -1996,7 +2021,8 @@ p {
 }
 .engagement-link {
   display: inline-block;
-  margin-top: 12px;
+  margin-block: 0 -0.75rem;
+  padding-block: 0.75rem;
   font-size: 0.93rem;
 }
 
@@ -2580,6 +2606,89 @@ p {
   }
   .tile {
     min-height: 0;
+  }
+}
+
+/* ── Forced colours (V1-08.2) ───────────────────────────────── */
+/* Windows High Contrast and other forced-colour modes draw their own palette: gradients clipped to text, background
+   colours and shadows are not painted, so each shape that carried meaning gets a system colour of its own. The
+   gradient text, plates, buttons and chips are handled with their primitives, near the top of this file. */
+@media (forced-colors: active) {
+  /* Decoration only: the rays, the waves, the pulses and the progress line. */
+  .hero-sun,
+  .hero-waves,
+  .wave-top,
+  .hero-stack::after,
+  .arch-edge i::before,
+  .site-header::after {
+    display: none;
+  }
+  /* The logo keeps its own colours: it is the one picture that has to look like itself. */
+  .brand-mark {
+    forced-color-adjust: none;
+  }
+  /* Bands lose their fill, so their edges are drawn. */
+  .hero {
+    border-bottom: 1px solid CanvasText;
+  }
+  .contact {
+    border-top: 1px solid CanvasText;
+  }
+  .skip {
+    border: 1px solid CanvasText;
+  }
+
+  /* Cards, boxes and tiles that are drawn by a transparent border over a gradient. */
+  .hero-layer,
+  .arch-node,
+  .arch-base,
+  .engagement:not(.is-flat),
+  .tile,
+  .mail-card {
+    background: Canvas;
+    border-color: CanvasText;
+    color: CanvasText;
+  }
+  .mail-card {
+    border: 2px solid CanvasText;
+  }
+  .tile:hover {
+    border-color: Highlight;
+  }
+  .hero-layer li {
+    border-color: CanvasText;
+  }
+  .hero-layer li.is-core {
+    border-width: 2px;
+  }
+  .hero-layer-icon,
+  .skill-icon,
+  .project-stat,
+  .role-badge,
+  .mail-icon,
+  .check-mark {
+    border: 1px solid CanvasText;
+  }
+
+  /* Lines and bullets that are a background colour in the design. */
+  .role-rail::before,
+  .arch-edge i,
+  .hero-stack::before,
+  .hero-layer::after,
+  .metrics li::before,
+  .hero-meta::before,
+  .engagement li::before,
+  .evidence li::before,
+  .core-list li + li::before,
+  .hero-layer li.is-core::before {
+    background: CanvasText;
+  }
+
+  /* The current tab and the current row of the menu are marked by their fill, which is not painted. */
+  .site-header nav a[aria-current],
+  .site-menu a[aria-current] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
   }
 }
 

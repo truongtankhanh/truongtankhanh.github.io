@@ -50,8 +50,21 @@ describe.each([
 
   // Dark gold on the light surfaces; on the bands the ring is `gold` in light mode (checked above at 4.5:1),
   // and `focus` itself in dark mode, where it is gold already.
-  it.each(['paper', 'surface', 'wash'])('the focus ring on %s is at least 3:1', (bg) => {
-    expect(contrast(theme['focus']!, theme[bg]!)).toBeGreaterThanOrEqual(3);
+  it.each(['paper', 'surface', 'wash', 'plate-top', 'plate-bot'])(
+    'the focus ring on %s is at least 3:1',
+    (bg) => {
+      expect(contrast(theme['focus']!, theme[bg]!)).toBeGreaterThanOrEqual(3);
+    },
+  );
+});
+
+describe('focus ring on the current tab', () => {
+  // The ring inside a tab or menu row that is filled in the light band colour is drawn in the band colour.
+  it.each([
+    ['light', light],
+    ['dark', dark],
+  ] as const)('is at least 3:1 on the fill in the %s theme', (_name, theme) => {
+    expect(contrast(theme['band']!, theme['on-band']!)).toBeGreaterThanOrEqual(3);
   });
 });
 
@@ -73,5 +86,44 @@ describe('stylesheet', () => {
   it('has no literal colour below the token blocks, so both themes and print follow the tokens', () => {
     const literals = rules.match(/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(|\b(?:white|black)\b(?![-\w])/gi);
     expect(literals).toBeNull();
+  });
+});
+
+describe('motion and forced colours', () => {
+  it('smooths scrolling only for visitors who have not asked for reduced motion', () => {
+    const at = [...css.matchAll(/scroll-behavior:\s*smooth/g)].map((m) => m.index!);
+    expect(at.length).toBeGreaterThan(0);
+    for (const i of at) {
+      const before = css.slice(0, i);
+      expect(before.slice(before.lastIndexOf('@media'))).toMatch(
+        /^@media \(prefers-reduced-motion: no-preference\)/,
+      );
+    }
+  });
+
+  describe('forced-colors blocks', () => {
+    const forced = [...css.matchAll(/@media \(forced-colors: active\) \{[\s\S]*?\n\}/g)]
+      .map((m) => m[0])
+      .join('\n');
+
+    it('hide the decorative sun, waves and pulses', () => {
+      for (const part of ['.hero-sun', '.hero-waves', '.hero-stack::after', '.arch-edge i::before']) {
+        expect(forced, part).toContain(part);
+      }
+      expect(forced).toMatch(/\.hero-sun[\s\S]*?display: none/);
+    });
+
+    it('draw gradient-clipped text, plates and cards in system colours', () => {
+      expect(forced).toMatch(/\.text-silver,\s*\.text-gold \{[^}]*CanvasText/);
+      expect(forced).toMatch(/\.tile[\s\S]*?border-color: CanvasText/);
+    });
+
+    it('mark the current tab with a Highlight outline', () => {
+      expect(forced).toMatch(/\.site-header nav a\[aria-current\][\s\S]*?outline: 2px solid Highlight/);
+    });
+
+    it('let the logo keep its own colours', () => {
+      expect(forced).toMatch(/\.brand-mark \{\s*forced-color-adjust: none/);
+    });
   });
 });
