@@ -1,4 +1,5 @@
-import type { Project } from '../content/types';
+import type { Architecture, Project } from '../content/types';
+import { ArchDiagram } from './ArchDiagram';
 import { Icon } from './Icon';
 import { Platform } from './Platform';
 
@@ -94,8 +95,8 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-/** The public work: the lead project, a card for each of the others, and, until V1-06.3, the platform diagram. */
-export function Work({ projects }: { projects: Project[] }) {
+/** The public work: the lead project, a card for each of the others, how they fit together and, until V1-06.3, the platform diagram. */
+export function Work({ projects, architecture }: { projects: Project[]; architecture: Architecture }) {
   const [featured, ...others] = projects;
   return (
     <section id="work" className="section" aria-labelledby="work-title">
@@ -114,6 +115,7 @@ export function Work({ projects }: { projects: Project[] }) {
           </li>
         ))}
       </ul>
+      <ArchDiagram architecture={architecture} projects={projects} />
       <Platform projects={projects} />
 
       {/* Printed CVs can't use the diagram, so print gets a plain list instead. */}

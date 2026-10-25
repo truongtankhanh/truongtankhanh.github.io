@@ -1586,6 +1586,279 @@ p {
   }
 }
 
+/* ── Architecture diagram ───────────────────────────────────── */
+/* How the repositories fit together: boxes joined by labelled arrows, in plain HTML and CSS. A light-blue pulse
+   travels the arrows in turn and each box it reaches glows briefly; all of it is off for reduced motion. */
+.arch {
+  margin-block: var(--space-4);
+  padding: var(--space-4);
+}
+.arch-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.arch-head h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.arch-head p {
+  max-width: 52ch;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.arch-row {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.arch-node {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 14px var(--space-2);
+  border: 1.5px dashed var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  text-align: center;
+}
+.arch-node.is-repo {
+  flex: 1.5 1 0;
+  border: 1.5px solid var(--accent);
+  background: var(--wash);
+}
+.arch-node b {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.arch-node small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.arch-tag {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.arch-node .arch-tag {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--accent);
+}
+/* The line is the list item, so every arrow sits at the row's vertical centre whatever its label needs. */
+.arch-edge {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 72px;
+  height: 2px;
+  margin-inline: 12px;
+}
+.arch-edge > span {
+  position: absolute;
+  inset-inline: -8px;
+  bottom: 12px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  text-align: center;
+}
+.arch-edge i {
+  position: absolute;
+  inset: 0;
+  background: var(--line);
+}
+.arch-edge::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--line);
+  border-right: 2px solid var(--line);
+  transform: rotate(45deg);
+}
+/* The pulse: a short bright segment, 6 px thick, so moving it with `left` and `top` is cheap. */
+.arch-edge i::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 40px;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, var(--glow));
+  filter: drop-shadow(0 0 5px var(--glow));
+  opacity: 0;
+}
+.arch-base {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 28px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: var(--band);
+  color: var(--on-band);
+  font-size: 0.92rem;
+}
+.arch-base .arch-tag {
+  flex: none;
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .arch-edge i::before {
+    animation: arch-pulse-x 3.6s linear infinite;
+  }
+  .arch-edge:nth-child(4) i::before {
+    animation-delay: 1.2s;
+  }
+  .arch-edge:nth-child(6) i::before {
+    animation-delay: 2.4s;
+  }
+  .arch-node:nth-child(3),
+  .arch-node:nth-child(5),
+  .arch-node:nth-child(7) {
+    animation: arch-glow 3.6s ease-out infinite;
+  }
+  .arch-node:nth-child(3) {
+    animation-delay: 1s;
+  }
+  .arch-node:nth-child(5) {
+    animation-delay: 2.2s;
+  }
+  .arch-node:nth-child(7) {
+    animation-delay: 3.4s;
+  }
+}
+@keyframes arch-pulse-x {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  26% {
+    left: calc(100% - 40px);
+    opacity: 1;
+  }
+  30%,
+  100% {
+    left: calc(100% - 40px);
+    opacity: 0;
+  }
+}
+@keyframes arch-pulse-y {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  26% {
+    top: calc(100% - 40px);
+    opacity: 1;
+  }
+  30%,
+  100% {
+    top: calc(100% - 40px);
+    opacity: 0;
+  }
+}
+@keyframes arch-glow {
+  0% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  4% {
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--glow) 35%, transparent),
+      0 0 22px color-mix(in srgb, var(--glow) 50%, transparent);
+  }
+  24%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* Below 960 px the row stacks and the arrows point down. The label sits beside the line, in the right half. */
+@container (width < 960px) {
+  .arch-head {
+    flex-direction: column;
+    align-items: start;
+    gap: var(--space-1);
+  }
+  .arch-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .arch-node,
+  .arch-node.is-repo {
+    flex: none;
+  }
+  .arch-edge {
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr;
+    flex: none;
+    align-items: stretch;
+    min-width: 0;
+    height: 52px;
+    margin: 0;
+  }
+  .arch-edge > span {
+    position: static;
+    grid-column: 3;
+    align-self: center;
+    padding-left: var(--space-2);
+    text-align: left;
+  }
+  .arch-edge i {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .arch-edge::after {
+    top: auto;
+    right: auto;
+    bottom: -1px;
+    left: 50%;
+    margin-left: -5px;
+    transform: rotate(135deg);
+  }
+  .arch-edge i::before {
+    top: 0;
+    left: -2px;
+    width: 6px;
+    height: 40px;
+    background: linear-gradient(180deg, transparent, var(--glow));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .arch-edge i::before {
+      animation-name: arch-pulse-y;
+    }
+  }
+  .arch-base {
+    flex-direction: column;
+    align-items: start;
+    gap: 4px;
+  }
+}
+@container (width < 600px) {
+  .arch {
+    padding: 22px;
+  }
+}
+
 /* ── Platform diagram ───────────────────────────────────────── */
 .diagram {
   display: block;
@@ -1997,6 +2270,7 @@ p {
   .metrics,
   .featured,
   .project-grid,
+  .arch,
   .platform,
   .section-head p,
   .sec-head p,

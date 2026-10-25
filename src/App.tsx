@@ -27,7 +27,7 @@ export function App() {
         <Hero resume={r} />
 
         <div className="page">
-          <Work projects={r.projects} />
+          <Work projects={r.projects} architecture={r.architecture} />
 
           <section id="experience" className="section" aria-labelledby="experience-title">
             <div className="section-head">

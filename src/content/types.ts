@@ -62,6 +62,21 @@ export interface SkillGroup {
   usedIn: string[];
 }
 
+/** One box of the architecture diagram: a repository (drawn from the project it names) or a party outside the code. */
+export type ArchNode = { project: ProjectId; note: string } | { name: string; note: string };
+
+/** How the repositories fit together. Every label is worded from the `what` and `proof` of the projects it names. */
+export interface Architecture {
+  title: string;
+  summary: string;
+  /** The boxes in reading order. */
+  nodes: ArchNode[];
+  /** What travels between box `i` and box `i + 1`, so one label fewer than `nodes`. */
+  flows: string[];
+  /** The band under the row: the project that hosts both systems, and what it runs. */
+  platform: { project: ProjectId; services: string[]; note: string };
+}
+
 export type StackLayerId = 'frontend' | 'backend' | 'data' | 'cloud';
 
 /** One layer of the hero's technology stack. `items` are picks from the skill group named `group`. */
@@ -117,6 +132,7 @@ export interface Resume {
   /** In career order, early to recent. */
   metrics: Metric[];
   projects: Project[];
+  architecture: Architecture;
   experience: Role[];
   skills: SkillGroup[];
   principles: { title: string; body: string; evidence: Evidence[] }[];

@@ -183,6 +183,54 @@ describe('resume content', () => {
     }
   });
 
+  describe('architecture', () => {
+    const { nodes, flows, platform } = resume.architecture;
+    const project = (id: string) => resume.projects.find((p) => p.id === id)!;
+    const repoNodes = nodes.flatMap((n) => ('project' in n ? [n] : []));
+
+    it('joins every box to the next with one labelled arrow', () => {
+      expect(nodes).toHaveLength(4);
+      expect(flows).toHaveLength(nodes.length - 1);
+      for (const f of flows) expect(f.trim()).not.toBe('');
+    });
+
+    it('draws the telemetry pipeline and the command center, in that order, with tools from their stacks', () => {
+      expect(repoNodes.map((n) => n.project)).toEqual(['telemetry', 'occ']);
+      for (const n of repoNodes) {
+        for (const part of n.note.split(' · ')) {
+          expect(
+            project(n.project).stack.some((s) => s.includes(part)),
+            `${part} is in the stack of ${n.project}`,
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('words each arrow from the text of the projects it joins', () => {
+      expect(project('telemetry').stack).toContain('MQTT 5');
+      expect(project('telemetry').proof).toContain('About 10,000 messages a second on one replica');
+      expect(flows[0]).toContain('MQTT 5');
+      expect(flows[0]).toContain('~10k msg/s per replica');
+      expect(project('telemetry').proof.toLowerCase()).toContain('outbox');
+      expect(flows[1]).toContain('outbox');
+      expect(project('occ').what.toLowerCase()).toContain(flows[2]);
+    });
+
+    it('names the outside parties from the same text', () => {
+      const outside = nodes.flatMap((n) => ('name' in n ? [n] : []));
+      expect(outside.map((n) => n.name)).toEqual(['Sensors', 'Operators']);
+      expect(project('telemetry').what).toContain('Sensor readings from the campus');
+      expect(project('occ').what).toContain('control room');
+    });
+
+    it('describes the hosting platform with services its text names, as AWS CDK code', () => {
+      expect(platform.project).toBe('aws');
+      for (const s of platform.services) expect(project('aws').what, s).toContain(s);
+      expect(platform.note).toContain('AWS CDK code');
+      expect(project('aws').what).toContain('AWS CDK code');
+    });
+  });
+
   describe('hero', () => {
     it('draws four layers whose tools all come from the skill group they name', () => {
       expect(resume.heroStack.map((l) => l.id)).toEqual(['frontend', 'backend', 'data', 'cloud']);

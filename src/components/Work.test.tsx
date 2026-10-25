@@ -6,7 +6,7 @@ import { Work } from './Work';
 
 const render = (projects: Project[]) =>
   // React separates adjacent text nodes with `<!-- -->`; drop them so the text reads as written.
-  renderToString(<Work projects={projects} />).replaceAll('<!-- -->', '');
+  renderToString(<Work projects={projects} architecture={resume.architecture} />).replaceAll('<!-- -->', '');
 
 /** The cards, the featured project and the head: everything before the platform diagram, which has its own panel. */
 const html = (projects: Project[] = resume.projects) => render(projects).split('<div class="platform"')[0]!;

@@ -149,6 +149,24 @@ export const resume: Resume = {
     },
   ],
 
+  architecture: {
+    title: 'How the pieces fit together',
+    summary:
+      'Readings flow from devices to the control room through two repositories. The third describes where both run.',
+    nodes: [
+      { name: 'Sensors', note: 'Campus devices' },
+      { project: 'telemetry', note: 'NestJS · PostgreSQL' },
+      { project: 'occ', note: 'NestJS · React' },
+      { name: 'Operators', note: 'Control room' },
+    ],
+    flows: ['MQTT 5 · ~10k msg/s per replica', 'alerts through an outbox', 'live incidents'],
+    platform: {
+      project: 'aws',
+      services: ['ECS Fargate', 'RDS PostgreSQL', 'IoT Core', 'CloudFront and WAF'],
+      note: 'all described as AWS CDK code',
+    },
+  },
+
   experience: [
     {
       company: 'Surbana Jurong',
