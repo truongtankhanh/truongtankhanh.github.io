@@ -255,6 +255,12 @@ shows; it never autoplays. It sits at the top of the case study; the featured ca
 "Watch the demo" action. The build renders it only
 when the file exists, so a missing video never leaves a broken player.
 
+_Done 2026-10-26._ `CaseStudy.demo` in `resume.ts` holds the caption, the summary and the files; the build finds the video
+through `__DEMO_VIDEO_BYTES__` (`vite.config.ts`), so the player (`<figure id="demo">` at the top of the overview) and the
+"Watch the demo" action of the featured card exist only when `public/media/ops-command-center-demo.mp4` does. The
+captions menu holds `ops-command-center-demo.vtt`, a note that the video has no sound; the summary is worded from the
+captions burned into the frames.
+
 **Leadership story (Q21), draft copy for the Claude Code Pipelines case study, condensed in "How I work".**
 Sources: the owner's engineering-workflow notes in the private portfolio, the CV, and the
 [claude-code-pipelines](https://github.com/truongtankhanh/claude-code-pipelines) README.

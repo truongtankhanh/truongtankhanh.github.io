@@ -119,6 +119,53 @@ describe('CaseStudy', () => {
     for (const paragraph of study.overview) expect(markup).toContain(`<p>${paragraph}</p>`);
   });
 
+  describe('the demo video', () => {
+    const demo = resume.projects[0]!.caseStudy!.demo!;
+    /** The project with the demo of the content, as the build left it: published or not. */
+    const withDemo = (published: boolean): Project => ({
+      ...project,
+      caseStudy: { ...study, demo: { ...demo, published, bytes: published ? 7_151_429 : null } },
+    });
+
+    it('has no player when the build did not find the video, so a missing file never leaves a broken player', () => {
+      for (const p of [project, withDemo(false)]) {
+        const markup = html(one, p);
+        expect(markup).not.toContain('<video');
+        expect(markup).not.toContain('id="demo"');
+        expect(markup).not.toContain('demo-summary');
+      }
+    });
+
+    it('puts a native player at the top of the overview: controls, no autoplay, nothing loaded but the poster', () => {
+      const markup = html(one, withDemo(true));
+      const video = block(markup, '<video', 'video');
+      expect(video).toContain(' controls=""');
+      expect(video).toContain('preload="none"');
+      expect(video).toContain(`poster="/${demo.poster}"`);
+      expect(video).toContain('width="1440"');
+      expect(video).toContain('height="900"');
+      expect(video).not.toMatch(/autoplay|loop=|muted/i);
+      expect(video).toContain(`<source src="/${demo.video}" type="video/mp4"/>`);
+      expect(markup.indexOf('<figure id="demo"')).toBeGreaterThan(markup.indexOf('id="overview"'));
+      expect(markup.indexOf('<figure id="demo"')).toBeLessThan(markup.indexOf('cs-shot'));
+    });
+
+    it('says there is no sound in the captions menu, and links the file where the browser cannot play it', () => {
+      const video = block(html(one, withDemo(true)), '<video', 'video');
+      expect(video).toMatch(new RegExp(`<track kind="captions" src="/${demo.captions}" srcLang="en"`, 'i'));
+      expect(video).toContain(`<a href="/${demo.video}">Download the demo video (MP4)</a>`);
+    });
+
+    it('has a one-line caption and a text summary, and the player points at both', () => {
+      const markup = html(one, withDemo(true));
+      expect(markup).toContain(
+        `<figcaption id="demo-caption" class="cs-label cs-caption">${demo.caption}</figcaption>`,
+      );
+      expect(markup).toContain(`<p id="demo-summary" class="cs-demo-summary">${demo.summary}</p>`);
+      expect(markup).toContain('aria-describedby="demo-caption demo-summary"');
+    });
+  });
+
   it('leads "What it does" with the key figure, then three cards, with key phrases in strong', () => {
     const markup = html();
     const card = block(markup, '<article class="cs-lead-card', 'article');

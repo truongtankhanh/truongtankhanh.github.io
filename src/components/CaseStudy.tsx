@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import type { Project, Resume, Screenshot } from '../content/types';
+import type { Demo, Project, Resume, Screenshot } from '../content/types';
 import { emphasis } from '../lib/emphasis';
 import { displayUrl } from '../lib/urls';
 import { HeroSun } from './Hero';
@@ -36,6 +36,40 @@ function Shot({ shot, lazy }: { shot: Screenshot; lazy?: boolean }) {
       decoding="async"
       loading={lazy ? 'lazy' : undefined}
     />
+  );
+}
+
+/** The demo video is 1440 × 900 (16:10); the size is set so the page does not shift while the poster loads. */
+const DEMO_SIZE = { width: 1440, height: 900 };
+
+/**
+ * The demo video of the case study: a native player that never autoplays and loads nothing but its poster until
+ * play is pressed. It has no sound, so the captions menu holds a note that says so, and a text summary under the
+ * player says what it shows. The anchor `#demo` is where the "Watch the demo" action of the home page lands.
+ */
+function DemoVideo({ demo }: { demo: Demo }) {
+  return (
+    <>
+      <figure id="demo" className="cs-figure cs-demo">
+        <video
+          controls
+          preload="none"
+          poster={`/${demo.poster}`}
+          {...DEMO_SIZE}
+          aria-describedby="demo-caption demo-summary"
+        >
+          <source src={`/${demo.video}`} type="video/mp4" />
+          <track kind="captions" src={`/${demo.captions}`} srcLang="en" label="No sound" />
+          <a href={`/${demo.video}`}>Download the demo video (MP4)</a>
+        </video>
+        <figcaption id="demo-caption" className="cs-label cs-caption">
+          {demo.caption}
+        </figcaption>
+      </figure>
+      <p id="demo-summary" className="cs-demo-summary">
+        {demo.summary}
+      </p>
+    </>
   );
 }
 
@@ -204,6 +238,7 @@ export function CaseStudy({ resume, project }: { resume: Resume; project: Projec
 
           <div className="cs-article">
             <Section id="overview">
+              {study.demo?.published && <DemoVideo demo={study.demo} />}
               {project.image && (
                 <figure className="cs-figure">
                   <div className="cs-shot">

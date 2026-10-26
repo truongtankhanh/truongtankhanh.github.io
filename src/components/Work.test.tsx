@@ -96,4 +96,25 @@ describe('Work', () => {
     expect(repoLinks).toEqual(resume.projects.map((p) => p.repo));
     for (const href of repoLinks) expect(href).toMatch(/^https:\/\/github\.com\/truongtankhanh\/[\w.-]+$/);
   });
+  describe('the demo video', () => {
+    const demo = resume.projects[0]!.caseStudy!.demo!;
+    const withDemo = (published: boolean): Project[] => [
+      { ...featured, caseStudy: { ...sampleCaseStudy('ops-command-center'), demo: { ...demo, published } } },
+      ...others,
+    ];
+    const watch = /<a [^>]*href="\/work\/ops-command-center\/#demo"[^>]*>Watch the demo<\/a>/;
+
+    it('adds "Watch the demo" to the featured card, after the case study, when the build found the video', () => {
+      const markup = render(withDemo(true));
+      expect(markup).toMatch(watch);
+      expect(markup.indexOf('Read the case study')).toBeLessThan(markup.indexOf('Watch the demo'));
+      expect(markup.indexOf('Watch the demo')).toBeLessThan(markup.indexOf('>Repository<'));
+    });
+
+    it('has no such action when the video was not found, or the project has no case study', () => {
+      expect(render(withDemo(false))).not.toContain('Watch the demo');
+      expect(render(bare)).not.toContain('Watch the demo');
+      expect(render()).not.toContain('Watch the demo');
+    });
+  });
 });

@@ -48,6 +48,12 @@ function FeaturedProject({ project }: { project: Project }) {
               Read the case study
             </a>
           )}
+          {/* Only a project whose video the build found links to it, so no link points at a player that is not there. */}
+          {project.caseStudy?.demo?.published && (
+            <a className="btn btn-on-band" href={`/work/${project.caseStudy.slug}/#demo`}>
+              Watch the demo
+            </a>
+          )}
           <RepoLink project={project} className="btn btn-on-band">
             Repository
           </RepoLink>

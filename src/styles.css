@@ -1434,15 +1434,26 @@ p {
   color: color-mix(in srgb, var(--on-band) 85%, transparent);
 }
 .featured-actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin-top: auto;
   padding-top: 12px;
 }
+/* Two actions share the row. With three, the first (the case study) takes the row and the other two share the next,
+   so no button is shorter than the one beside it. On a phone they stack. */
+.featured-actions > :first-child:nth-last-child(3),
+.featured-actions > :only-child {
+  grid-column: 1 / -1;
+}
 .featured-actions .btn {
   min-height: 3rem;
-  padding-inline: var(--space-3);
+  padding-inline: var(--space-2);
+}
+@media (max-width: 30rem) {
+  .featured-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .featured-side {
   display: flex;
@@ -2851,6 +2862,19 @@ p {
 .cs-caption {
   margin-top: 0.75rem;
   text-transform: none;
+}
+.cs-demo video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--shade);
+  box-shadow: var(--shadow);
+}
+.cs-demo-summary {
+  margin: 0 0 var(--space-4);
 }
 .cs-shot {
   overflow: hidden;

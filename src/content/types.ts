@@ -57,6 +57,27 @@ export interface ClaimSource {
 }
 
 /**
+ * The demo video of a case study (brief, Q18): recorded by the owner on the demo campus, with no sound and its captions
+ * burned into the picture, so the page needs only a line under the player and a text summary of what it shows.
+ */
+export interface Demo {
+  /** The video, as a path under `public/` with no leading slash, like `Screenshot.src`. */
+  video: string;
+  /** The frame shown before play. */
+  poster: string;
+  /** A WebVTT note for the captions menu: the video has no sound and says so. */
+  captions: string;
+  /** One line under the player. */
+  caption: string;
+  /** What the video shows, in words, so the page does not depend on the pictures. Every scene is a caption of the video. */
+  summary: string;
+  /** Whether the build found the video in `public/media/`; set by the build (`vite.config.ts`), never by hand. */
+  published: boolean;
+  /** Size of the video in bytes, or null when the build did not find it. */
+  bytes: number | null;
+}
+
+/**
  * The page behind a project card, in the order of the page. Every sentence is quoted or paraphrased from the README
  * or an ADR of the repository (V1-11 and V1-12 record the source line of each); the template adds only the headings.
  */
@@ -68,6 +89,8 @@ export interface CaseStudy {
   status: string;
   /** Paragraphs under the screenshot of `Project.image`. */
   overview: string[];
+  /** The demo video at the top of the overview, and the "Watch the demo" action of the featured card. */
+  demo?: Demo;
   /** "What it does": one lead capability with the key figure of the README, then the cards beside it. */
   does: {
     lead: Capability & { figure: { value: string; label: string }; image?: Screenshot };

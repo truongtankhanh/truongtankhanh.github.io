@@ -19,10 +19,30 @@ function cvPdfBytes(mode: string): number | null {
   }
 }
 
+// Keep in sync with `caseStudy.demo.video` of the first project in src/content/resume.ts (a test checks it).
+const DEMO_VIDEO = 'public/media/ops-command-center-demo.mp4';
+
+/**
+ * Size of the demo video, or null when the file is not there. As with the PDF, the page and the server render read it
+ * (`__DEMO_VIDEO_BYTES__`), so a build without the video has no player and no "Watch the demo" link, and the browser
+ * hydrates exactly what was prerendered. Tests never see a file.
+ */
+function demoVideoBytes(mode: string): number | null {
+  if (mode === 'test') return null;
+  try {
+    return statSync(new URL(`./${DEMO_VIDEO}`, import.meta.url)).size;
+  } catch {
+    return null;
+  }
+}
+
 // The site is served from the root of truongtankhanh.github.io, so the base stays '/'.
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  define: { __CV_PDF_BYTES__: JSON.stringify(cvPdfBytes(mode)) },
+  define: {
+    __CV_PDF_BYTES__: JSON.stringify(cvPdfBytes(mode)),
+    __DEMO_VIDEO_BYTES__: JSON.stringify(demoVideoBytes(mode)),
+  },
   // strictPort fails loudly instead of silently hopping to another port when 5390 is taken.
   server: { port: 5390, strictPort: true },
   build: { assetsInlineLimit: 0 },

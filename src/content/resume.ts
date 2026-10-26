@@ -111,6 +111,17 @@ export const resume: Resume = {
           'The demo runs on Langbiang Tech Campus, a fictional site with synthetic incidents and simulated cameras. One command brings up the whole stack.',
           'Live incidents are drawn on a site map with camera tiles next to every incident, and the response workflow is auditable: every timeline entry shows who made it.',
         ],
+        demo: {
+          video: 'media/ops-command-center-demo.mp4',
+          poster: 'images/ops-command-center-demo-poster.webp',
+          captions: 'media/ops-command-center-demo.vtt',
+          caption: 'Demo video, 1 min 27 s, recorded on the demo campus. It plays only when you press play.',
+          summary:
+            'It walks through the demo campus in 3D and in 2D: the live incident feed, an incident’s timeline and nearby cameras, search, equipment with live telemetry and fault state, reporting an incident and then acknowledging and resolving it, keyboard shortcuts, and the read-only video-wall screen. There is no sound; the captions are in the picture.',
+          // Set by the build from the file it finds (`vite.config.ts`), never by hand.
+          published: __DEMO_VIDEO_BYTES__ !== null,
+          bytes: __DEMO_VIDEO_BYTES__,
+        },
         does: {
           lead: {
             title: 'Live incident feed',

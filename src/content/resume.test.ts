@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resume } from './resume';
 import { formatMonthLong, formatRange, parseMonth } from '../lib/dates';
 import { emphasis, stripEmphasis } from '../lib/emphasis';
@@ -507,5 +507,31 @@ describe('resume content', () => {
   it('keeps a phone number off the public page', () => {
     // Serialising the whole object covers every field, including metrics, checks, case studies and the CV link.
     expect(findPhoneNumber(JSON.stringify(resume))).toBeUndefined();
+  });
+  describe('the demo video', () => {
+    const demo = resume.projects[0]!.caseStudy!.demo!;
+    const inPublic = (path: string) => existsSync(new URL(`../../public/${path}`, import.meta.url));
+
+    it('is the lead project’s only, and the files it names are in public/', () => {
+      expect(resume.projects.filter((p) => p.caseStudy?.demo).map((p) => p.id)).toEqual(['occ']);
+      for (const file of [demo.video, demo.poster, demo.captions]) expect(inPublic(file), file).toBe(true);
+      expect(demo.video).toMatch(/^media\/[\w.-]+\.mp4$/);
+    });
+
+    it('is published exactly when the build found the file, and tests never find one', () => {
+      expect(demo.published).toBe(demo.bytes !== null);
+      expect(demo.bytes).toBeNull();
+    });
+
+    it('is named in the build config, which decides whether the file is there', () => {
+      const config = readFileSync(new URL('../../vite.config.ts', import.meta.url), 'utf8');
+      expect(config).toContain(`'public/${demo.video}'`);
+    });
+
+    it('has a one-line caption and a summary that says there is no sound', () => {
+      expect(demo.caption.trim()).not.toBe('');
+      expect(demo.caption).not.toContain('\n');
+      expect(demo.summary).toMatch(/no sound/i);
+    });
   });
 });
