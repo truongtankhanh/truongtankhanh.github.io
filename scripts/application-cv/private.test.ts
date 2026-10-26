@@ -62,6 +62,7 @@ const most = {
   team: '3 developers',
   stack: 'Node.js, TypeScript',
   responsibilities: ['Built a thing.', 'Reviewed a thing.'],
+  privateOnly: ['a made-up client'],
 };
 
 const accepted: [string, string][] = [
@@ -239,7 +240,14 @@ describe('checkProjects', () => {
 
   it('knows the fields it asks for', () => {
     expect([...PROJECT_REQUIRED].sort()).toEqual(Object.keys(least).sort());
-    expect([...PROJECT_OPTIONAL].sort()).toEqual(['overview', 'responsibilities', 'stack', 'team', 'title']);
+    expect([...PROJECT_OPTIONAL].sort()).toEqual([
+      'overview',
+      'privateOnly',
+      'responsibilities',
+      'stack',
+      'team',
+      'title',
+    ]);
   });
 
   it.each(PROJECT_REQUIRED)('refuses a project without "%s", naming the position and the field', (key) => {
@@ -259,14 +267,13 @@ describe('checkProjects', () => {
     );
   });
 
-  it.each([[[]], ['a bullet'], [['a bullet', '']], [[1]]])(
-    'refuses responsibilities that are %j',
-    (responsibilities) => {
-      expect(checkProjects([{ ...least, responsibilities }])).toBe(
-        'extraProjects[0]: "responsibilities" must be a list of non-empty strings.',
+  describe.each(['responsibilities', 'privateOnly'])('the list %s', (key) => {
+    it.each([[[]], ['a bullet'], [['a bullet', '']], [[1]]])('is refused when it is %j', (list) => {
+      expect(checkProjects([{ ...least, [key]: list }])).toBe(
+        `extraProjects[0]: "${key}" must be a list of non-empty strings.`,
       );
-    },
-  );
+    });
+  });
 
   it('refuses a key it does not know, and anything but an object', () => {
     expect(checkProjects([{ ...least, rol: 'x' }])).toBe('extraProjects[0] has an unknown key: rol.');

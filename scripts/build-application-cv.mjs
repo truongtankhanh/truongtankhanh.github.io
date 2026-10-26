@@ -9,6 +9,7 @@
 import { fileURLToPath } from 'node:url';
 import { relative } from 'node:path';
 import { generate, OutputError } from './application-cv/generate.mjs';
+import { loadResume } from './application-cv/load-resume.mjs';
 import { PrivateDataError } from './application-cv/private.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -19,23 +20,6 @@ const args = process.argv.slice(2);
 if (args.some((arg) => arg !== '--dry-run')) {
   console.error('Usage: node scripts/build-application-cv.mjs [--dry-run]');
   process.exit(1);
-}
-
-/** `resume.ts` as the site reads it, with the same Vite configuration, compiled on the fly (the server is not kept). */
-async function loadResume() {
-  const { createServer } = await import('vite');
-  const server = await createServer({
-    root,
-    appType: 'custom',
-    logLevel: 'error',
-    server: { middlewareMode: true, hmr: false, watch: null },
-    optimizeDeps: { noDiscovery: true, include: [] },
-  });
-  try {
-    return (await server.ssrLoadModule('/src/content/resume.ts')).resume;
-  } finally {
-    await server.close();
-  }
 }
 
 try {

@@ -53,7 +53,7 @@ function checkTarget(file) {
 }
 
 /** The made-up projects of `private.example.json`, which a dry run builds so the layout is exercised without private data. */
-function exampleProjects() {
+export function exampleProjects() {
   const projects = JSON.parse(
     readFileSync(new URL('./private.example.json', import.meta.url), 'utf8'),
   ).extraProjects;

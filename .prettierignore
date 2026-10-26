@@ -2,5 +2,8 @@ dist
 dist-ssr
 pnpm-lock.yaml
 
+# Local and private (the application edition, V1-21): never committed, so not the business of the format check
+cv
+
 # Verbatim copy of the V1 design canvas source (docs/design/v1/brief.md)
 docs/design/v1/mockups

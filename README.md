@@ -70,9 +70,15 @@ Every time:
 git check-ignore -v cv/private.json   # prints the rule that keeps it out of Git
 pnpm build:application-cv             # writes the CV and the portfolio in cv/application/
 pnpm build:application-cv --dry-run   # same with "(phone on request)" and made-up projects, in a temporary folder
+pnpm check:application-cv             # checks the two files against resume.ts and cv/private.json, lists how they differ
+pnpm check:application-cv --dry-run   # makes the dry-run files, checks them and removes them; needs no private file
 ```
 
-The files are built from `resume.ts`, so after a change to the content, run the command again. It writes only in
+The files are built from `resume.ts`, so after a change to the content, run the command again, and then the check: it
+fails, naming the rule and the file, if a role, a title, a date, a career figure or the English level is not the one of
+the site, if an old wording or a placeholder is left, or if the phone number is anywhere but once in the contact line.
+It also lists what the application edition has that the site does not, including each fact a project marks as
+`privateOnly` (a client name, an internal product name), and it proves those are in the files and not on the site. It writes only in
 `cv/application/` and does not touch the older Word files in `cv/`. Fonts are Calibri, so it looks the same on any
 machine with Word. The styles are in [`scripts/application-cv/`](scripts/application-cv/); check the result in Word
 before sending it.

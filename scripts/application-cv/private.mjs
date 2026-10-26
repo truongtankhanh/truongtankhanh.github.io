@@ -28,6 +28,9 @@ export const KEYS = ['phone', 'linkedin', 'extraProjects', 'overrides'];
 const INTERNATIONAL = /(?:\+|\b00)\s*84/;
 const NATIONAL = /\b0(?:[\s.-]?\d){9}\b/;
 
+/** True if `text` holds something the privacy scan of the public site would take for a phone number. */
+export const looksLikePhone = (text) => INTERNATIONAL.test(text) || NATIONAL.test(text);
+
 /** What a phone number may be made of: digits, spaces, dots, dashes, parentheses and a plus. */
 const WRITTEN = /^[\d\s.()+-]+$/;
 
@@ -52,10 +55,15 @@ const isPlainObject = (value) => typeof value === 'object' && value !== null && 
 /**
  * The fields of a project of the portfolio (V1-21.3). `name` and `tableRole` are what the overview table shows, `title`
  * (else `name`) heads the block, `stack` is the text of the master's "Tech stack" line, and `source` says where in the
- * master the project was taken from, so nothing is typed from memory.
+ * master the project was taken from, so nothing is typed from memory. `privateOnly` lists the facts of the project that
+ * the public edition leaves out on purpose (a client name, a product name), each as it is written in the files; the
+ * parity check (V1-21.4) proves they are in the application files and not in the public content, and lists them.
  */
 export const PROJECT_REQUIRED = ['name', 'company', 'duration', 'tableRole', 'role', 'source'];
-export const PROJECT_OPTIONAL = ['title', 'overview', 'team', 'stack', 'responsibilities'];
+export const PROJECT_OPTIONAL = ['title', 'overview', 'team', 'stack', 'responsibilities', 'privateOnly'];
+
+/** The optional fields that are a list of texts and not one text. */
+const PROJECT_LISTS = ['responsibilities', 'privateOnly'];
 
 /**
  * What is wrong with `projects`, or `undefined`. The message names the position and the field, never the value.
@@ -71,13 +79,15 @@ export function checkProjects(projects) {
     const text = (value) => typeof value === 'string' && value.trim() !== '';
     for (const key of PROJECT_REQUIRED)
       if (!text(project[key])) return `${at}: "${key}" must be a non-empty string.`;
-    for (const key of PROJECT_OPTIONAL.filter((key) => key !== 'responsibilities')) {
+    for (const key of PROJECT_OPTIONAL.filter((key) => !PROJECT_LISTS.includes(key))) {
       if (project[key] !== undefined && !text(project[key]))
         return `${at}: "${key}" must be a non-empty string.`;
     }
-    const list = project.responsibilities;
-    if (list !== undefined && !(Array.isArray(list) && list.length > 0 && list.every(text))) {
-      return `${at}: "responsibilities" must be a list of non-empty strings.`;
+    for (const key of PROJECT_LISTS) {
+      const list = project[key];
+      if (list !== undefined && !(Array.isArray(list) && list.length > 0 && list.every(text))) {
+        return `${at}: "${key}" must be a list of non-empty strings.`;
+      }
     }
   }
   return undefined;

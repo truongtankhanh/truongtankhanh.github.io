@@ -1,5 +1,5 @@
 {
-  "$comment": "Copy this file to cv/private.json (a local folder that is never committed) and replace the placeholder. phone: your Vietnamese number, in the national form (a leading zero and nine more digits) or with the country code of Vietnam, spaces or dashes allowed. linkedin (optional): an https address to use instead of the one in resume.ts. extraProjects: the projects of the portfolio that only the application edition has; each has name, company, duration, tableRole, role and source (where in your master it was taken from), and optionally title, overview, team, stack (one line of text) and responsibilities (a list). A project is listed under its company; a company that is on the site is headed with the title and dates of that role. The two projects below are made up: a dry run builds them, so the layout is checked without private data. overrides: not used yet. A key that starts with a dollar sign is ignored.",
+  "$comment": "Copy this file to cv/private.json (a local folder that is never committed) and replace the placeholder. phone: your Vietnamese number, in the national form (a leading zero and nine more digits) or with the country code of Vietnam, spaces or dashes allowed. linkedin (optional): an https address to use instead of the one in resume.ts. extraProjects: the projects of the portfolio that only the application edition has; each has name, company, duration, tableRole, role and source (where in your master it was taken from), and optionally title, overview, team, stack (one line of text), responsibilities (a list) and privateOnly (a list of facts that the public edition leaves out, each written as it is in the files; the parity check proves they are there and not on the site, and lists them). A project is listed under its company; a company that is on the site is headed with the title and dates of that role. The two projects below are made up: a dry run builds them, so the layout is checked without private data. overrides: not used yet. A key that starts with a dollar sign is ignored.",
   "phone": "REPLACE_WITH_YOUR_PHONE_NUMBER",
   "extraProjects": [
     {
@@ -13,6 +13,7 @@
       "team": "3 developers",
       "stack": "Node.js, TypeScript, PostgreSQL",
       "responsibilities": ["Built the **first made-up feature**.", "Reviewed the code of the team."],
+      "privateOnly": ["a made-up client"],
       "source": "private.example.json, made up"
     },
     {
