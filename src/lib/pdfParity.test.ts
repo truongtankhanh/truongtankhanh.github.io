@@ -11,7 +11,7 @@ function pdfTextOf(r = resume): string {
     r.email,
     ...r.experience.flatMap((role) => [role.company, role.title, formatRange(role.start, role.end)]),
     ...r.projects.flatMap((p) => [p.name, displayUrl(p.repo)]),
-    ...r.metrics.map((m) => m.label),
+    ...r.metrics.map((m) => m.short ?? m.label),
   ].join('\n');
 }
 

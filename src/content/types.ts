@@ -147,6 +147,8 @@ export interface Metric {
   /** Kept exactly as in the CV, with its "~" or "+". */
   value: string;
   label: string;
+  /** The label in fewer words, for the one-line strip of the CV; `label` is used when there is none. */
+  short?: string;
   /** Short caption saying where the figure comes from. */
   source: string;
 }

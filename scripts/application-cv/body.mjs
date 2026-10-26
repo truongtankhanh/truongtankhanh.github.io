@@ -49,18 +49,11 @@ export const keepTogether = (blocks) =>
   );
 
 /**
- * The words of each career figure on the strip, shorter than the site's so the five fit one row; a label that is not
- * here is written in full, so a new figure on the site still appears (and may wrap, which the render shows).
+ * "7+ years in production": a figure of the site as the strip writes it, with the short words of `resume.ts` (`short`)
+ * so the five fit one row. A figure with no short words is written in full, so a new figure still appears (and may
+ * wrap, which the render shows). The web page of the CV reads the same field.
  */
-const SHORT_LABELS = {
-  'years shipping production software': 'years in production',
-  'marketplaces integrated': 'marketplaces',
-  'repositories and services': 'repos and services',
-  'messages on one replica': 'per replica',
-};
-
-/** "7+ years in production": a figure of the site as the strip writes it. */
-export const figureText = (figure) => `${figure.value} ${SHORT_LABELS[figure.label] ?? figure.label}`;
+export const figureText = (figure) => `${figure.value} ${figure.short ?? figure.label}`;
 
 /** "7+ years in production · 5+ marketplaces · ...": each value in bold accent, on the strip under the band. */
 export function buildFigures(resume) {

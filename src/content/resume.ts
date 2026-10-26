@@ -53,15 +53,31 @@ export const resume: Resume = {
   },
 
   metrics: [
-    { value: '7+', label: 'years shipping production software', source: 'Since December 2018' },
+    {
+      value: '7+',
+      label: 'years shipping production software',
+      short: 'years in production',
+      source: 'Since December 2018',
+    },
     {
       value: '5+',
       label: 'marketplaces integrated',
+      short: 'marketplaces',
       source: 'Tmall, eBay US, Mercari, 95Point, Yahoo Shopping and more',
     },
     { value: '3+', label: 'engineers led', source: 'Surbana Jurong, since April 2024' },
-    { value: '~50', label: 'repositories and services', source: 'NestJS, Angular, React, PostgreSQL' },
-    { value: '~10k/s', label: 'messages on one replica', source: 'Open-source telemetry pipeline' },
+    {
+      value: '~50',
+      label: 'repositories and services',
+      short: 'repos and services',
+      source: 'NestJS, Angular, React, PostgreSQL',
+    },
+    {
+      value: '~10k/s',
+      label: 'messages on one replica',
+      short: 'per replica',
+      source: 'Open-source telemetry pipeline',
+    },
   ],
 
   projects: [

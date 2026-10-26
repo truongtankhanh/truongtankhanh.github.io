@@ -37,7 +37,8 @@ export function pdfParityProblems(text: string, r: Resume): string[] {
     expectText('a project', project.name);
     expectText('a repository address', displayUrl(project.repo));
   }
-  for (const metric of r.metrics) expectText('a career figure', metric.label);
+  // The strip of the CV writes each figure in its short words, when the content has them.
+  for (const metric of r.metrics) expectText('a career figure', metric.short ?? metric.label);
 
   // A role removed from the content but still in a PDF that was not regenerated leaves one range too many.
   const ranges = haystack.match(DATE_RANGE)?.length ?? 0;
