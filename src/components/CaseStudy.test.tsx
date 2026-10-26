@@ -115,6 +115,11 @@ describe('CaseStudy', () => {
     expect(markup).toContain(`src="/${project.image!.src}"`);
     expect(markup).toContain(`alt="${project.image!.alt}"`);
     expect(markup).toContain('width="1600"');
+    // A phone takes the 800 px file, which has `-800` before the extension; the full file stays the fallback.
+    const small = project.image!.src.replace(/\.webp$/, '-800.webp');
+    expect(markup).toContain(`srcSet="/${small} 800w, /${project.image!.src} 1600w"`);
+    expect(markup).toContain('sizes="(min-width: 60rem) 52rem, calc(100vw - 2.5rem)"');
+    expect(markup).toContain('fetchPriority="low"');
     expect(markup).toContain(project.image!.caption);
     for (const paragraph of study.overview) expect(markup).toContain(`<p>${paragraph}</p>`);
   });

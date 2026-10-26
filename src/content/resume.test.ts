@@ -508,6 +508,23 @@ describe('resume content', () => {
     // Serialising the whole object covers every field, including metrics, checks, case studies and the CV link.
     expect(findPhoneNumber(JSON.stringify(resume))).toBeUndefined();
   });
+  describe('the screenshots', () => {
+    const shots = resume.projects.flatMap((p) =>
+      [p.image, p.caseStudy?.does.lead.image].filter((shot) => shot !== undefined),
+    );
+
+    it('are 1600 px files in public/, and each has its 800 px version for a phone', () => {
+      expect(shots.length).toBeGreaterThan(0);
+      for (const shot of shots) {
+        expect(shot.src, shot.src).toMatch(/^images\/[\w-]+\.webp$/);
+        const small = shot.src.replace(/\.webp$/, '-800.webp');
+        for (const file of [shot.src, small]) {
+          expect(existsSync(new URL(`../../public/${file}`, import.meta.url)), file).toBe(true);
+        }
+      }
+    });
+  });
+
   describe('the demo video', () => {
     const demo = resume.projects[0]!.caseStudy!.demo!;
     const inPublic = (path: string) => existsSync(new URL(`../../public/${path}`, import.meta.url));

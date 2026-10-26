@@ -27,14 +27,27 @@ function Rich({ text }: { text: string }) {
   );
 }
 
+/**
+ * Each screenshot is also kept at 800 px, with `-800` before the extension (a test checks that the file is there). A
+ * phone is 412 px wide, so it takes the small file, which is a third of the size: the browser starts fetching a lazy
+ * image some 1,250 px before the screen, so the big file used to compete with the styles and the fonts of the first paint.
+ */
+const SHOT_SMALL = 800;
+const smaller = (src: string) => src.replace(/\.webp$/, `-${SHOT_SMALL}.webp`);
+/** The article is 52 rem wide beside the contents list, and the width of the screen less the margins below that. */
+const SHOT_SIZES = '(min-width: 60rem) 52rem, calc(100vw - 2.5rem)';
+
 function Shot({ shot, lazy }: { shot: Screenshot; lazy?: boolean }) {
   return (
     <img
       src={`/${shot.src}`}
+      srcSet={`/${smaller(shot.src)} ${SHOT_SMALL}w, /${shot.src} ${SHOT_SIZE.width}w`}
+      sizes={SHOT_SIZES}
       alt={shot.alt}
       {...SHOT_SIZE}
       decoding="async"
       loading={lazy ? 'lazy' : undefined}
+      fetchPriority={lazy ? 'low' : undefined}
     />
   );
 }
