@@ -72,13 +72,21 @@ pnpm build:application-cv             # writes the CV and the portfolio in cv/ap
 pnpm build:application-cv --dry-run   # same with "(phone on request)" and made-up projects, in a temporary folder
 pnpm check:application-cv             # checks the two files against resume.ts and cv/private.json, lists how they differ
 pnpm check:application-cv --dry-run   # makes the dry-run files, checks them and removes them; needs no private file
+pnpm pdf:application-cv               # LibreOffice makes the two PDFs, checks them, copies them to cv/application/
 ```
 
 The files are built from `resume.ts`, so after a change to the content, run the command again, and then the check: it
 fails, naming the rule and the file, if a role, a title, a date, a career figure or the English level is not the one of
 the site, if an old wording or a placeholder is left, or if the phone number is anywhere but once in the contact line.
 It also lists what the application edition has that the site does not, including each fact a project marks as
-`privateOnly` (a client name, an internal product name), and it proves those are in the files and not on the site. It writes only in
+`privateOnly` (a client name, an internal product name), and it proves those are in the files and not on the site.
+
+The PDFs are made from the Word files, with LibreOffice (`brew install --cask libreoffice`) and the poppler tools
+(`brew install poppler`) that read them back; without them, Word's "Save as PDF" does the job. The script converts one
+file at a time, in a temporary folder with a LibreOffice profile of its own, and copies the PDFs to `cv/application/`
+only if each one passes: under 300 KB (the CV) or 400 KB (the portfolio), the right number of pages (2 to 3 and 3 to 4),
+A4, every font embedded, text that can be selected and reads in the order of the Word file, and the phone number once.
+If one fails, `cv/` is left as it was and the folder with the PDFs is named so you can look at them. It writes only in
 `cv/application/` and does not touch the older Word files in `cv/`. Fonts are Calibri, so it looks the same on any
 machine with Word. The styles are in [`scripts/application-cv/`](scripts/application-cv/); check the result in Word
 before sending it.

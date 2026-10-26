@@ -29,8 +29,8 @@ const textOf = (xml) =>
   decode([...xml.matchAll(/<w:t(?: [^>]*)?>([^<]*)<\/w:t>|<w:tab\/>/g)].map((m) => m[1] ?? '\t').join(''));
 
 /**
- * Opens a .docx and gives what the rules read: each paragraph with its style, the rows of each table, the text of the
- * footer, the relationships (where the links go) and the properties of the file.
+ * Opens a .docx and gives what the rules read: each paragraph with its style and whether it is in a table cell, the rows
+ * of each table, the text of the footer, the relationships (where the links go) and the properties of the file.
  *
  * @param {Buffer} buffer
  * @param {string} name The file name, for the messages.
@@ -44,11 +44,15 @@ export async function readDocx(buffer, name) {
     throw new Error(`${name} has no ${part}; it is not a Word file`);
   };
   const body = await read('word/document.xml');
+  // Where each table starts and ends, so a paragraph can say whether it is in a cell: the PDF puts the cells in an
+  // order of its own, and a check of the reading order leaves them out.
+  const spans = [...body.matchAll(/<w:tbl>.*?<\/w:tbl>/gs)].map((t) => [t.index, t.index + t[0].length]);
   return {
     name,
     paragraphs: [...body.matchAll(/<w:p[ >].*?<\/w:p>/gs)].map((p) => ({
       style: /<w:pStyle w:val="([^"]+)"/.exec(p[0])?.[1] ?? 'Normal',
       text: textOf(p[0]),
+      inTable: spans.some(([from, to]) => p.index >= from && p.index < to),
     })),
     tables: [...body.matchAll(/<w:tbl>.*?<\/w:tbl>/gs)].map((table) =>
       [...table[0].matchAll(/<w:tr[ >].*?<\/w:tr>/gs)].map((row) =>

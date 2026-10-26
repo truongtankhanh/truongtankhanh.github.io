@@ -6,7 +6,7 @@ import type { Resume } from '../../src/content/types';
 
 interface Docx {
   name: string;
-  paragraphs: { style: string; text: string }[];
+  paragraphs: { style: string; text: string; inTable: boolean }[];
   tables: string[][][];
   footer: string;
   rels: string;
@@ -102,12 +102,23 @@ const rules = (result: Result) => result.failures.map((f) => f.rule);
 
 describe('readDocx', () => {
   it('reads the paragraphs with their styles, a tab where there is one, and the rows of a table', () => {
-    expect(files.cv.paragraphs[1]).toEqual({ style: 'Title', text: `${resume.name}\t` });
+    expect(files.cv.paragraphs[1]).toEqual({ style: 'Title', text: `${resume.name}\t`, inTable: false });
     expect(files.cv.paragraphs.some((p) => p.style === 'Heading2' && p.text.includes('\t'))).toBe(true);
     expect(files.portfolio.tables[0]![0]).toEqual(['Project', 'Company', 'Duration', 'Role']);
     expect(files.portfolio.tables[0]).toHaveLength(1 + projects.length);
     expect(files.cv.footer).toContain(resume.name);
     expect(files.cv.core).toContain('Truong Tan Khanh, CV');
+  });
+
+  it('says which paragraphs are in a table cell, and only those', () => {
+    const cells = files.portfolio.tables[0]!.flat();
+    const inside = files.portfolio.paragraphs.filter((p) => p.inTable).map((p) => p.text);
+    expect(inside).toEqual(cells);
+    // A company is a cell of the table and also a heading below it: only the cell is in the table.
+    const headings = files.portfolio.paragraphs.filter((p) => p.style === 'Heading1');
+    expect(headings.map((p) => p.text)).toContain('NewIT Vietnam');
+    expect(headings.every((p) => !p.inTable)).toBe(true);
+    expect(files.cv.paragraphs.some((p) => p.inTable)).toBe(false);
   });
 
   it('turns the characters Word escapes back into themselves', async () => {
@@ -387,7 +398,7 @@ describe('the portfolio', () => {
       ...old,
       paragraphs: [
         ...old.paragraphs,
-        { style: 'Normal', text: `Some Company  Some Title\tJan 1999 – Feb 2001` },
+        { style: 'Normal', text: `Some Company  Some Title\tJan 1999 – Feb 2001`, inTable: false },
       ],
     };
     // A project and a date lost are two problems, each its own message.
