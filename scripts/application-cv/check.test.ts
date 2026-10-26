@@ -34,9 +34,10 @@ interface Result {
 }
 interface Check {
   readDocx(buffer: Buffer, name: string): Promise<Docx>;
+  splitCombined(doc: Docx): { cv: Docx; portfolio: Docx } | undefined;
   checkParity(input: {
     resume: Resume;
-    files: { cv: Docx; portfolio?: Docx };
+    files: { cv: Docx; portfolio?: Docx; combined?: Docx };
     phone?: string;
     dryRun?: boolean;
     projects?: Project[];
@@ -49,14 +50,23 @@ interface Check {
 const checkPath = './check.mjs';
 const cvPath = './cv.mjs';
 const portfolioPath = './portfolio.mjs';
+const combinedPath = './combined.mjs';
 const headerPath = './header.mjs';
-const { readDocx, checkParity } = (await import(checkPath)) as Check;
+const { readDocx, checkParity, splitCombined } = (await import(checkPath)) as Check;
 const { PHONE_ON_REQUEST, buildCvDocument } = (await import(cvPath)) as {
   PHONE_ON_REQUEST: string;
   buildCvDocument(input: { resume: Resume; phone: string; logo: Buffer }): Document;
 };
 const { buildPortfolioDocument } = (await import(portfolioPath)) as {
   buildPortfolioDocument(input: {
+    resume: Resume;
+    phone: string;
+    logo: Buffer;
+    projects: Project[];
+  }): Document;
+};
+const { buildCombinedDocument } = (await import(combinedPath)) as {
+  buildCombinedDocument(input: {
     resume: Resume;
     phone: string;
     logo: Buffer;
@@ -83,6 +93,10 @@ async function make({ source = resume, phone = PHONE, list = projects } = {}) {
     portfolio: await read(
       buildPortfolioDocument({ resume: source, phone, logo, projects: list }),
       'Portfolio.docx',
+    ),
+    combined: await read(
+      buildCombinedDocument({ resume: source, phone, logo, projects: list }),
+      'Combined.docx',
     ),
   };
 }
@@ -247,9 +261,7 @@ describe('the roles and the title', () => {
 describe('the figures, the languages and the email', () => {
   it('fail when a figure changes, keeping its + or ~ in the message', () => {
     const result = run({ resume: changed((c) => (c.metrics[0]!.value = '8+')) });
-    expect(result.failures.find((f) => f.rule === 'figures')!.message).toContain(
-      '8+ years shipping production software',
-    );
+    expect(result.failures.find((f) => f.rule === 'figures')!.message).toContain('8+ years in production');
   });
 
   it('fail when the English level or its words change', () => {
@@ -264,6 +276,7 @@ describe('the figures, the languages and the email', () => {
     expect(result.failures.filter((f) => f.rule === 'email').map((f) => f.file)).toEqual([
       'CV.docx',
       'Portfolio.docx',
+      'Combined.docx',
     ]);
   });
 });
@@ -325,7 +338,7 @@ describe('the phone number', () => {
   it('fails in a dry run if a number is there', () => {
     const result = run({ dryRun: true, phone: undefined });
     const named = result.failures.filter((f) => f.rule === 'phone').map((f) => f.file);
-    expect([...new Set(named)]).toEqual(['CV.docx', 'Portfolio.docx']);
+    expect([...new Set(named)]).toEqual(['CV.docx', 'Portfolio.docx', 'Combined.docx']);
     expect(result.failures[0]!.message).toMatch(/dry run has a phone number/);
   });
 
@@ -369,6 +382,17 @@ describe('the portfolio', () => {
     );
   });
 
+  it('fails when the summary of a role on the site changes and the file does not', () => {
+    const result = run({
+      resume: changed(
+        (c) => (c.experience.find((r) => r.company === 'NewIT Vietnam')!.summary = 'A new summary.'),
+      ),
+    });
+    expect(result.failures.find((f) => f.rule === 'portfolio-roles')!.message).toMatch(
+      /summary of the role at "NewIT Vietnam"/,
+    );
+  });
+
   it('fails when a fact marked private-only is not in the portfolio, or is on the site too', () => {
     const missing = projects.map((p, i) => (i === 0 ? { ...p, privateOnly: ['a fact nobody wrote'] } : p));
     expect(run({ projects: missing }).failures.find((f) => f.rule === 'private-only')!.message).toMatch(
@@ -401,12 +425,15 @@ describe('the portfolio', () => {
         { style: 'Normal', text: `Some Company  Some Title\tJan 1999 – Feb 2001`, inTable: false },
       ],
     };
-    // A project and a date lost are two problems, each its own message.
-    const messages = run({ master: dated })
-      .failures.filter((f) => f.rule === 'old-appendix')
-      .map((f) => f.message);
-    expect(messages).toHaveLength(2);
-    expect(messages.join('\n')).toContain('"Jan 1999 – Feb 2001"');
+    // A project and a date lost are two problems, each its own message, and the portfolio part of the one-file edition
+    // is held to the same old appendix as the portfolio file.
+    const failures = run({ master: dated }).failures.filter((f) => f.rule === 'old-appendix');
+    for (const file of ['Portfolio.docx', 'Combined.docx']) {
+      const messages = failures.filter((f) => f.file === file).map((f) => f.message);
+      expect(messages, file).toHaveLength(2);
+      expect(messages.join('\n')).toContain('"Jan 1999 – Feb 2001"');
+    }
+    expect(failures).toHaveLength(4);
   });
 
   it('is not checked when there is no portfolio', async () => {
@@ -415,5 +442,92 @@ describe('the portfolio', () => {
     expect(result.failures).toEqual([]);
     expect(result.passed.every((p) => p.file === 'CV.docx')).toBe(true);
     expect(result.differences.join()).toMatch(/project portfolio: none/);
+  });
+});
+
+describe('the one-file edition', () => {
+  it('passes the rules of the CV and of the portfolio, each on its own part, and says what it is', () => {
+    const result = run({ files: { cv: files.cv, combined: files.combined } });
+    expect(result.failures).toEqual([]);
+    const passed = result.passed.filter((p) => p.file === 'Combined.docx').map((p) => p.rule);
+    expect(passed).toEqual(
+      expect.arrayContaining([
+        'combined-parts',
+        'phone-in-appendix',
+        'title',
+        'experience',
+        'figures',
+        'english',
+        'email',
+        'portfolio-projects',
+        'portfolio-roles',
+        'private-only',
+      ]),
+    );
+    expect(passed).not.toContain('portfolio-subtitle');
+    expect(result.differences.join('\n')).toMatch(/one file:/);
+  });
+
+  it('splits at the title of the portfolio, and gives each part the footer, the links and the properties', () => {
+    const parts = splitCombined(files.combined)!;
+    expect(parts.cv.paragraphs.some((p) => p.style === 'Part')).toBe(false);
+    expect(parts.portfolio.paragraphs[0]!.style).toBe('Part');
+    expect(parts.cv.paragraphs.length + parts.portfolio.paragraphs.length).toBe(
+      files.combined.paragraphs.length,
+    );
+    expect(parts.portfolio.footer).toBe(files.combined.footer);
+    expect(splitCombined({ ...files.cv })).toBeUndefined();
+  });
+
+  it('fails when a figure, a role or the title of the site changes and the file does not, naming the file', () => {
+    const result = run({
+      files: { cv: files.cv, combined: files.combined },
+      resume: changed((c) => (c.metrics[0]!.value = '8+')),
+    });
+    expect(result.failures.filter((f) => f.file === 'Combined.docx').map((f) => f.rule)).toContain('figures');
+  });
+
+  it('fails when the summary of a role on the site changes and the file does not', () => {
+    const result = run({
+      files: { cv: files.cv, combined: files.combined },
+      resume: changed((c) => (c.experience.find((r) => r.company === 'NewIT Vietnam')!.summary = 'New.')),
+    });
+    expect(
+      result.failures.find((f) => f.file === 'Combined.docx' && f.rule === 'portfolio-roles')!.message,
+    ).toMatch(/summary of the role at "NewIT Vietnam"/);
+  });
+
+  it('fails when there is no title that starts the portfolio', () => {
+    const plain = {
+      ...files.combined,
+      paragraphs: files.combined.paragraphs.filter((p) => p.style !== 'Part'),
+    };
+    const result = run({ files: { cv: files.cv, combined: plain } });
+    expect(result.failures.find((f) => f.rule === 'combined-parts')!.message).toMatch(
+      /no ".*" paragraph that starts the portfolio/,
+    );
+  });
+
+  it('fails when a second first-page block, or a phone number, is in the portfolio part', () => {
+    const at = files.combined.paragraphs.findIndex((p) => p.style === 'Part');
+    const doubled = {
+      ...files.combined,
+      paragraphs: [
+        ...files.combined.paragraphs.slice(0, at + 1),
+        { style: 'Contact', text: `${PHONE} · someone@example.com`, inTable: false },
+        ...files.combined.paragraphs.slice(at + 1),
+      ],
+    };
+    const result = run({ files: { cv: files.cv, combined: doubled } });
+    const messages = result.failures.filter((f) => f.file === 'Combined.docx').map((f) => f.message);
+    expect(messages.join('\n')).toMatch(/second first-page block/);
+    expect(messages.join('\n')).toMatch(/phone number is in 1 paragraph\(s\) of the portfolio part/);
+    expect(messages.join('\n')).not.toContain(NINE);
+  });
+
+  it('passes a dry run, which has the placeholder and no number anywhere', async () => {
+    const dry = await make({ phone: PHONE_ON_REQUEST });
+    const result = run({ files: { cv: dry.cv, combined: dry.combined }, phone: undefined, dryRun: true });
+    expect(result.failures).toEqual([]);
   });
 });

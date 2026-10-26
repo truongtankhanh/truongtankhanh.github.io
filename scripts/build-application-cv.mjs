@@ -1,7 +1,8 @@
 // Builds the application edition of the CV (V1-21.2, V1-21.3): the CV of the site with the phone number, and the
 // project portfolio that goes with it, as Word files.
 //   node scripts/build-application-cv.mjs             writes cv/application/Truong_Tan_Khanh_CV.docx, and
-//                                                     Truong_Tan_Khanh_Project_Portfolio.docx when the private file has projects
+//                                                     Truong_Tan_Khanh_Project_Portfolio.docx and Truong_Tan_Khanh_CV_and_Portfolio.docx
+//                                                     (the two in one file) when the private file has projects
 //   node scripts/build-application-cv.mjs --dry-run   the same with "(phone on request)" and made-up projects, in a temporary folder
 // It reads `src/content/resume.ts` and `cv/private.json` (copy `scripts/application-cv/private.example.json` there and
 // put your number in it). It is not part of `pnpm build`, `pnpm test` or the deploy workflow; only the dry run may run
@@ -23,7 +24,7 @@ if (args.some((arg) => arg !== '--dry-run')) {
 }
 
 try {
-  const { file, bytes, dryRun, portfolio } = await generate({
+  const { file, bytes, dryRun, portfolio, combined } = await generate({
     loadResume,
     dryRun: args.includes('--dry-run'),
   });
@@ -32,7 +33,8 @@ try {
     `${dryRun ? 'dry run: ' : ''}wrote ${dryRun ? path : relative(root, path)} (${Math.round(size / 1024)} KB)`;
   console.log(`${line(file, bytes)} in ${seconds} s`);
   if (portfolio) console.log(line(portfolio.file, portfolio.bytes));
-  else console.log('no portfolio: extraProjects of cv/private.json is empty');
+  if (combined) console.log(line(combined.file, combined.bytes));
+  if (!portfolio) console.log('no portfolio: extraProjects of cv/private.json is empty');
 } catch (error) {
   if (!(error instanceof PrivateDataError || error instanceof OutputError)) throw error;
   console.error(error.message);

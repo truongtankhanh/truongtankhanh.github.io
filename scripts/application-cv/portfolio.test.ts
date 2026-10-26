@@ -20,7 +20,8 @@ interface Project {
   source: string;
 }
 interface Portfolio {
-  PORTFOLIO_SUBTITLE: string;
+  PORTFOLIO_TITLE: string;
+  portfolioSubtitle(resume: Resume): string;
   PORTFOLIO_PROPERTIES: { title: string; creator: string; description: string };
   portfolioFileName(resume: Pick<Resume, 'cvPdf'>): string;
   buildPortfolioDocument(input: {
@@ -37,9 +38,13 @@ interface Header {
 // The modules are plain JavaScript; computed specifiers keep the type checker out of them.
 const portfolioPath = './portfolio.mjs';
 const headerPath = './header.mjs';
-const { PORTFOLIO_SUBTITLE, PORTFOLIO_PROPERTIES, portfolioFileName, buildPortfolioDocument } = (await import(
-  portfolioPath
-)) as Portfolio;
+const {
+  PORTFOLIO_TITLE,
+  portfolioSubtitle,
+  PORTFOLIO_PROPERTIES,
+  portfolioFileName,
+  buildPortfolioDocument,
+} = (await import(portfolioPath)) as Portfolio;
 const { LOGO_FILE } = (await import(headerPath)) as Header;
 
 // Put together here and not written out, so no number appears in this file.
@@ -98,12 +103,12 @@ describe('portfolio document', () => {
     expect(doc.media).toHaveLength(1);
   });
 
-  it('opens like the CV, with the title of the appendix in place of the role', () => {
+  it('opens like the CV, with the role of the site and the name of the file under the name', () => {
     expect(text[1]).toBe(resume.name);
-    expect(text[2]).toBe(PORTFOLIO_SUBTITLE);
-    expect(PORTFOLIO_SUBTITLE).toBe('Project Portfolio · Appendix to CV');
+    expect(text[2]).toBe(portfolioSubtitle(resume));
+    expect(text[2]).toBe(`${resume.headline} · Project Portfolio`);
+    expect(PORTFOLIO_TITLE).toBe('Project Portfolio');
     expect(styleOf(xml[2]!)).toBe('Subtitle');
-    expect(text).not.toContain(resume.headline);
     expect(text[3]).toContain(resume.email);
   });
 
@@ -113,6 +118,12 @@ describe('portfolio document', () => {
     expect(doc.footer).not.toContain(PHONE);
     expect(paragraphs(doc.footer)[0]).toMatch(new RegExp(`^${resume.name} · ${resume.headline}`));
     expect(doc.footer).toContain('NUMPAGES');
+  });
+
+  it('counts the projects on the strip under the band, with the numbers in the Figure style', () => {
+    expect(text[5]).toBe('3 projects across 3 organisations');
+    expect(styleOf(xml[5]!)).toBe('FigureStrip');
+    expect(xml[5]!.match(/<w:rStyle w:val="Figure"\/>/g)).toHaveLength(2);
   });
 
   it('lists the projects under their companies, in the order the private file gives them', () => {
@@ -129,6 +140,17 @@ describe('portfolio document', () => {
     expect(from('Surbana Jurong', 'Heading1').text[1]).toBe(
       `${surbana.title} · ${formatRange(surbana.start, surbana.end).replace('present', 'Present')}`,
     );
+    // The summary of the role, as the site words it, follows the title and is kept with the first project.
+    for (const [company, role] of [
+      ['NewIT Vietnam', newit],
+      ['Surbana Jurong', surbana],
+    ] as const) {
+      const block = from(company, 'Heading1');
+      expect(role.summary).toBeTruthy();
+      expect(block.text[2]).toBe(role.summary);
+      expect(block.xml[2]).toContain('<w:keepNext/>');
+      expect(styleOf(block.xml[3]!)).toBe('Heading2');
+    }
     expect(styleOf(from('Personal project', 'Heading1').xml[1]!)).toBe('Heading2');
   });
 });
@@ -159,12 +181,21 @@ describe('overview table', () => {
     for (const row of rows()) expect(row).toContain('<w:cantSplit');
   });
 
-  it('has a steel rule under the header and no shading, no merged cell and no other rule', () => {
-    const header = rows()[0]!;
-    expect(header.match(/<w:bottom [^>]*w:color="A9B8CD"/g)).toHaveLength(4);
+  it('has a steel rule under the header, a thinner one under each row, and no shading, no merged cell and no other rule', () => {
+    const [header, ...body] = rows();
+    expect(header!.match(/<w:bottom [^>]*w:color="A9B8CD"/g)).toHaveLength(4);
+    expect(header).toMatch(/<w:bottom [^>]*w:sz="6"/);
+    for (const row of body) {
+      expect(row.match(/<w:bottom [^>]*w:color="A9B8CD"/g)).toHaveLength(4);
+      expect(row).toMatch(/<w:bottom [^>]*w:sz="2"/);
+    }
     // The margins of a cell are `<w:top w:type=...>`; a rule is one that has a `w:val` (its style).
-    for (const row of rows().slice(1)) expect(row).not.toMatch(/<w:(?:top|bottom|left|right) [^>]*w:val=/);
+    for (const row of rows()) expect(row).not.toMatch(/<w:(?:top|left|right) [^>]*w:val=/);
     expect(table()).not.toMatch(/<w:shd|gridSpan|vMerge|hMerge/);
+  });
+
+  it('sets the cells in the Table Text style, so a row is one line', () => {
+    for (const row of rows().slice(1)) expect(row.match(/<w:pStyle w:val="TableText"\/>/g)).toHaveLength(4);
   });
 
   it('sits between the heading of the overview and the first company', () => {
@@ -186,21 +217,27 @@ describe('project blocks', () => {
     expect(from('Personal project', 'Heading1').text[1]).toBe(`${personal.name}${personal.duration}`);
   });
 
-  it('write Overview, Role, Team and Tech stack as Label: text lines with the label in bold, and what is missing is left out', () => {
+  it('write the overview as it is, then Role, Team and Stack in a label column, and what is missing is left out', () => {
     const [full] = example.extraProjects as [Project];
     const block = from('NewIT Vietnam', 'Heading1');
-    const at = block.text.findIndex((t) => t.startsWith('Overview:'));
+    const at = block.text.findIndex((t) => t === full.overview);
+    expect(at).toBeGreaterThan(0);
     expect(block.text.slice(at, at + 4)).toEqual([
-      `Overview: ${full.overview}`,
-      `Role: ${full.role}`,
-      `Team: ${full.team}`,
-      `Tech stack: ${full.stack}`,
+      full.overview,
+      `Role${full.role}`,
+      `Team${full.team}`,
+      `Stack${full.stack}`,
     ]);
-    for (const line of block.xml.slice(at, at + 4)) expect(strongRuns(line)).toBe(1);
-    // The bare project has a role and nothing else: one line, no label for what it lacks.
+    // The tab between a label and its text is not in the text this reads; the label is bold, in a Field row.
+    for (const line of block.xml.slice(at + 1, at + 4)) {
+      expect(strongRuns(line)).toBe(1);
+      expect(styleOf(line)).toBe('Field');
+      expect(line).toContain('<w:tab/>');
+    }
+    // The bare project has a role and nothing else: one row, no label for what it lacks.
     const bareBlock = from('Surbana Jurong', 'Heading1');
-    expect(bareBlock.text.filter((t) => /^(Overview|Team|Tech stack):/.test(t))).toEqual([]);
-    expect(bareBlock.text).toContain(`Role: ${bare.role}`);
+    expect(bareBlock.xml.filter((p) => styleOf(p) === 'Field')).toHaveLength(1);
+    expect(bareBlock.text).toContain(`Role${bare.role}`);
     expect(bareBlock.text).not.toContain('Responsibilities');
   });
 
@@ -219,13 +256,18 @@ describe('project blocks', () => {
     expect(doc.body).not.toContain('**');
   });
 
-  it('keep a block on one page when it fits: each paragraph with the next, the last one free', () => {
+  it('keep the head of a block together on a page and let the bullets run on: only the head is kept with the next', () => {
     const keeps = (p: string) =>
       p.includes('<w:keepNext/>') || ['Heading1', 'Heading2', 'RoleTitle'].includes(styleOf(p) ?? '');
-    const block = from('NewIT Vietnam', 'Heading1').xml.slice(2); // from the first Heading 2
+    const block = from('NewIT Vietnam', 'Heading1').xml.slice(3); // from the first Heading 2
     expect(styleOf(block[0]!)).toBe('Heading2');
-    block.slice(0, -1).forEach((p, i) => expect(keeps(p), `paragraph ${i}`).toBe(true));
-    expect(keeps(block.at(-1)!)).toBe(false);
+    const bullets = block.findIndex((p) => styleOf(p) === 'ListBullet');
+    expect(bullets).toBeGreaterThan(1);
+    block.slice(0, bullets).forEach((p, i) => expect(keeps(p), `head ${i}`).toBe(true));
+    block.slice(bullets).forEach((p, i) => expect(keeps(p), `bullet ${i}`).toBe(false));
+    // A project without bullets ends its head free, so the next one can start a page.
+    const bareBlock = from('Surbana Jurong', 'Heading1').xml.slice(3);
+    expect(keeps(bareBlock.at(-1)!)).toBe(false);
   });
 });
 

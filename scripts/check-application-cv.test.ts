@@ -15,6 +15,7 @@ describe('check-application-cv.mjs', () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toMatch(/^✔ Truong_Tan_Khanh_CV\.docx: \d+ rule\(s\) passed$/m);
     expect(result.stdout).toMatch(/^✔ Truong_Tan_Khanh_Project_Portfolio\.docx: \d+ rule\(s\) passed$/m);
+    expect(result.stdout).toMatch(/^✔ Truong_Tan_Khanh_CV_and_Portfolio\.docx: \d+ rule\(s\) passed$/m);
     expect(result.stdout).toContain('Differences from the public edition:');
     expect(result.stdout).toContain('phone number: a dry run');
     expect(result.stdout).toContain('private-only: "a made-up client"');

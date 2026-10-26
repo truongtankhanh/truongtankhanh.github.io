@@ -35,7 +35,12 @@ describe('build-application-cv.mjs', () => {
     )?.[1];
     expect(portfolio, result.stdout).toBeDefined();
     expect(dirname(portfolio!)).toBe(dirname(file!));
-    expect(unpackBuffer(readFileSync(portfolio!)).body).toContain('Project Portfolio · Appendix to CV');
+    expect(unpackBuffer(readFileSync(portfolio!)).body).toContain('Project Portfolio');
+    const combined = /^dry run: wrote (\S+Truong_Tan_Khanh_CV_and_Portfolio\.docx) \(\d+ KB\)$/m.exec(
+      result.stdout,
+    )?.[1];
+    expect(combined, result.stdout).toBeDefined();
+    expect(dirname(combined!)).toBe(dirname(file!));
   }, 30_000);
 
   it('refuses an argument it does not know, without repeating it', () => {

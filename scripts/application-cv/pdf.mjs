@@ -3,11 +3,14 @@
 // rule and says what is wrong, and never repeats the phone number.
 import { looksLikePhone } from './private.mjs';
 
-/** The limits of the task, in bytes: 300 KB for the CV and 400 KB for the portfolio. */
-export const MAX_BYTES = { cv: 300 * 1024, portfolio: 400 * 1024 };
+/** The limits of the task, in bytes: 300 KB for the CV, 400 KB for the portfolio and 500 KB for the two in one file. */
+export const MAX_BYTES = { cv: 300 * 1024, portfolio: 400 * 1024, combined: 500 * 1024 };
 
-/** How long each file is meant to be (V1-20.3: two or three pages; V1-21.3: three to four), as the first and the last. */
-export const PAGE_RANGE = { cv: [2, 3], portfolio: [3, 4] };
+/** How long each file is meant to be (V1-20.3: two or three pages; V1-21.3: three to four; V1-23.1: four to six), as the first and the last. */
+export const PAGE_RANGE = { cv: [2, 3], portfolio: [3, 4], combined: [4, 6] };
+
+/** What each kind of file is called in a message. */
+const KIND_NAME = { cv: 'CV', portfolio: 'portfolio', combined: 'one-file edition' };
 
 /** A4 in points, portrait. */
 const A4 = { width: 595.276, height: 841.89 };
@@ -58,7 +61,10 @@ const anchor = (text) =>
 /**
  * The paragraphs of the DOCX that are not found in the text of the PDF in the order they were written in. A paragraph is
  * looked for after the one before it; a table cell is not looked for, because a PDF sets the cells in an order of its own,
- * and neither is the contact line.
+ * and neither is the contact line. A Heading 2 is looked for by what comes before its tab, the company or the project:
+ * its date is at the right edge, and when a project has no line of text across the page under it (a project with no
+ * overview, only a label column) poppler sets the date after the rows instead of beside the title. The date stays in
+ * the PDF text, a few lines on, within the same project.
  */
 export function outOfOrder(paragraphs, pdfText) {
   const text = norm(pdfText);
@@ -68,7 +74,7 @@ export function outOfOrder(paragraphs, pdfText) {
     // A table cell is left out (see above); so is the contact line, which holds the phone number: the rule of the phone
     // number looks at it, and what is said here must never show it.
     if (paragraph.inTable || paragraph.style === 'Contact' || looksLikePhone(paragraph.text)) continue;
-    const start = anchor(paragraph.text);
+    const start = anchor(paragraph.style === 'Heading2' ? paragraph.text.split('\t')[0] : paragraph.text);
     if (start.length < 3) continue;
     const found = text.indexOf(start, at);
     if (found < 0) lost.push(start);
@@ -81,7 +87,7 @@ export function outOfOrder(paragraphs, pdfText) {
  * Runs the rules on one PDF.
  *
  * @param {object} input
- * @param {'cv' | 'portfolio'} input.kind
+ * @param {'cv' | 'portfolio' | 'combined'} input.kind
  * @param {number} input.bytes The size of the file.
  * @param {string} input.pdfinfo, input.pdffonts, input.text What `pdfinfo -f 1 -l 99`, `pdffonts` and `pdftotext` print.
  * @param {{ paragraphs: { style: string, text: string, inTable: boolean }[] }} input.docx The Word file the PDF was made from (`readDocx`).
@@ -100,10 +106,7 @@ export function checkPdf({ kind, bytes, pdfinfo, pdffonts, text, docx, phone }) 
   const [fewest, most] = PAGE_RANGE[kind];
   if (pages === undefined) fail('pages', 'pdfinfo did not say how many pages there are');
   else if (pages < fewest || pages > most) {
-    fail(
-      'pages',
-      `${pages} page(s); a ${kind === 'cv' ? 'CV' : 'portfolio'} should have ${fewest} to ${most}`,
-    );
+    fail('pages', `${pages} page(s); a ${KIND_NAME[kind]} should have ${fewest} to ${most}`);
   }
 
   const sizes = parsePageSizes(pdfinfo);

@@ -21,6 +21,7 @@ interface Result {
   bytes: number;
   dryRun: boolean;
   portfolio: { file: string; bytes: number } | null;
+  combined: { file: string; bytes: number } | null;
 }
 interface Generate {
   OUTPUT_FOLDER: string;
@@ -47,6 +48,7 @@ const NINE = [1, 2, 3, 4, 5, 6, 7, 8, 9].join('');
 const PHONE = ['0', NINE.slice(0, 2), NINE.slice(2, 5), NINE.slice(5)].join(' ');
 const NAME = 'Truong_Tan_Khanh_CV.docx';
 const PORTFOLIO = 'Truong_Tan_Khanh_Project_Portfolio.docx';
+const COMBINED = 'Truong_Tan_Khanh_CV_and_Portfolio.docx';
 /** A project of the private file, with the least a project may have. */
 const project = {
   name: 'Project of the private test file',
@@ -157,17 +159,30 @@ describe('generate', () => {
       const result = await run();
       expect(result.portfolio?.file).toBe(join(realpathSync(cv), OUTPUT_FOLDER, PORTFOLIO));
       expect(result.portfolio?.bytes).toBe(readFileSync(result.portfolio!.file).length);
-      expect(readdirSync(join(cv, OUTPUT_FOLDER)).sort()).toEqual([NAME, PORTFOLIO].sort());
+      expect(readdirSync(join(cv, OUTPUT_FOLDER)).sort()).toEqual([NAME, PORTFOLIO, COMBINED].sort());
       const doc = parts(result.portfolio!.file);
       expect(doc.body.split(PHONE)).toHaveLength(2);
       expect(doc.body).toContain(project.name);
-      expect(doc.body).toContain('Project Portfolio · Appendix to CV');
+      expect(doc.body).toContain('Project Portfolio');
+    });
+
+    it('writes the CV and the portfolio in one file too, with the phone number once and the project in it', async () => {
+      putPrivate({ extraProjects: [project] });
+      const result = await run();
+      expect(result.combined?.file).toBe(join(realpathSync(cv), OUTPUT_FOLDER, COMBINED));
+      expect(result.combined?.bytes).toBe(readFileSync(result.combined!.file).length);
+      const doc = parts(result.combined!.file);
+      expect(doc.body.split(PHONE)).toHaveLength(2);
+      expect(doc.body).toContain(project.name);
+      expect(doc.body).toContain(resume.headline);
+      expect(doc.body).toContain('Project Portfolio');
     });
 
     it('writes no portfolio when there is no project, and says so', async () => {
       putPrivate();
       const result = await run();
       expect(result.portfolio).toBeNull();
+      expect(result.combined).toBeNull();
       expect(readdirSync(join(cv, OUTPUT_FOLDER))).toEqual([NAME]);
     });
 
@@ -182,6 +197,14 @@ describe('generate', () => {
       mkdirSync(join(cv, OUTPUT_FOLDER, PORTFOLIO), { recursive: true });
       await expect(run()).rejects.toThrow(/not a plain file/);
       expect(existsSync(join(cv, OUTPUT_FOLDER, NAME))).toBe(false);
+    });
+
+    it('writes none of the files when the place of the one-file edition is taken by something that is not a file', async () => {
+      putPrivate({ extraProjects: [project] });
+      mkdirSync(join(cv, OUTPUT_FOLDER, COMBINED), { recursive: true });
+      await expect(run()).rejects.toThrow(/not a plain file/);
+      expect(existsSync(join(cv, OUTPUT_FOLDER, NAME))).toBe(false);
+      expect(existsSync(join(cv, OUTPUT_FOLDER, PORTFOLIO))).toBe(false);
     });
 
     it('changes the portfolio when a project changes', async () => {
@@ -216,6 +239,8 @@ describe('generate', () => {
       expect(doc.body).toContain('Example project');
       expect(doc.body).not.toContain(project.name);
       expect(doc.body).toContain('(phone on request)');
+      expect(dirname(result.combined!.file)).toBe(dirname(result.file));
+      expect(parts(result.combined!.file).body).toContain('Example project');
     });
 
     it('ignores a private file that is there', async () => {

@@ -44,7 +44,13 @@ pnpm preview    # serve dist/
 The site and its PDF never carry a phone number. The version I send to an employer who asks for it is a Word file
 built from the same `resume.ts` by [`scripts/build-application-cv.mjs`](scripts/build-application-cv.mjs), with the
 number added, and a second file next to it, the project portfolio (an appendix with a table of projects and a block
-for each). It is not part of `pnpm build`, `pnpm test` or the deploy, and the number is never committed.
+for each). A third file has the two in one, the CV and then the portfolio on a new page, for the job sites that take
+one file only. It is not part of `pnpm build`, `pnpm test` or the deploy, and the number is never committed.
+
+The first page opens with a navy band (location, name, role and two contact lines) and, under it, one line of career
+figures. The CV is two pages and is a little shorter than the site on purpose: the figures are in short words, and the
+"In practice" evidence of the principles, which repeats the experience, is left out. The title, the roles, the dates and
+the English level are still those of the site, which `pnpm check:application-cv` proves.
 
 First time on a machine:
 
@@ -84,11 +90,11 @@ It also lists what the application edition has that the site does not, including
 The PDFs are made from the Word files, with LibreOffice (`brew install --cask libreoffice`) and the poppler tools
 (`brew install poppler`) that read them back; without them, Word's "Save as PDF" does the job. The script converts one
 file at a time, in a temporary folder with a LibreOffice profile of its own, and copies the PDFs to `cv/application/`
-only if each one passes: under 300 KB (the CV) or 400 KB (the portfolio), the right number of pages (2 to 3 and 3 to 4),
+only if each one passes: under 300 KB (the CV) or 400 KB (the portfolio), the right number of pages (2 to 3 for the CV, 3 to 4 for the portfolio, 4 to 6 for the two in one),
 A4, every font embedded, text that can be selected and reads in the order of the Word file, and the phone number once.
 If one fails, `cv/` is left as it was and the folder with the PDFs is named so you can look at them.
 
-The files I send are the four directly in `cv/`; the generator and the PDF script write in `cv/application/`. When the
+The files I send are the six directly in `cv/` (the CV, the portfolio and the two in one, each as Word and PDF); the generator and the PDF script write in `cv/application/`. When the
 files there have passed the checks and I am happy with them, the old ones go to an archive folder and the new ones take
 their place under the same names:
 

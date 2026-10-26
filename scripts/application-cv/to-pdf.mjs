@@ -1,4 +1,4 @@
-// Makes the PDF of the application CV and of its portfolio with LibreOffice (V1-22.1), and checks them:
+// Makes the PDF of the application CV, of its portfolio and of the two in one file with LibreOffice (V1-22.1), and checks them:
 //   node scripts/application-cv/to-pdf.mjs      (or: pnpm pdf:application-cv)
 // It needs `soffice` (LibreOffice) and the poppler tools `pdfinfo`, `pdffonts` and `pdftotext`; it says which are missing.
 // Word's "Save as PDF" does the same job without this script, and the checks of `pdf.mjs` can be read as a list.
@@ -15,6 +15,7 @@ import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { readDocx } from './check.mjs';
+import { combinedFileName } from './combined.mjs';
 import { fileName } from './cv.mjs';
 import { OUTPUT_FOLDER } from './generate.mjs';
 import { loadResume } from './load-resume.mjs';
@@ -85,6 +86,11 @@ try {
             kind: 'portfolio',
             docx: portfolioFileName(resume),
             pdf: portfolioFileName(resume).replace(/\.docx$/, '.pdf'),
+          },
+          {
+            kind: 'combined',
+            docx: combinedFileName(resume),
+            pdf: combinedFileName(resume).replace(/\.docx$/, '.pdf'),
           },
         ]
       : []),

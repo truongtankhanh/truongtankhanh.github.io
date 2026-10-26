@@ -1,11 +1,11 @@
 // The project portfolio, the appendix to the application CV (V1-21.3), as a `docx` document: the same page, styles,
-// first-page block and footer as the CV, with the line under the name changed to "Project Portfolio · Appendix to CV",
-// then an overview table and one block per project.
+// first-page block and footer as the CV, with the line under the name changed to the role and "Project Portfolio",
+// a strip that counts the projects, then an overview table and one block per project.
 //
 // The projects are the `extraProjects` of `cv/private.json`, moved there once from the private master with the place
 // they were taken from; the company, title and dates of each group come from `resume.experience`, so they cannot drift
 // from the site. The overview is the one table of the Word edition, and it is a plain one: no shading, no merged cell,
-// a steel rule under the header row, which repeats on every page.
+// a steel rule under the header row, which repeats on every page, and a thinner one under each row.
 import {
   Document,
   Paragraph,
@@ -19,13 +19,16 @@ import {
   Tab,
   WidthType,
 } from 'docx';
-import { bullet, heading, keepTogether, rich, strong } from './body.mjs';
+import { bullet, figure, heading, rich, row, strong } from './body.mjs';
 import { buildFirstBlock, buildFooter } from './header.mjs';
 import { COLORS, createStyles, PAGE, STYLE, TEXT_WIDTH } from './styles.mjs';
 import { formatRange } from './text.mjs';
 
-/** The line under the name, in place of the role. */
-export const PORTFOLIO_SUBTITLE = 'Project Portfolio · Appendix to CV';
+/** What the portfolio is called: the line under the name, and the title of its part in the one-file edition. */
+export const PORTFOLIO_TITLE = 'Project Portfolio';
+
+/** The line under the name: the role of the site, then what this file is ("Full-stack Engineer · Project Portfolio"). */
+export const portfolioSubtitle = (resume) => `${resume.headline} · ${PORTFOLIO_TITLE}`;
 
 export const PORTFOLIO_PROPERTIES = {
   title: 'Truong Tan Khanh, Project Portfolio',
@@ -42,16 +45,21 @@ export function portfolioFileName(resume) {
   return name;
 }
 
-/** Overview table: the label of each column and its width in twips, which add up to the width of the text. */
+/**
+ * Overview table: the label of each column and its width in twips, which add up to the width of the text. The widths
+ * are set so the longest value of each column (such as "Long-term engagement") stays on one row at 9 pt.
+ */
 const COLUMNS = [
   ['Project', 3300],
-  ['Company', 2000],
-  ['Duration', 1900],
-  ['Role', TEXT_WIDTH - 3300 - 2000 - 1900],
+  ['Company', 1700],
+  ['Duration', 2100],
+  ['Role', TEXT_WIDTH - 3300 - 1700 - 2100],
 ];
 
 /** Space inside a cell: none at the left, so the first column lines up with the text above and below the table. */
-const MARGINS = { top: 40, bottom: 40, left: 0, right: 120 };
+const MARGINS = { top: 50, bottom: 50, left: 0, right: 100 };
+
+const RULE = { style: BorderStyle.SINGLE, color: COLORS.steel };
 
 function overviewTable(projects) {
   const header = new TableRow({
@@ -62,7 +70,7 @@ function overviewTable(projects) {
         new TableCell({
           width: { size: width, type: WidthType.DXA },
           margins: MARGINS,
-          borders: { bottom: { style: BorderStyle.SINGLE, size: 6, color: COLORS.steel } },
+          borders: { bottom: { ...RULE, size: 6 } },
           children: [new Paragraph({ style: STYLE.caption, keepNext: true, children: [strong(label)] })],
         }),
     ),
@@ -76,7 +84,8 @@ function overviewTable(projects) {
             new TableCell({
               width: { size: COLUMNS[i][1], type: WidthType.DXA },
               margins: MARGINS,
-              children: [new Paragraph({ children: [new TextRun(text)] })],
+              borders: { bottom: { ...RULE, size: 2 } },
+              children: [new Paragraph({ style: STYLE.cell, children: [new TextRun(text)] })],
             }),
         ),
       }),
@@ -90,38 +99,52 @@ function overviewTable(projects) {
   });
 }
 
-/** `Label: text`, the label in bold. */
-const labelled = (label, text) => ({ children: [strong(`${label}:`), ...rich(` ${text}`)] });
+const tab = () => new TextRun({ children: [new Tab()] });
 
-/** A project: its title with the duration at the right, the labelled lines, then the responsibilities. */
+/**
+ * A project: its title with the duration at the right, what it is, its role, team and stack in a label column, then the
+ * responsibilities. The head stays together on a page and the bullets may run on to the next, so a page is not left
+ * half empty for the sake of one block.
+ */
 function projectBlock(project) {
-  return keepTogether([
+  const head = [
     {
       style: STYLE.heading2,
       children: [
         new TextRun(project.title ?? project.name),
-        new TextRun({ children: [new Tab()] }),
+        tab(),
         new TextRun({ text: project.duration, style: STYLE.dateRun }),
       ],
     },
+    ...(project.overview ? [{ children: rich(project.overview) }] : []),
     ...[
-      ['Overview', project.overview],
       ['Role', project.role],
       ['Team', project.team],
-      ['Tech stack', project.stack],
+      ['Stack', project.stack],
     ]
       .filter(([, text]) => text)
-      .map(([label, text]) => labelled(label, text)),
-    ...(project.responsibilities
-      ? [{ children: [strong('Responsibilities')] }, ...project.responsibilities.map(bullet)]
-      : []),
-  ]);
+      .map(([label, text]) => row(STYLE.field, label, rich(text))),
+    ...(project.responsibilities ? [{ children: [strong('Responsibilities')] }] : []),
+  ];
+  const bullets = (project.responsibilities ?? []).map(bullet);
+  return [
+    ...head.map(
+      (options, i) =>
+        new Paragraph({
+          ...options,
+          keepLines: true,
+          ...((i < head.length - 1 || bullets.length > 0) && { keepNext: true }),
+        }),
+    ),
+    ...bullets.map((options) => new Paragraph({ ...options, keepLines: true })),
+  ];
 }
 
 /**
  * The projects under the company they belong to, in the order of the private file. A company that is on the site
- * (`resume.experience`) is headed with the title and the dates of that role; one that is not, such as a personal project,
- * is headed with its name alone.
+ * (`resume.experience`) is headed with the title and the dates of that role and, when the site has one, the summary of
+ * the role (what the site says about leading the team, for example), so the portfolio says as much about the role as
+ * the site; one that is not, such as a personal project, is headed with its name alone.
  */
 function groups(resume, projects) {
   const companies = [...new Set(projects.map((project) => project.company))];
@@ -135,6 +158,9 @@ function groups(resume, projects) {
               style: STYLE.roleTitle,
               children: [new TextRun(`${role.title} · ${formatRange(role.start, role.end)}`)],
             }),
+            ...(role.summary
+              ? [new Paragraph({ keepNext: true, keepLines: true, children: [new TextRun(role.summary)] })]
+              : []),
           ]
         : []),
       ...projects.filter((project) => project.company === company).flatMap(projectBlock),
@@ -142,9 +168,28 @@ function groups(resume, projects) {
   });
 }
 
-/** The overview table and the project blocks. */
+/** The strip under the band: how many projects, and in how many organisations. */
+function countStrip(projects) {
+  const organisations = new Set(projects.map((project) => project.company)).size;
+  return new Paragraph({
+    style: STYLE.figureStrip,
+    children: [
+      figure(String(projects.length)),
+      new TextRun(projects.length === 1 ? ' project in ' : ' projects across '),
+      figure(String(organisations)),
+      new TextRun(organisations === 1 ? ' organisation' : ' organisations'),
+    ],
+  });
+}
+
+/** The count, the overview table and the project blocks. */
 export function buildPortfolioBody({ resume, projects }) {
-  return [heading('Project overview'), overviewTable(projects), ...groups(resume, projects)];
+  return [
+    countStrip(projects),
+    heading('Project overview'),
+    overviewTable(projects),
+    ...groups(resume, projects),
+  ];
 }
 
 /**
@@ -161,7 +206,7 @@ export function buildPortfolioDocument({ resume, phone, logo, projects, font }) 
         properties: { page: PAGE },
         footers: { default: buildFooter({ resume }) },
         children: [
-          ...buildFirstBlock({ resume, phone, logo, subtitle: PORTFOLIO_SUBTITLE }),
+          ...buildFirstBlock({ resume, phone, logo, subtitle: portfolioSubtitle(resume) }),
           ...buildPortfolioBody({ resume, projects }),
         ],
       },

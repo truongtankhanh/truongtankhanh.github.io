@@ -51,10 +51,11 @@ describe('buildCvDocument', () => {
   it('puts the first-page block, the body and a footer in one section, with the logo as the only picture', async () => {
     const doc = await unpack(buildCvDocument({ resume, phone: PHONE, logo }));
     const text = paragraphs(doc.body);
+    const english = resume.languages.at(-1)!;
     expect(text[1]).toBe(resume.name);
     expect(text[2]).toBe(resume.headline);
     expect(text).toContain('Summary');
-    expect(text.at(-1)).toBe(resume.languages.at(-1)!.detail);
+    expect(text.at(-1)).toBe(`${english.name} · ${english.level}. ${english.detail}`);
     expect(doc.footer).toContain('NUMPAGES');
     expect(doc.media).toHaveLength(1);
     expect(doc.body.match(/<w:sectPr>/g)).toHaveLength(1);

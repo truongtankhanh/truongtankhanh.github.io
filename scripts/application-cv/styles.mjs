@@ -15,6 +15,12 @@ export const COLORS = {
   steel: 'A9B8CD',
   /** The short mark before the location line only, never text. */
   gold: 'B8862B',
+  /** Text on the navy band of the first page: the name, and the links of the contact line. */
+  white: 'FFFFFF',
+  /** Text on the navy band: the location, the role and the contact line. */
+  mist: 'C5D3EA',
+  /** The fill of the strip of career figures under the band, never text. */
+  tint: 'EEF3FA',
 };
 
 /**
@@ -26,34 +32,88 @@ export const FONT = { preferred: 'Be Vietnam Pro', fallback: 'Calibri' };
 const mm = (millimetres) => Math.round((millimetres * 1440) / 25.4);
 
 /**
- * A4, margins 15 mm at the sides and 14 mm at the top and bottom; the header and the footer start 11 mm from the edge,
- * so nothing sits closer than that (as in V1-13.1).
+ * A4, margins 15 mm at the sides, 12 mm at the top and 15 mm at the bottom; the footer starts 8 mm from the edge, so
+ * the last line of text keeps clear of its rule. The text is 10 pt, so the margins are what keeps the CV to two pages.
  */
 export const PAGE = {
   size: { width: mm(210), height: mm(297) },
-  margin: { top: mm(14), bottom: mm(14), left: mm(15), right: mm(15), header: mm(11), footer: mm(11) },
+  margin: { top: mm(12), bottom: mm(15), left: mm(15), right: mm(15), header: mm(10), footer: mm(8) },
 };
 
 /** Width of the text column; the right tab stop of the Title and Heading 2 styles sits on its edge. */
 export const TEXT_WIDTH = PAGE.size.width - PAGE.margin.left - PAGE.margin.right;
 
-/** Font sizes in half-points: 26 pt, 12 pt, 11 pt, 10 pt, 9.5 pt, 8.5 pt and, in the footer, 8 pt. */
-export const SIZE = { name: 52, role: 24, title: 22, section: 20, body: 19, label: 17, footer: 16 };
+/**
+ * Font sizes in half-points: 26 pt (the name), 18 pt (the title of the portfolio part), 12 pt (the role), 11.5 pt (a
+ * role or a project title), 10 pt (the text and the section titles), 9.5 pt (the figures), 9 pt (small text) and, in the
+ * footer, 8.5 pt.
+ */
+export const SIZE = {
+  name: 52,
+  part: 36,
+  role: 24,
+  title: 23,
+  section: 20,
+  body: 20,
+  strip: 19,
+  label: 18,
+  footer: 17,
+};
 
 const SPACING = {
-  /** 1.15 lines (240 is one line). */
-  line: 276,
-  /** 3 pt after a paragraph. */
-  after: 60,
+  /** 1.12 lines (240 is one line). */
+  line: 269,
+  /** 2.5 pt after a paragraph. */
+  after: 50,
   /** 10 pt before a section title. */
   beforeSection: 200,
-  /** 6 pt before a role or a project title, so one block is set off from the one above it. */
-  beforeTitle: 120,
+  /** 8 pt before a role or a project title, so one block is set off from the one above it. */
+  beforeTitle: 160,
 };
 
 /** 0.12 em of 10 pt, in twips, for the section titles. */
 const TRACKING = 24;
 
+/**
+ * How far the navy band and the strip of figures reach beyond the text column on each side, in points. A paragraph's
+ * shading runs out to its border, so the border's distance from the text is what makes the band wider than the text; at
+ * 14 pt it still sits 28 pt inside the edge of the page.
+ */
+const BAND_REACH = 14;
+
+/** The first-page block: one navy box round the location, name, role and contact lines (they share this, so Word draws one box). */
+const band = {
+  shading: { type: 'clear', fill: COLORS.ink, color: COLORS.ink },
+  border: Object.fromEntries(
+    [
+      ['top', 12],
+      ['bottom', 12],
+      ['left', BAND_REACH],
+      ['right', BAND_REACH],
+    ].map(([side, space]) => [side, { style: 'single', size: 4, space, color: COLORS.ink }]),
+  ),
+};
+
+/** The strip of figures under the band: the same width, in the pale tint. */
+const strip = {
+  shading: { type: 'clear', fill: COLORS.tint, color: COLORS.tint },
+  border: Object.fromEntries(
+    [
+      ['top', 6],
+      ['bottom', 6],
+      ['left', BAND_REACH],
+      ['right', BAND_REACH],
+    ].map(([side, space]) => [side, { style: 'single', size: 4, space, color: COLORS.tint }]),
+  ),
+};
+
+/** The label column of a `Label<tab>text` row: the text wraps under itself, not under the label. */
+export const ROW_INDENT = mm(32);
+export const FIELD_INDENT = mm(22);
+const hanging = (left) => ({
+  tabStops: [{ type: 'left', position: left }],
+  indent: { left, hanging: left },
+});
 /** The bullet list of V1-20.1: a real numbering definition, so the bullet is never a typed character. */
 export const BULLETS = 'cv-bullets';
 
@@ -68,10 +128,19 @@ export const STYLE = {
   date: 'Date',
   caption: 'Caption',
   contact: 'Contact',
+  location: 'Location',
+  figureStrip: 'FigureStrip',
+  part: 'Part',
+  row: 'Row',
+  field: 'Field',
+  cell: 'TableText',
+  repo: 'Repo',
+  repoLink: 'RepoLink',
   roleTitle: 'RoleTitle',
   footer: 'Footer',
   strong: 'Strong',
   hyperlink: 'Hyperlink',
+  bandLink: 'BandLink',
   figure: 'Figure',
   mark: 'Mark',
   dateRun: 'DateRun',
@@ -113,24 +182,24 @@ export function createStyles({ font = FONT.fallback } = {}) {
         paragraph: { spacing: { line: SPACING.line, lineRule: 'auto', before: 0, after: SPACING.after } },
       },
       {
-        // The name. The right tab stop is where the logo sits (V1-20.2).
+        // The name, white on the band. The right tab stop is where the logo sits (V1-20.2).
         id: STYLE.title,
         name: 'Title',
         basedOn: STYLE.normal,
         next: STYLE.subtitle,
         quickFormat: true,
-        run: { ...base, size: SIZE.name, bold: true },
-        paragraph: { keepNext: true, spacing: { before: 0, after: 0 }, tabStops: rightTab },
+        run: { ...base, size: SIZE.name, bold: true, color: COLORS.white },
+        paragraph: { ...band, keepNext: true, spacing: { before: 0, after: 0 }, tabStops: rightTab },
       },
       {
-        // The role, "Full-stack Engineer". Bold is the nearest Word has to the site's semibold.
+        // The role, "Full-stack Engineer", on the band. Bold is the nearest Word has to the site's semibold.
         id: STYLE.subtitle,
         name: 'Subtitle',
         basedOn: STYLE.normal,
         next: STYLE.normal,
         quickFormat: true,
-        run: { ...base, size: SIZE.role, bold: true, color: COLORS.accent },
-        paragraph: { keepNext: true, spacing: { before: 0, after: SPACING.after } },
+        run: { ...base, size: SIZE.role, bold: true, color: COLORS.mist },
+        paragraph: { ...band, keepNext: true, spacing: { before: 0, after: SPACING.after } },
       },
       {
         // A section title: capitals (shown, not typed, so a parser still reads the words), tracked, with a steel rule.
@@ -197,17 +266,93 @@ export function createStyles({ font = FONT.fallback } = {}) {
         paragraph: { keepLines: true },
       },
       {
-        // The contact line under the name (V1-20.2). Its bottom border is the solid 1.5 pt accent rule that closes the
-        // first-page block, in place of the silver-to-blue one of frame 05.
+        // The two contact lines under the name (V1-20.2), the last paragraphs of the band: it ends under them.
         id: STYLE.contact,
         name: 'Contact',
         basedOn: STYLE.normal,
         next: STYLE.normal,
+        run: { ...base, color: COLORS.mist },
+        paragraph: { ...band, keepLines: true, spacing: { before: 0, after: 0 } },
+      },
+      {
+        // The location line above the name, on the band, with the gold mark before it.
+        id: STYLE.location,
+        name: 'Location',
+        basedOn: STYLE.normal,
+        next: STYLE.title,
+        run: { ...base, size: SIZE.label, color: COLORS.mist },
+        paragraph: { ...band, keepNext: true, keepLines: true, spacing: { before: 0, after: SPACING.after } },
+      },
+      {
+        // The title of the portfolio in the one-file edition: it starts a new page, so the CV and its appendix read as
+        // two parts of one document, and it has the accent rule the first block used to have.
+        id: STYLE.part,
+        name: 'Part Title',
+        basedOn: STYLE.normal,
+        next: STYLE.figureStrip,
+        quickFormat: true,
+        run: { ...base, size: SIZE.part, bold: true },
         paragraph: {
+          pageBreakBefore: true,
+          keepNext: true,
           keepLines: true,
-          spacing: { before: SPACING.after, after: 0 },
-          border: { bottom: { style: 'single', size: 12, space: 8, color: COLORS.accent } },
+          outlineLevel: 0,
+          spacing: { before: 0, after: 160 },
+          border: { bottom: { style: 'single', size: 12, space: 6, color: COLORS.accent } },
         },
+      },
+      {
+        // The career figures as one centred line on a pale strip, directly under the band.
+        id: STYLE.figureStrip,
+        name: 'Figure Strip',
+        basedOn: STYLE.normal,
+        next: STYLE.normal,
+        run: { ...base, size: SIZE.strip },
+        paragraph: { ...strip, alignment: 'center', keepLines: true, spacing: { before: 0, after: 0 } },
+      },
+      {
+        // A row of the Technical Skills and of the closing section: a bold label, then the text in its own column.
+        id: STYLE.row,
+        name: 'Row',
+        basedOn: STYLE.normal,
+        quickFormat: true,
+        paragraph: { ...hanging(ROW_INDENT), keepLines: true },
+      },
+      {
+        // A public repository: its name and figure, kept tight to the address under it.
+        id: STYLE.repo,
+        name: 'Repo',
+        basedOn: STYLE.normal,
+        next: STYLE.repoLink,
+        quickFormat: true,
+        paragraph: { keepNext: true, keepLines: true, spacing: { before: 0, after: 0 } },
+      },
+      {
+        // The address of a public repository, with more space after it than between the two lines of one repository.
+        id: STYLE.repoLink,
+        name: 'Repo Link',
+        basedOn: STYLE.normal,
+        next: STYLE.repo,
+        quickFormat: true,
+        run: { ...base, size: SIZE.label, color: COLORS.muted },
+        paragraph: { keepLines: true, spacing: { before: 0, after: 100 } },
+      },
+      {
+        // The text of a cell of the overview table of the portfolio, a half-point smaller than the body so a row is one line.
+        id: STYLE.cell,
+        name: 'Table Text',
+        basedOn: STYLE.normal,
+        quickFormat: true,
+        run: { ...base, size: SIZE.strip },
+        paragraph: { spacing: { before: 0, after: 0 } },
+      },
+      {
+        // The same for the fields of a project of the portfolio (Role, Team, Stack), whose labels are shorter.
+        id: STYLE.field,
+        name: 'Field',
+        basedOn: STYLE.normal,
+        quickFormat: true,
+        paragraph: { ...hanging(FIELD_INDENT), keepLines: true, spacing: { before: 0, after: 40 } },
       },
       {
         // The title of a role, under its company line (V1-20.3): body size in accent, kept with what follows.
@@ -259,7 +404,14 @@ export function createStyles({ font = FONT.fallback } = {}) {
         id: STYLE.dateRun,
         name: 'Date Run',
         basedOn: 'DefaultParagraphFont',
-        run: { bold: false, size: SIZE.label, color: COLORS.muted },
+        run: { bold: false, size: SIZE.body, color: COLORS.muted },
+      },
+      {
+        // A link of the contact line, which is on the navy band, where the accent of a Hyperlink could not be read.
+        id: STYLE.bandLink,
+        name: 'Band Link',
+        basedOn: 'DefaultParagraphFont',
+        run: { color: COLORS.white },
       },
     ],
   };

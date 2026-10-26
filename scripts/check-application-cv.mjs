@@ -1,5 +1,5 @@
 // Checks that the application edition tells the story of the site (V1-21.4), and that the phone number is where it
-// should be and nowhere else:
+// should be and nowhere else (the CV, the portfolio and the two in one file):
 //   node scripts/check-application-cv.mjs             checks cv/application/*.docx against resume.ts and cv/private.json
 //   node scripts/check-application-cv.mjs --dry-run   makes the dry-run files in a temporary folder, checks them, and
 //                                                     removes them; needs no private file, so CI may run it
@@ -10,6 +10,7 @@ import { readdir, rm } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkParity, readDocx } from './application-cv/check.mjs';
+import { combinedFileName } from './application-cv/combined.mjs';
 import { fileName } from './application-cv/cv.mjs';
 import { exampleProjects, generate, OUTPUT_FOLDER } from './application-cv/generate.mjs';
 import { loadResume } from './application-cv/load-resume.mjs';
@@ -57,7 +58,11 @@ async function whatToCheck(resume) {
     return {
       folder,
       input: {
-        files: { cv: await open(made.file), portfolio: made.portfolio && (await open(made.portfolio.file)) },
+        files: {
+          cv: await open(made.file),
+          portfolio: made.portfolio && (await open(made.portfolio.file)),
+          combined: made.combined && (await open(made.combined.file)),
+        },
         projects: exampleProjects(),
       },
     };
@@ -70,11 +75,14 @@ async function whatToCheck(resume) {
   if (!existsSync(cvPath)) throw missing(cvPath);
   const portfolioPath = join(folder, portfolioFileName(resume));
   if (data.extraProjects.length > 0 && !existsSync(portfolioPath)) throw missing(portfolioPath);
+  const combinedPath = join(folder, combinedFileName(resume));
+  if (data.extraProjects.length > 0 && !existsSync(combinedPath)) throw missing(combinedPath);
   return {
     input: {
       files: {
         cv: await open(cvPath),
         portfolio: data.extraProjects.length > 0 ? await open(portfolioPath) : undefined,
+        combined: data.extraProjects.length > 0 ? await open(combinedPath) : undefined,
       },
       phone: data.phone,
       projects: data.extraProjects,

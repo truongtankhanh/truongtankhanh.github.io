@@ -9,6 +9,7 @@ import { paragraphXml, paragraphs, styleOf, unpack, type DocxParts } from './doc
 
 interface Body {
   buildBody(resume: Resume): Paragraph[];
+  figureText(figure: { value: string; label: string }): string;
 }
 interface Sheet {
   PAGE: NonNullable<ISectionOptions['properties']>['page'];
@@ -18,7 +19,7 @@ interface Sheet {
 // The modules are plain JavaScript; computed specifiers keep the type checker out of them.
 const bodyPath = './body.mjs';
 const stylesPath = './styles.mjs';
-const { buildBody } = (await import(bodyPath)) as Body;
+const { buildBody, figureText } = (await import(bodyPath)) as Body;
 const { PAGE, createStyles } = (await import(stylesPath)) as Sheet;
 
 let doc: DocxParts;
@@ -56,25 +57,35 @@ describe('body of the application CV', () => {
       'Experience',
       'Public work',
       'How I work',
-      'Education',
-      'Languages',
+      'Education and languages',
     ]);
   });
 
-  it('opens with the career figures as one line, each value in the Figure style', () => {
-    expect(text[0]).toBe(resume.metrics.map((m) => `${m.value} ${m.label}`).join(' · '));
+  it('opens with the career figures as one line on the strip, each value in the Figure style and the words short', () => {
+    expect(text[0]).toBe(
+      '7+ years in production · 5+ marketplaces · 3+ engineers led · ~50 repos and services · ~10k/s per replica',
+    );
+    expect(text[0]).toBe(resume.metrics.map(figureText).join(' · '));
+    expect(styleOf(xml[0]!)).toBe('FigureStrip');
     expect(xml[0]!.match(/<w:rStyle w:val="Figure"\/>/g)).toHaveLength(resume.metrics.length);
     for (const value of ['7+', '5+', '3+', '~50', '~10k']) expect(text[0]).toContain(value);
+  });
+
+  it('keeps a figure that has no short words in full, so a new figure of the site still appears', () => {
+    expect(figureText({ value: '9+', label: 'something new' })).toBe('9+ something new');
   });
 
   it('gives the summary paragraphs as written', () => {
     expect(section('Summary').text.slice(1)).toEqual(resume.intro);
   });
 
-  it('writes one Label: item, item line per skill group, with the label in bold', () => {
+  it('writes one row per skill group: the label in bold, a tab (not in the text this reads), then the items, in the Row style', () => {
     const skills = section('Technical Skills');
-    expect(skills.text.slice(1)).toEqual(resume.skills.map((g) => `${g.name}: ${g.items.join(', ')}`));
-    for (const line of skills.xml.slice(1)) expect(strongRuns(line)).toBe(1);
+    expect(skills.text.slice(1)).toEqual(resume.skills.map((g) => `${g.name}${g.items.join(', ')}`));
+    for (const line of skills.xml.slice(1)) {
+      expect(strongRuns(line)).toBe(1);
+      expect(styleOf(line)).toBe('Row');
+    }
   });
 
   it('lists the roles newest first, each as company and dates with its title under it', () => {
@@ -103,10 +114,7 @@ describe('body of the application CV', () => {
   });
 
   it('writes every bullet as a real list paragraph with its key phrases in bold, and no asterisks', () => {
-    const points = [
-      ...newestFirst.flatMap((r) => r.work.flatMap((w) => w.points)),
-      ...resume.leadership.owns,
-    ];
+    const points = newestFirst.flatMap((r) => r.work.flatMap((w) => w.points));
     const bullets = xml.map((p, i) => ({ p, t: text[i]! })).filter(({ p }) => styleOf(p) === 'ListBullet');
     expect(bullets.map((b) => b.t)).toEqual(points.map(stripEmphasis));
     bullets.forEach(({ p }, i) => {
@@ -131,41 +139,47 @@ describe('body of the application CV', () => {
     });
   });
 
-  it('gives each public repository one line: name, lead figure and address as a link', () => {
+  it('gives each public repository two lines: name with its lead figure, then its address as a link', () => {
     const work = section('Public work');
-    expect(work.text.slice(1)).toHaveLength(resume.projects.length);
+    expect(work.text.slice(1)).toHaveLength(resume.projects.length * 2);
     resume.projects.forEach((project, i) => {
-      const line = work.text[i + 1]!;
+      const line = work.text[1 + i * 2]!;
+      const address = work.text[2 + i * 2]!;
       const lead = project.stat ?? project.caseStudy?.does.lead.figure;
       expect(line.startsWith(project.name), line).toBe(true);
       if (lead) expect(line).toContain(`${lead.value} – ${lead.label}`);
-      expect(line.endsWith(displayUrl(project.repo)), line).toBe(true);
+      expect(address).toBe(displayUrl(project.repo));
+      expect(styleOf(work.xml[1 + i * 2]!)).toBe('Repo');
+      expect(styleOf(work.xml[2 + i * 2]!)).toBe('RepoLink');
       expect(doc.rels).toContain(`Target="${project.repo}"`);
     });
   });
 
-  it('shows the scope figures, what I own and each principle with its first evidence line', () => {
+  it('shows each principle, and leaves out "What I own", the figures line and the "In practice" evidence', () => {
     const approach = section('How I work');
-    expect(approach.text[1]).toBe(resume.leadership.figures.map((f) => `${f.value} ${f.label}`).join(' · '));
-    expect(approach.text[2]).toBe('What I own');
-    for (const own of resume.leadership.owns) expect(approach.text).toContain(own);
+    expect(approach.text).not.toContain('What I own');
+    for (const own of resume.leadership.owns) expect(approach.text).not.toContain(own);
+    expect(approach.text.slice(1)).toHaveLength(resume.principles.length);
     for (const principle of resume.principles) {
-      const at = approach.text.indexOf(`${principle.title}. ${principle.body}`);
-      expect(at, principle.title).toBeGreaterThan(0);
-      const [evidence] = principle.evidence;
-      expect(approach.text[at + 1]).toBe(`In practice: ${evidence!.text} (${evidence!.source})`);
-      expect(styleOf(approach.xml[at + 1]!)).toBe('Caption');
+      expect(approach.text, principle.title).toContain(`${principle.title}. ${principle.body}`);
     }
+    expect(approach.text.some((t) => t.startsWith('In practice'))).toBe(false);
+    expect(approach.text).not.toContain(
+      resume.leadership.figures.map((f) => `${f.value} ${f.label}`).join(' · '),
+    );
   });
 
-  it('closes with education and the two languages in the words of the content file', () => {
+  it('closes with education and the two languages in a label column, in the words of the content file', () => {
     const { school, detail, start, end } = resume.education;
-    expect(section('Education').text.slice(1)).toEqual([school, `${detail} (${start}–${end})`]);
-    const languages = section('Languages').text.slice(1);
-    expect(languages).toEqual(
-      resume.languages.flatMap((l) => [`${l.name} · ${l.level}`, ...(l.detail ? [l.detail] : [])]),
-    );
-    expect(languages.join(' ')).not.toMatch(/actively improving/i);
+    const closing = section('Education and languages');
+    expect(closing.text.slice(1)).toEqual([
+      `Education${school}, ${detail} (${start}–${end})`,
+      ...resume.languages.map(
+        (l, i) => `${i === 0 ? 'Languages' : ''}${l.name} · ${l.level}${l.detail ? `. ${l.detail}` : ''}`,
+      ),
+    ]);
+    for (const line of closing.xml.slice(1)) expect(styleOf(line)).toBe('Row');
+    expect(closing.text.join(' ')).not.toMatch(/actively improving/i);
   });
 
   it('has no table, text box or picture, and no direct colour or size', () => {

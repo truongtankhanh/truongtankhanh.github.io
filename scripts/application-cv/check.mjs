@@ -5,7 +5,9 @@
 // This module only checks and reports; `scripts/check-application-cv.mjs` finds the files. A message names the rule
 // that failed and the file, and never repeats the phone number.
 import { createRequire } from 'node:module';
-import { PORTFOLIO_SUBTITLE } from './portfolio.mjs';
+import { figureText, languageText } from './body.mjs';
+import { PART_TITLE } from './combined.mjs';
+import { portfolioSubtitle } from './portfolio.mjs';
 import { looksLikePhone } from './private.mjs';
 import { formatRange } from './text.mjs';
 
@@ -129,29 +131,20 @@ const rules = {
     return [roles && `roles and dates ${roles}`, titles && `role titles ${titles}`].filter(Boolean);
   },
 
-  /** The career figures are one line, with every value as the site writes it (`+`, `~`, `/s`). */
+  /** The career figures are one line, with every value as the site writes it (`+`, `~`, `/s`) and the short words of the strip. */
   figures: (doc, { resume }) => {
-    const line = resume.metrics.map((m) => `${m.value} ${m.label}`).join(' · ');
+    const line = resume.metrics.map(figureText).join(' · ');
     return doc.paragraphs.some((p) => p.text === line)
       ? []
       : [`the line of career figures is missing or changed; it should read "${line}"`];
   },
 
-  /** The languages, with the level and the words of the site about the English. */
+  /** Each language is a row of the closing section, as the site words it: the level, then the words about it. */
   english: (doc, { resume }) => {
-    const wanted = resume.languages.flatMap((l) => [
-      `${l.name} · ${l.level}`,
-      ...(l.detail ? [l.detail] : []),
-    ]);
-    const problems = describe({
-      ...difference(
-        wanted,
-        doc.paragraphs.map((p) => p.text),
-      ),
-      extra: [],
-      reordered: false,
-    });
-    return problems ? [`the languages ${problems}`] : [];
+    // The text of a row is what follows its label and its tab.
+    const rows = doc.paragraphs.map((p) => lower(p.text.split('\t').pop()));
+    const missing = resume.languages.map(languageText).filter((text) => !rows.includes(lower(text)));
+    return missing.length > 0 ? [`the languages missing: ${missing.map((t) => `"${t}"`).join(', ')}`] : [];
   },
 
   /** The email is in the contact line. */
@@ -248,22 +241,73 @@ const portfolioRules = {
     return problems;
   },
 
-  /** A company of the site is headed with the title and the dates of its role on the site. */
+  /** A company of the site is headed with the title and the dates of its role on the site, and with its summary. */
   'portfolio-roles': (doc, { resume, projects }) => {
-    const wanted = [...new Set(projects.map((p) => p.company))].flatMap((company) => {
+    const roles = [...new Set(projects.map((p) => p.company))].flatMap((company) => {
       const role = resume.experience.find((r) => r.company === company);
-      return role ? [`${role.title} · ${formatRange(role.start, role.end)}`] : [];
+      return role ? [role] : [];
     });
-    const problems = describe(difference(wanted, texts(doc, 'RoleTitle')));
-    return problems ? [`the roles under the companies ${problems}`] : [];
+    const wanted = roles.map((role) => `${role.title} · ${formatRange(role.start, role.end)}`);
+    const titles = describe(difference(wanted, texts(doc, 'RoleTitle')));
+    const written = doc.paragraphs.map((p) => p.text);
+    const lost = roles.filter((role) => role.summary && !written.includes(role.summary));
+    return [
+      titles && `the roles under the companies ${titles}`,
+      lost.length > 0 &&
+        `the summary of the role at ${lost.map((role) => `"${role.company}"`).join(', ')} is not in the file as the site words it`,
+    ].filter(Boolean);
   },
 
   /** The portfolio says what it is. */
-  'portfolio-subtitle': (doc) => {
+  'portfolio-subtitle': (doc, { resume }) => {
     const [subtitle] = texts(doc, 'Subtitle');
-    return subtitle === PORTFOLIO_SUBTITLE
-      ? []
-      : [`the line under the name is "${subtitle}", not "${PORTFOLIO_SUBTITLE}"`];
+    const wanted = portfolioSubtitle(resume);
+    return subtitle === wanted ? [] : [`the line under the name is "${subtitle}", not "${wanted}"`];
+  },
+};
+
+/**
+ * The one-file edition as the two files it is made of: the paragraphs before the title of the portfolio part are the CV,
+ * the ones from that title on are the portfolio. The footer, the links and the properties belong to the whole file, so
+ * both parts have them.
+ */
+export function splitCombined(doc) {
+  const at = doc.paragraphs.findIndex((p) => p.style === 'Part');
+  if (at < 0) return undefined;
+  return {
+    cv: { ...doc, paragraphs: doc.paragraphs.slice(0, at) },
+    portfolio: { ...doc, paragraphs: doc.paragraphs.slice(at) },
+  };
+}
+
+/** The rules of the CV that the portfolio part of the one-file edition has as well: wording and placeholders. */
+const BOTH_PARTS = ['old-wording', 'placeholders'];
+
+/** The rules that are about the two parts of the one-file edition as a whole. */
+const combinedRules = {
+  /** One title that starts the portfolio, and no second first-page block in it. */
+  'combined-parts': (doc) => {
+    const parts = splitCombined(doc);
+    if (!parts) return [`there is no "${PART_TITLE}" paragraph that starts the portfolio`];
+    const titles = doc.paragraphs.filter((p) => p.style === 'Part');
+    const second = parts.portfolio.paragraphs.filter((p) =>
+      ['Title', 'Contact', 'Subtitle'].includes(p.style),
+    );
+    return [
+      titles.length !== 1 && `the file has ${titles.length} portfolio titles; it should have one`,
+      titles[0] &&
+        titles[0].text !== PART_TITLE &&
+        `the portfolio title is "${titles[0].text}", not "${PART_TITLE}"`,
+      second.length > 0 && 'the portfolio part has a second first-page block (name, role or contact line)',
+    ].filter(Boolean);
+  },
+
+  /** The phone number is in the contact line of the CV and not in the portfolio part. */
+  'phone-in-appendix': (doc) => {
+    const parts = splitCombined(doc);
+    if (!parts) return [];
+    const hits = parts.portfolio.paragraphs.filter((p) => looksLikePhone(p.text)).length;
+    return hits > 0 ? [`a phone number is in ${hits} paragraph(s) of the portfolio part`] : [];
   },
 };
 
@@ -322,7 +366,7 @@ function oldAppendixProblems(portfolio, master) {
  *
  * @param {object} input
  * @param {object} input.resume The content of `src/content/resume.ts`.
- * @param {{ cv: object, portfolio?: object }} input.files Results of `readDocx`.
+ * @param {{ cv: object, portfolio?: object, combined?: object }} input.files Results of `readDocx`.
  * @param {string} [input.phone] The number of `cv/private.json`; none in a dry run.
  * @param {boolean} [input.dryRun]
  * @param {object[]} [input.projects] The `extraProjects` the portfolio was built from.
@@ -350,6 +394,21 @@ export function checkParity({ resume, files, phone, dryRun = false, projects = [
     if (master) run(files.portfolio, 'old-appendix', oldAppendixProblems(files.portfolio, master));
   }
 
+  if (files.combined) {
+    for (const [name, rule] of Object.entries(combinedRules))
+      run(files.combined, name, rule(files.combined, context));
+    const parts = splitCombined(files.combined);
+    if (parts) {
+      for (const [name, rule] of Object.entries(rules)) run(parts.cv, name, rule(parts.cv, context));
+      for (const name of BOTH_PARTS) run(parts.portfolio, name, rules[name](parts.portfolio, context));
+      for (const [name, rule] of Object.entries(portfolioRules)) {
+        if (name !== 'portfolio-subtitle') run(parts.portfolio, name, rule(parts.portfolio, context));
+      }
+      run(parts.portfolio, 'private-only', privateOnlyProblems(parts.portfolio, context));
+      if (master) run(parts.portfolio, 'old-appendix', oldAppendixProblems(parts.portfolio, master));
+    }
+  }
+
   const differences = [
     dryRun
       ? 'phone number: a dry run, so the placeholder "(phone on request)" takes its place'
@@ -363,6 +422,9 @@ export function checkParity({ resume, files, phone, dryRun = false, projects = [
           ),
         ]
       : ['project portfolio: none, because cv/private.json has no extraProjects']),
+    ...(files.combined
+      ? ['one file: the CV and the portfolio together, each part checked by the rules of its own file']
+      : []),
     ...(files.portfolio && !master
       ? ['old appendix: not found, so the portfolio is compared with cv/private.json only']
       : []),

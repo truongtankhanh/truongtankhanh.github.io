@@ -1,4 +1,4 @@
-// Writes the application CV (V1-21.2) and its portfolio (V1-21.3): reads `cv/private.json`, builds the documents of
+// Writes the application CV (V1-21.2), its portfolio (V1-21.3) and the two in one file (V1-23.1): reads `cv/private.json`, builds the documents of
 // `cv.mjs` and `portfolio.mjs` and puts them in `cv/application/`. It writes nowhere else and touches no file of `cv/` itself, where the old masters are until the
 // cut-over (V1-22.3). A dry run needs no private file: the phone is `PHONE_ON_REQUEST`, the projects are the made-up ones of
 // `private.example.json`, and the files go to a new temporary folder, so CI can check that the generator still works
@@ -9,6 +9,7 @@ import { lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFil
 import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative } from 'node:path';
 import { Packer } from 'docx';
+import { buildCombinedDocument, combinedFileName } from './combined.mjs';
 import { buildCvDocument, fileName, PHONE_ON_REQUEST } from './cv.mjs';
 import { LOGO_FILE } from './header.mjs';
 import { buildPortfolioDocument, portfolioFileName } from './portfolio.mjs';
@@ -68,8 +69,8 @@ export function exampleProjects() {
  * @param {boolean} [input.dryRun] No private file, a placeholder for the phone, the example projects, a temporary folder.
  * @param {string} [input.cvDir] Only the tests change this and the next.
  * @param {string} [input.privateFile]
- * @returns {Promise<{ file: string, bytes: number, dryRun: boolean, portfolio: { file: string, bytes: number } | null }>}
- *   The CV, and the portfolio, which is `null` when the private file has no projects.
+ * @returns {Promise<{ file: string, bytes: number, dryRun: boolean, portfolio: { file: string, bytes: number } | null, combined: { file: string, bytes: number } | null }>}
+ *   The CV, and the portfolio and the one-file edition, which are `null` when the private file has no projects.
  */
 export async function generate({ loadResume, dryRun = false, cvDir = CV_DIR, privateFile = PRIVATE_FILE }) {
   // The private file first: a missing or wrong file stops the run before anything is read or written.
@@ -89,18 +90,29 @@ export async function generate({ loadResume, dryRun = false, cvDir = CV_DIR, pri
         )
       : null;
 
+  const combined =
+    data.extraProjects.length > 0
+      ? await Packer.toBuffer(
+          buildCombinedDocument({ resume: content, phone: data.phone, logo, projects: data.extraProjects }),
+        )
+      : null;
+
   const folder = dryRun ? mkdtempSync(join(tmpdir(), 'application-cv-')) : outputFolder(cvDir);
   const cvFile = join(folder, fileName(resume));
   const portfolioFile = join(folder, portfolioFileName(resume));
+  const combinedFile = join(folder, combinedFileName(resume));
   // Both targets are checked before either is written, so a refusal leaves nothing half done.
   checkTarget(cvFile);
   if (portfolio) checkTarget(portfolioFile);
+  if (combined) checkTarget(combinedFile);
   writeFileSync(cvFile, cv);
   if (portfolio) writeFileSync(portfolioFile, portfolio);
+  if (combined) writeFileSync(combinedFile, combined);
   return {
     file: cvFile,
     bytes: cv.length,
     dryRun,
     portfolio: portfolio && { file: portfolioFile, bytes: portfolio.length },
+    combined: combined && { file: combinedFile, bytes: combined.length },
   };
 }

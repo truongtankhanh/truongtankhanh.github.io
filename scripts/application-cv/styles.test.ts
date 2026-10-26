@@ -16,10 +16,13 @@ interface ParagraphStyle {
   paragraph?: {
     keepNext?: boolean;
     keepLines?: boolean;
+    pageBreakBefore?: boolean;
     outlineLevel?: number;
     spacing?: { line?: number; before?: number; after?: number };
     tabStops?: { type: string; position: number }[];
-    border?: Record<'top' | 'bottom', { color: string; size: number }>;
+    indent?: { left: number; hanging: number };
+    shading?: { fill: string };
+    border?: Record<'top' | 'bottom' | 'left' | 'right', { color: string; size: number; space: number }>;
     numbering?: { reference: string; level: number };
   };
 }
@@ -29,10 +32,12 @@ interface CharacterStyle {
   run: RunProps;
 }
 interface Sheet {
-  COLORS: Record<'ink' | 'muted' | 'accent' | 'steel' | 'gold', string>;
+  COLORS: Record<'ink' | 'muted' | 'accent' | 'steel' | 'gold' | 'white' | 'mist' | 'tint', string>;
   FONT: { preferred: string; fallback: string };
   PAGE: { size: { width: number; height: number }; margin: Record<string, number> };
   TEXT_WIDTH: number;
+  ROW_INDENT: number;
+  FIELD_INDENT: number;
   BULLETS: string;
   STYLE: Record<
     | 'title'
@@ -44,10 +49,19 @@ interface Sheet {
     | 'date'
     | 'caption'
     | 'contact'
+    | 'location'
+    | 'figureStrip'
+    | 'part'
+    | 'row'
+    | 'field'
+    | 'cell'
+    | 'repo'
+    | 'repoLink'
     | 'roleTitle'
     | 'footer'
     | 'strong'
     | 'hyperlink'
+    | 'bandLink'
     | 'figure'
     | 'mark'
     | 'dateRun',
@@ -67,7 +81,7 @@ interface Sheet {
 // The module is plain JavaScript; a computed specifier keeps the type checker out of it.
 const path = './styles.mjs';
 const sheet = (await import(path)) as Sheet;
-const { COLORS, FONT, PAGE, TEXT_WIDTH, STYLE, BULLETS, createStyles } = sheet;
+const { COLORS, FONT, PAGE, TEXT_WIDTH, ROW_INDENT, FIELD_INDENT, STYLE, BULLETS, createStyles } = sheet;
 const { styles, numbering } = createStyles();
 
 const paragraph = (id: string) => {
@@ -109,10 +123,18 @@ describe('application CV style sheet', () => {
       [
         'Contact',
         'Date',
+        'Field',
+        'Figure Strip',
         'List Bullet',
+        'Location',
         'Normal',
+        'Part Title',
+        'Repo',
+        'Repo Link',
         'Role Title',
+        'Row',
         'Subtitle',
+        'Table Text',
         'Title',
         'caption',
         'footer',
@@ -135,17 +157,26 @@ describe('application CV style sheet', () => {
     expect(JSON.stringify([styles, numbering])).not.toMatch(/"color":"auto"/);
   });
 
-  it('keeps steel for the rule and gold for the mark, and all text at 4.5:1 on white', () => {
+  it('keeps steel for the rule, gold for the mark and the tint for the strip, and all text at 4.5:1 on its ground', () => {
     const text = [...styles.paragraphStyles.map((s) => s.run), ...styles.characterStyles.map((s) => s.run)]
       .map((run) => run?.color)
       .filter((c): c is string => Boolean(c));
     expect(text).not.toContain(COLORS.steel);
+    expect(text).not.toContain(COLORS.tint);
     expect(styles.characterStyles.filter((s) => s.run.color === COLORS.gold).map((s) => s.id)).toEqual([
       STYLE.mark,
     ]);
     expect(paragraph(STYLE.heading1).paragraph?.border?.bottom.color).toBe(COLORS.steel);
     for (const color of [COLORS.ink, COLORS.muted, COLORS.accent]) {
       expect(contrast(color, 'FFFFFF'), color).toBeGreaterThanOrEqual(4.5);
+    }
+    // The text of the strip is ink, muted or accent on the tint; the text of the band is white or mist on the ink, and
+    // the gold mark is on the ink too.
+    for (const color of [COLORS.ink, COLORS.muted, COLORS.accent]) {
+      expect(contrast(color, COLORS.tint), color).toBeGreaterThanOrEqual(4.5);
+    }
+    for (const color of [COLORS.white, COLORS.mist, COLORS.gold]) {
+      expect(contrast(color, COLORS.ink), color).toBeGreaterThanOrEqual(4.5);
     }
   });
 
@@ -154,18 +185,19 @@ describe('application CV style sheet', () => {
     expect(size(STYLE.title)).toBe(52); // 26 pt
     expect(size(STYLE.subtitle)).toBe(24); // 12 pt
     expect(size(STYLE.heading1)).toBe(20); // 10 pt
-    expect(size(STYLE.heading2)).toBe(22); // 11 pt
-    expect(size(STYLE.normal)).toBe(19); // 9.5 pt
-    expect(size(STYLE.date)).toBe(17); // 8.5 pt
-    expect(size(STYLE.caption)).toBe(17);
-    expect(paragraph(STYLE.subtitle).run?.color).toBe(COLORS.accent);
+    expect(size(STYLE.heading2)).toBe(23); // 11.5 pt
+    expect(size(STYLE.normal)).toBe(20); // 10 pt
+    expect(size(STYLE.date)).toBe(18); // 9 pt
+    expect(size(STYLE.caption)).toBe(18);
+    expect(paragraph(STYLE.title).run?.color).toBe(COLORS.white);
+    expect(paragraph(STYLE.subtitle).run?.color).toBe(COLORS.mist);
     expect(paragraph(STYLE.date).run?.color).toBe(COLORS.muted);
     const h1 = paragraph(STYLE.heading1);
     expect(h1.run).toMatchObject({ bold: true, allCaps: true, color: COLORS.accent, characterSpacing: 24 });
   });
 
   it('spaces paragraphs at 1.15 lines, 3 pt after, 10 pt before a section', () => {
-    expect(paragraph(STYLE.normal).paragraph?.spacing).toMatchObject({ line: 276, after: 60 });
+    expect(paragraph(STYLE.normal).paragraph?.spacing).toMatchObject({ line: 269, after: 50 });
     expect(paragraph(STYLE.heading1).paragraph?.spacing?.before).toBe(200);
   });
 
@@ -184,26 +216,60 @@ describe('application CV style sheet', () => {
     expect(level?.style.run.color).toBe(COLORS.accent);
   });
 
-  it('is A4 with 15 mm at the sides, 14 mm at the top and bottom, and 11 mm to the header and footer', () => {
+  it('is A4 with 15 mm at the sides, 12 mm at the top, 15 mm at the bottom, and the footer 8 mm from the edge', () => {
     const twips = (mm: number) => Math.round((mm * 1440) / 25.4);
     expect(PAGE.size).toEqual({ width: 11906, height: 16838 }); // A4
     expect(PAGE.margin).toMatchObject({
       left: twips(15),
       right: twips(15),
-      top: twips(14),
-      bottom: twips(14),
-      header: twips(11),
-      footer: twips(11),
+      top: twips(12),
+      bottom: twips(15),
+      header: twips(10),
+      footer: twips(8),
     });
     expect(TEXT_WIDTH).toBe(PAGE.size.width - 2 * twips(15));
   });
 
-  it('closes the first-page block with a 1.5 pt accent rule and the page with a steel rule over an 8 pt footer', () => {
-    const rule = paragraph(STYLE.contact).paragraph?.border?.bottom;
-    expect(rule).toMatchObject({ color: COLORS.accent, size: 12 }); // eighths of a point
+  it('puts the first-page block on one navy band: the same shading and border on every paragraph, so Word draws one box', () => {
+    const block = [STYLE.location, STYLE.title, STYLE.subtitle, STYLE.contact].map(paragraph);
+    for (const { paragraph: p } of block) {
+      expect(p?.shading?.fill).toBe(COLORS.ink);
+      expect(p?.border).toEqual(block[0]!.paragraph?.border);
+    }
+    const border = block[0]!.paragraph!.border!;
+    expect(Object.values(border).every((side) => side.color === COLORS.ink)).toBe(true);
+    // Left and right reach beyond the text; the band must stay inside the page: 15 mm margin is 42.5 pt.
+    expect(border.left.space).toBeGreaterThan(0);
+    expect(border.left.space).toBeLessThan(42);
+    expect(border.left.space).toBe(border.right.space);
+  });
+
+  it('sets the strip of figures in the tint, as wide as the band, and closes the page with a steel rule over an 8.5 pt footer', () => {
+    const strip = paragraph(STYLE.figureStrip).paragraph;
+    expect(strip?.shading?.fill).toBe(COLORS.tint);
+    expect(strip?.border?.left.space).toBe(paragraph(STYLE.title).paragraph?.border?.left.space);
     const footer = paragraph(STYLE.footer);
     expect(footer.paragraph?.border?.top).toMatchObject({ color: COLORS.steel });
-    expect(footer.run).toMatchObject({ size: 16, color: COLORS.muted }); // 8 pt
+    expect(footer.run).toMatchObject({ size: 17, color: COLORS.muted }); // 8.5 pt
+  });
+
+  it('starts the portfolio part of the one-file edition on a new page, in the outline, over an accent rule', () => {
+    const part = paragraph(STYLE.part);
+    expect(part.paragraph).toMatchObject({ pageBreakBefore: true, keepNext: true, outlineLevel: 0 });
+    expect(part.paragraph?.border?.bottom).toMatchObject({ color: COLORS.accent });
+    expect(part.run?.size).toBe(36); // 18 pt
+  });
+
+  it('sets a label column with a hanging indent and a tab on its edge, in two widths', () => {
+    for (const [id, width] of [
+      [STYLE.row, ROW_INDENT],
+      [STYLE.field, FIELD_INDENT],
+    ] as const) {
+      const p = paragraph(id).paragraph;
+      expect(p?.indent).toEqual({ left: width, hanging: width });
+      expect(p?.tabStops).toEqual([{ type: 'left', position: width }]);
+    }
+    expect(ROW_INDENT).toBeGreaterThan(FIELD_INDENT);
   });
 
   it('puts a right tab stop on the edge of the text for the logo, the dates and the page count', () => {

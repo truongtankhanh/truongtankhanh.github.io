@@ -10,14 +10,14 @@ interface Problem {
   message: string;
 }
 interface Pdf {
-  MAX_BYTES: Record<'cv' | 'portfolio', number>;
-  PAGE_RANGE: Record<'cv' | 'portfolio', [number, number]>;
+  MAX_BYTES: Record<'cv' | 'portfolio' | 'combined', number>;
+  PAGE_RANGE: Record<'cv' | 'portfolio' | 'combined', [number, number]>;
   parsePageCount(pdfinfo: string): number | undefined;
   parsePageSizes(pdfinfo: string): { width: number; height: number }[];
   parseFonts(pdffonts: string): { name: string; embedded: boolean }[];
   outOfOrder(paragraphs: Paragraph[], pdfText: string): string[];
   checkPdf(input: {
-    kind: 'cv' | 'portfolio';
+    kind: 'cv' | 'portfolio' | 'combined';
     bytes: number;
     pdfinfo: string;
     pdffonts: string;
@@ -155,6 +155,18 @@ describe('the reading order', () => {
     expect(outOfOrder(inBody, 'SUMMARY')).toEqual([]);
   });
 
+  it('looks for a Heading 2 by its title alone, because poppler may set its date after the rows under it', () => {
+    const heading = { style: 'Heading2', text: 'AI-driven web platform\t4 months', inTable: false };
+    const next = para('Responsibilities');
+    expect(outOfOrder([heading, next], 'AI-driven web platform\nRole\n4 months\nResponsibilities')).toEqual(
+      [],
+    );
+    // Any other paragraph with a tab is still looked for whole.
+    const row = { style: 'Row', text: 'Backend\tNode.js', inTable: false };
+    expect(outOfOrder([row], 'Backend\nNode.js')).toEqual([]);
+    expect(outOfOrder([row], 'Backend only')).toHaveLength(1);
+  });
+
   it('leaves out a mark before the text and a paragraph too short to look for', () => {
     expect(outOfOrder([para('— Lâm Đồng'), para('ab')], 'lâm đồng')).toEqual([]);
   });
@@ -177,7 +189,7 @@ describe('checkPdf', () => {
     expect(
       rules(checkPdf(input({ kind: 'portfolio', bytes: MAX_BYTES.portfolio + 1, pdfinfo: pdfinfo(3) }))),
     ).toEqual(['size']);
-    expect(MAX_BYTES).toEqual({ cv: 300 * 1024, portfolio: 400 * 1024 });
+    expect(MAX_BYTES).toEqual({ cv: 300 * 1024, portfolio: 400 * 1024, combined: 500 * 1024 });
   });
 
   it.each([
@@ -189,11 +201,16 @@ describe('checkPdf', () => {
     ['portfolio', 3, false],
     ['portfolio', 4, false],
     ['portfolio', 5, true],
+    ['combined', 3, true],
+    ['combined', 4, false],
+    ['combined', 6, false],
+    ['combined', 7, true],
   ] as const)('a %s of %i pages fails: %s', (kind, pages, fails) => {
     const result = checkPdf(input({ kind, pdfinfo: pdfinfo(pages) }));
     expect(rules(result).includes('pages')).toBe(fails);
     expect(PAGE_RANGE.cv).toEqual([2, 3]);
     expect(PAGE_RANGE.portfolio).toEqual([3, 4]);
+    expect(PAGE_RANGE.combined).toEqual([4, 6]);
   });
 
   it('refuses a page that is not A4, such as Letter, and a pdfinfo that does not say', () => {

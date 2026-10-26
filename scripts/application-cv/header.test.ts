@@ -9,7 +9,7 @@ import {
 } from 'docx';
 import { readFileSync } from 'node:fs';
 import { resume } from '../../src/content/resume';
-import { paragraphs, unpack } from './docxParts';
+import { paragraphXml, paragraphs, unpack } from './docxParts';
 
 interface Builders {
   LOGO_FILE: URL;
@@ -57,26 +57,27 @@ beforeAll(async () => {
 });
 
 describe('first-page block', () => {
-  it('reads location, name, role and contact line, in that order', () => {
-    const [location, name, role, contact] = paragraphs(doc.body);
+  it('reads location, name, role and the two contact lines, in that order', () => {
+    const [location, name, role, phoneAndEmail, links] = paragraphs(doc.body);
     expect(location).toBe(`— ${resume.location} · ${resume.timezone}`);
     expect(name).toBe(resume.name);
     expect(role).toBe(resume.headline);
-    expect(contact).toBe(
-      [
-        PHONE,
-        resume.email,
-        'truongtankhanh.github.io',
-        'github.com/truongtankhanh',
-        'linkedin.com/in/truongtankhanh',
-      ].join(' · '),
+    expect(phoneAndEmail).toBe([PHONE, resume.email].join(' · '));
+    expect(links).toBe(
+      ['truongtankhanh.github.io', 'github.com/truongtankhanh', 'linkedin.com/in/truongtankhanh'].join(' · '),
     );
-    expect(paragraphs(doc.body)[4]).toBe('Summary');
+    expect(paragraphs(doc.body)[5]).toBe('Summary');
   });
 
-  it('puts the blocks in the named styles', () => {
+  it('puts the blocks in the named styles, the five of the band first', () => {
     const styles = [...doc.body.matchAll(/<w:pStyle w:val="([^"]+)"/g)].map((m) => m[1]);
-    expect(styles).toEqual(['Caption', 'Title', 'Subtitle', 'Contact', 'Heading1']);
+    expect(styles).toEqual(['Location', 'Title', 'Subtitle', 'Contact', 'Contact', 'Heading1']);
+  });
+
+  it('keeps the two contact lines together, the first with the second and the second free (the style of the others keeps them)', () => {
+    const [first, second] = paragraphXml(doc.body).slice(3, 5);
+    expect(first).toContain('<w:keepNext/>');
+    expect(second).not.toContain('<w:keepNext/>');
   });
 
   it('marks the name as Vietnamese and the location line with the gold mark style', () => {
@@ -96,7 +97,9 @@ describe('first-page block', () => {
       ]),
     );
     expect(doc.body.match(/<w:hyperlink /g)).toHaveLength(5);
-    expect(doc.body.match(/<w:rStyle w:val="Hyperlink"\/>/g)).toHaveLength(5);
+    // On the navy band a link is white, in the Band Link style, never the accent of an ordinary link.
+    expect(doc.body.match(/<w:rStyle w:val="BandLink"\/>/g)).toHaveLength(5);
+    expect(doc.body).not.toContain('<w:rStyle w:val="Hyperlink"/>');
   });
 
   it('leaves the dry run phone as plain text', async () => {
@@ -116,8 +119,8 @@ describe('first-page block', () => {
     expect(doc.body).not.toContain('<wp:anchor');
     expect(doc.body).toContain(`descr="${resume.nameAscii} monogram"`);
     expect(doc.body).toMatch(/<w:tab\/><\/w:r><w:r><w:drawing>/);
-    // 14 mm: 504825 EMU is 53 px at 96 dpi.
-    expect(doc.body).toContain('<wp:extent cx="504825" cy="504825"/>');
+    // 12 mm: 428625 EMU is 45 px at 96 dpi.
+    expect(doc.body).toContain('<wp:extent cx="428625" cy="428625"/>');
   });
 
   it('has no table, no text box and no direct colour or size', () => {
