@@ -86,7 +86,18 @@ The PDFs are made from the Word files, with LibreOffice (`brew install --cask li
 file at a time, in a temporary folder with a LibreOffice profile of its own, and copies the PDFs to `cv/application/`
 only if each one passes: under 300 KB (the CV) or 400 KB (the portfolio), the right number of pages (2 to 3 and 3 to 4),
 A4, every font embedded, text that can be selected and reads in the order of the Word file, and the phone number once.
-If one fails, `cv/` is left as it was and the folder with the PDFs is named so you can look at them. It writes only in
+If one fails, `cv/` is left as it was and the folder with the PDFs is named so you can look at them.
+
+The files I send are the four directly in `cv/`; the generator and the PDF script write in `cv/application/`. When the
+files there have passed the checks and I am happy with them, the old ones go to an archive folder and the new ones take
+their place under the same names:
+
+```bash
+A="cv/archive/$(date +%Y-%m-%d-%H%M)" && mkdir "$A" && mv cv/Truong_Tan_Khanh_* "$A"/ && mv cv/application/Truong_Tan_Khanh_* cv/
+```
+
+`mkdir` fails if the folder is there, so nothing is overwritten, and the `&&` stops the rest. Nothing is deleted;
+run `pnpm build:application-cv` again before the next check, because that folder is empty after the move. It writes only in
 `cv/application/` and does not touch the older Word files in `cv/`. Fonts are Calibri, so it looks the same on any
 machine with Word. The styles are in [`scripts/application-cv/`](scripts/application-cv/); check the result in Word
 before sending it.
