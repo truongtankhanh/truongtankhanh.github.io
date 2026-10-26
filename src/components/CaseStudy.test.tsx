@@ -136,12 +136,13 @@ describe('CaseStudy', () => {
       }
     });
 
-    it('puts a native player at the top of the overview: controls, no autoplay, nothing loaded but the poster', () => {
+    it('puts a native player at the top of the overview: controls, no autoplay, nothing loaded until play', () => {
       const markup = html(one, withDemo(true));
       const video = block(markup, '<video', 'video');
       expect(video).toContain(' controls=""');
       expect(video).toContain('preload="none"');
-      expect(video).toContain(`poster="/${demo.poster}"`);
+      // The poster is given in the browser, when the player is near the screen (see CaseStudyDemo.test.tsx).
+      expect(video).not.toContain('poster=');
       expect(video).toContain('width="1440"');
       expect(video).toContain('height="900"');
       expect(video).not.toMatch(/autoplay|loop=|muted/i);

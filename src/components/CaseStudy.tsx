@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Demo, Project, Resume, Screenshot } from '../content/types';
 import { emphasis } from '../lib/emphasis';
 import { displayUrl } from '../lib/urls';
@@ -42,19 +42,45 @@ function Shot({ shot, lazy }: { shot: Screenshot; lazy?: boolean }) {
 /** The demo video is 1440 × 900 (16:10); the size is set so the page does not shift while the poster loads. */
 const DEMO_SIZE = { width: 1440, height: 900 };
 
+/** How far below the screen the player may be before its poster is fetched. */
+const POSTER_MARGIN = '200px 0px';
+
 /**
- * The demo video of the case study: a native player that never autoplays and loads nothing but its poster until
- * play is pressed. It has no sound, so the captions menu holds a note that says so, and a text summary under the
- * player says what it shows. The anchor `#demo` is where the "Watch the demo" action of the home page lands.
+ * The demo video of the case study: a native player that never autoplays and loads nothing until play is pressed,
+ * apart from its poster. It has no sound, so the captions menu holds a note that says so, and a text summary under
+ * the player says what it shows. The anchor `#demo` is where the "Watch the demo" action of the home page lands.
+ *
+ * The poster is a 98 KB image, and a browser fetches the `poster` of a video as soon as the page is parsed, ahead of
+ * the fonts and styles of what is on screen: it cost the page its LCP budget. So, like the screenshots, it is not in the
+ * prerendered page and is given when the player comes near the screen (at once, when a link lands on `#demo`).
  */
 function DemoVideo({ demo }: { demo: Demo }) {
+  const figure = useRef<HTMLElement>(null);
+  const [near, setNear] = useState(false);
+
+  useEffect(() => {
+    const element = figure.current;
+    if (!element) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setNear(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: POSTER_MARGIN },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
-      <figure id="demo" className="cs-figure cs-demo">
+      <figure id="demo" ref={figure} className="cs-figure cs-demo">
         <video
           controls
           preload="none"
-          poster={`/${demo.poster}`}
+          poster={near ? `/${demo.poster}` : undefined}
           {...DEMO_SIZE}
           aria-describedby="demo-caption demo-summary"
         >
