@@ -129,5 +129,6 @@ self-hosted through Fontsource. Screenshots are from
 
 ## License
 
-The code is MIT licensed. The CV content (text and screenshots) is mine; please don't republish it as
-your own.
+All rights reserved. The code and the CV content (text and screenshots) are published to be read,
+not reused: please don't copy, modify or redistribute any part of this repository without written
+permission. See [LICENSE](LICENSE).

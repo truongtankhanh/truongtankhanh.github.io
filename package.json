@@ -2,7 +2,7 @@
   "name": "truongtankhanh.github.io",
   "private": true,
   "description": "Personal site and CV of Trương Tấn Khánh, prerendered to static HTML and deployed to GitHub Pages.",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "type": "module",
   "packageManager": "pnpm@10.28.0",
   "engines": {
